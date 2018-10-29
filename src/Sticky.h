@@ -3,7 +3,7 @@
 #include "Mechy.h"
 
 enum {
-    STK_SFT = 3072,
+    STK_SFT,
     STK_CTL,
     STK_ALT,
     STK_GUI,

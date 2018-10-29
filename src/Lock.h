@@ -3,7 +3,7 @@
 #include "Mechy.h"
 
 enum {
-    LOCK_1 = 1024,
+    LOCK_1,
     LOCK_2,
 };
 

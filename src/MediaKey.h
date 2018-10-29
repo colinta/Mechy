@@ -1,5 +1,6 @@
 #pragma once
 
+#include <Media.h>
 #include "Mechy.h"
 
 class MediaKey: public Plugin {
@@ -10,6 +11,7 @@ public:
 protected:
 };
 
-#define MD_VOLU { .name = FN_MEDIA, .key = MEDIA_VOL_UP, .isPressed = false, .started = 0 }
-#define MD_VOLD { .name = FN_MEDIA, .key = MEDIA_VOL_DOWN, .isPressed = false, .started = 0 }
-#define MD_PLAY { .name = FN_MEDIA, .key = MEDIA_PLAY, .isPressed = false, .started = 0 }
+#define MD(k) { .name = FN_MEDIA, .key = k, .isPressed = false, .started = 0 }
+#define MD_VOLU MD(MEDIA_VOL_UP)
+#define MD_VOLD MD(MEDIA_VOL_DOWN)
+#define MD_PLAY MD(MEDIA_PLAY)
