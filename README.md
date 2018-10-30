@@ -10,3 +10,5 @@ Includes support for split keyboards, see the example files.
 - Numpad.ino
 - Main.ino
 - Worker.ino
+
+† *pronounced "Mech Key", if that wasn't obvious*
