@@ -1,5 +1,3 @@
-#include <Keyboard.h>
-#include <String.h>
 #include "Event.h"
 
 bool Event::isPressed() { return keyState == KEY_PRESSED; }
