@@ -22,11 +22,9 @@ enum {
 class Sticky: public Plugin {
 public:
     Sticky();
-    void process_tick();
-    bool process_override(uint8_t name, Event *event);
-    void process_event(Event *event);
-    uint8_t mod_bit(uint16_t key);
-    uint8_t current_mods();
+    void tick();
+    bool override(uint8_t name, Event *event);
+    void run(Event *event);
 
 protected:
     bool should_clear;
@@ -40,8 +38,10 @@ protected:
     unsigned long sticky_lock_timer;
     unsigned long sticky_auto_off_timer;
 
-    void update_mods();
-    void clear_sticky_mods();
+    uint8_t modBit(uint16_t key);
+    uint8_t currentMods();
+    void updateMods();
+    void clearStickyMods();
 };
 
 #define ST_SFT { .name = FN_STICKY, .key = STK_SFT, .isPressed = false, .started = 0 }

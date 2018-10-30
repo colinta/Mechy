@@ -16,6 +16,7 @@
 #define FN_STICKY   3
 #define FN_LOCK     4
 #define FN_MACRO    5
+#define FN_USER    128
 
 
 struct KBD {

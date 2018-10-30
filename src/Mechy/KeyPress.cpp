@@ -4,11 +4,11 @@
 Keypress::Keypress() {
 }
 
-void Keypress::process_begin() {
+void Keypress::begin() {
     Keyboard.begin();
 }
 
-void Keypress::process_event(Event *event) {
+void Keypress::run(Event *event) {
     if (event->isPressed()) {
         Keyboard.press(event->key);
     }

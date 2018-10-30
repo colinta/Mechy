@@ -1,7 +1,7 @@
 #include "Scanner.h"
 
-Scanner::Scanner(KBD *_supervisorKeys, const uint8_t *_pinRows, const uint8_t *_pinCols, uint8_t rows, uint8_t cols) {
-    supervisorKeys = _supervisorKeys;
+Scanner::Scanner(KBD *_keys, const uint8_t *_pinRows, const uint8_t *_pinCols, uint8_t rows, uint8_t cols) {
+    keys = _keys;
     pinRows = _pinRows;
     pinCols = _pinCols;
     ROWS = rows;
@@ -30,8 +30,8 @@ void Scanner::scan() {
         digitalWrite(pinRows[row], LOW);
         for (uint8_t col = 0; col < COLS; col++) {
             bool isPressed = !digitalRead(pinCols[col]);
-            currentKey = supervisorKeys + (COLS * row) + col;
-            mechy->process_key_event(isPressed, currentKey);
+            currentKey = keys + (COLS * row) + col;
+            mechy->processKeyEvent(isPressed, currentKey);
         }
         digitalWrite(pinRows[row], HIGH);
     }

@@ -9,7 +9,7 @@ enum {
 class Macro: public Plugin {
 public:
     Macro(uint8_t count, const char **macros);
-    void process_event(Event *event);
+    void run(Event *event);
 
 protected:
     uint8_t prev_macro;

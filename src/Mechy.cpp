@@ -28,7 +28,7 @@ void Mechy::add(uint8_t name, Plugin *plugin) {
 void Mechy::_begin() {
     PluginPtr *ptr =&firstPlugin;
     while (ptr) {
-        ptr->plugin->process_begin();
+        ptr->plugin->begin();
         ptr = ptr->next;
     }
 }
@@ -36,12 +36,12 @@ void Mechy::_begin() {
 void Mechy::_tick() {
     PluginPtr *ptr =&firstPlugin;
     while (ptr) {
-        ptr->plugin->process_tick();
+        ptr->plugin->tick();
         ptr = ptr->next;
     }
 }
 
-void Mechy::process_key_event(bool isPressed, KBD *currentKey) {
+void Mechy::processKeyEvent(bool isPressed, KBD *currentKey) {
     if (!currentKey->isPressed && isPressed) {
         // if the key was just released, ignore debouncing HIGH signals
         if (millis() - currentKey->started < 10) {
@@ -50,7 +50,7 @@ void Mechy::process_key_event(bool isPressed, KBD *currentKey) {
 
         currentKey->isPressed = true;
         currentKey->started = millis();
-        process_event(true, false, currentKey);
+        runPlugin(true, false, currentKey);
     }
     else if (currentKey->isPressed) {
         // if the key was just pressed, ignore debouncing LOW signals
@@ -60,16 +60,16 @@ void Mechy::process_key_event(bool isPressed, KBD *currentKey) {
 
         if (!isPressed) {
             currentKey->isPressed = false;
-            process_event(false, true, currentKey);
+            runPlugin(false, true, currentKey);
             currentKey->started = millis();
         }
         else {
-            process_event(false, false, currentKey);
+            runPlugin(false, false, currentKey);
         }
     }
 }
 
-void Mechy::process_event(bool isDown, bool isUp, KBD *currentKey) {
+void Mechy::runPlugin(bool isDown, bool isUp, KBD *currentKey) {
     event.key = currentKey->key;
     event.keyState = isDown ? KEY_PRESSED : (isUp ? KEY_RELEASED : KEY_HELD);
     event.duration = millis() - currentKey->started;
@@ -77,7 +77,7 @@ void Mechy::process_event(bool isDown, bool isUp, KBD *currentKey) {
     bool processing = KBD_CONTINUE;
     PluginPtr *ptr =&firstPlugin;
     while (ptr) {
-        processing = ptr->plugin->process_override(currentKey->name, &event) && processing;
+        processing = ptr->plugin->override(currentKey->name, &event) && processing;
         ptr = ptr->next;
     }
 
@@ -85,19 +85,19 @@ void Mechy::process_event(bool isDown, bool isUp, KBD *currentKey) {
         PluginPtr *ptr =&firstPlugin;
         while (ptr) {
             if (ptr->name == currentKey->name) {
-                ptr->plugin->process_event(&event);
+                ptr->plugin->run(&event);
             }
             ptr = ptr->next;
         }
     }
 }
 
-void Plugin::process_begin() {
+void Plugin::begin() {
 }
 
-void Plugin::process_tick() {
+void Plugin::tick() {
 }
 
-bool Plugin::process_override(uint8_t name, Event *event) {
+bool Plugin::override(uint8_t name, Event *event) {
     return KBD_CONTINUE;
 }

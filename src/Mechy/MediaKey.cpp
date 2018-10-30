@@ -4,7 +4,7 @@
 MediaKey::MediaKey() {
 }
 
-void MediaKey::process_event(Event *event) {
+void MediaKey::run(Event *event) {
   if (event->isPressed()) {
     Media.send(event->key);
   }

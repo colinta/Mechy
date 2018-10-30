@@ -6,8 +6,8 @@
 class Keypress: public Plugin {
 public:
     Keypress();
-    void process_begin();
-    void process_event(Event *event);
+    void begin();
+    void run(Event *event);
 
 protected:
 };

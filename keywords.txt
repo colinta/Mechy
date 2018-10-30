@@ -6,15 +6,15 @@
 # Datatypes (KEYWORD1)
 #######################################
 
-Mechy       KEYWORD1  Mechy
-Scanner	    KEYWORD1	Scanner
-BetterHalf  KEYWORD1  BetterHalf
-KeyPress    KEYWORD1  KeyPress
-Lock        KEYWORD1  Lock
-Macro       KEYWORD1  Macro
-MediaKey    KEYWORD1  MediaKey
-Sticky      KEYWORD1  Sticky
-KBD KEYWORD1  KBD
+Mechy     KEYWORD1  Mechy
+Scanner	  KEYWORD1	Scanner
+Worker    KEYWORD1  Worker
+KeyPress  KEYWORD1  KeyPress
+Lock      KEYWORD1  Lock
+Macro     KEYWORD1  Macro
+MediaKey  KEYWORD1  MediaKey
+Sticky    KEYWORD1  Sticky
+KBD       KEYWORD1  KBD
 
 #######################################
 # Methods and Functions (KEYWORD2)
