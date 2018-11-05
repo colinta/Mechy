@@ -2,10 +2,12 @@
 
 #include <Arduino.h>
 
-#define KEY_NONE 0
-#define KEY_PRESSED 1
-#define KEY_HELD 2
-#define KEY_RELEASED 3
+#define UNUSED(x) x __attribute__ ((unused))
+
+#define KEY_STATE_NONE 0
+#define KEY_STATE_PRESSED 1
+#define KEY_STATE_HELD 2
+#define KEY_STATE_RELEASED 3
 
 #define KBD_HALT false
 #define KBD_CONTINUE true
@@ -17,6 +19,8 @@
 #define FN_LOCK     4
 #define FN_MACRO    5
 #define FN_USER    128
+
+#define MCHY_NONE     0
 
 
 struct KBD {
@@ -37,4 +41,4 @@ struct Event {
     bool isHeld();
 };
 
-#define ____ {.name = FN_NONE, .key = 0, .isPressed = false, .started = 0 }
+#define ____ {.name = FN_NONE, .key = MCHY_NONE, .isPressed = false, .started = 0 }

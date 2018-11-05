@@ -1,25 +1,22 @@
 #include "Receiver.h"
 
-Receiver::Receiver(KBD *_keys, uint8_t rows, uint8_t cols, uint8_t sdaPin, uint8_t sclPin) {
+Receiver::Receiver(KBD *_keys, uint8_t rows, uint8_t cols, uint8_t _dataPin, uint8_t _clockPin) {
     keys = _keys;
     ROWS = rows;
     COLS = cols;
-    SDA = sdaPin;
-    SCL = sclPin;
+    dataPin = _dataPin;
+    clockPin = _clockPin;
 }
 
 void Receiver::begin() {
-  pinMode(SDA, INPUT);
-  pinMode(SCL, OUTPUT);
-  digitalWrite(SCL, HIGH);
+  pinMode(dataPin, INPUT);
+  pinMode(clockPin, OUTPUT);
+  digitalWrite(clockPin, HIGH);
 }
 
 void Receiver::tick() {
     listen();
     holdCheck();
-}
-
-void Receiver::run(Event *event) {
 }
 
 void Receiver::listen() {
@@ -72,12 +69,12 @@ bool Receiver::getOneTransmitterBit() {
     delayForTransmitter();
     sendReadingState();
     debounce();
-    return digitalRead(SDA);
+    return digitalRead(dataPin);
 }
 
 void Receiver::debounce() { delayMicroseconds(10); }
 void Receiver::delayForTransmitter() { delayMicroseconds(1000); }
-bool Receiver::transmitterDidAck() { return digitalRead(SDA); }
-bool Receiver::transmitterHasData() { return !digitalRead(SDA); }
-void Receiver::sendReadyState() { digitalWrite(SCL, LOW); }
-void Receiver::sendReadingState() { digitalWrite(SCL, HIGH); }
+bool Receiver::transmitterDidAck() { return digitalRead(dataPin); }
+bool Receiver::transmitterHasData() { return !digitalRead(dataPin); }
+void Receiver::sendReadyState() { digitalWrite(clockPin, LOW); }
+void Receiver::sendReadingState() { digitalWrite(clockPin, HIGH); }

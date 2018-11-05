@@ -1,32 +1,29 @@
 #include "Mechy.h"
 
 Mechy::Mechy() {
-    firstPlugin.plugin = 0x0;
-    firstPlugin.next = 0x0;
-    lastPtr = 0x0;
-    event = { .key = 0x0, .keyState = KEY_NONE, .duration = 0 };
+    firstPtr = NULL;
+    lastPtr = NULL;
+    event = { .key = MCHY_NONE, .keyState = KEY_STATE_NONE, .duration = 0 };
 }
 
 void Mechy::add(uint8_t name, Plugin *plugin) {
-    PluginPtr *ptr;
-    if (!lastPtr) {
-        ptr = &firstPlugin;
-    }
-    else {
-        ptr = (PluginPtr*)malloc(sizeof(PluginPtr));
-        lastPtr->next = ptr;
-    }
-
+    PluginPtr *ptr = (PluginPtr*)malloc(sizeof(PluginPtr));
     ptr->name = name;
     ptr->plugin = plugin;
-    ptr->next = 0x0;
-    lastPtr = ptr;
-
+    ptr->next = NULL;
     plugin->mechy = this;
+
+    if (!firstPtr) {
+        firstPtr = ptr;
+    }
+    else {
+        lastPtr->next = ptr;
+    }
+    lastPtr = ptr;
 }
 
 void Mechy::_begin() {
-    PluginPtr *ptr =&firstPlugin;
+    PluginPtr *ptr = firstPtr;
     while (ptr) {
         ptr->plugin->begin();
         ptr = ptr->next;
@@ -34,7 +31,7 @@ void Mechy::_begin() {
 }
 
 void Mechy::_tick() {
-    PluginPtr *ptr =&firstPlugin;
+    PluginPtr *ptr = firstPtr;
     while (ptr) {
         ptr->plugin->tick();
         ptr = ptr->next;
@@ -71,18 +68,18 @@ void Mechy::processKeyEvent(bool isPressed, KBD *currentKey) {
 
 void Mechy::runPlugin(bool isDown, bool isUp, KBD *currentKey) {
     event.key = currentKey->key;
-    event.keyState = isDown ? KEY_PRESSED : (isUp ? KEY_RELEASED : KEY_HELD);
+    event.keyState = isDown ? KEY_STATE_PRESSED : (isUp ? KEY_STATE_RELEASED : KEY_STATE_HELD);
     event.duration = millis() - currentKey->started;
 
     bool processing = KBD_CONTINUE;
-    PluginPtr *ptr =&firstPlugin;
+    PluginPtr *ptr = firstPtr;
     while (ptr) {
         processing = ptr->plugin->override(currentKey->name, &event) && processing;
         ptr = ptr->next;
     }
 
     if (processing == KBD_CONTINUE) {
-        PluginPtr *ptr =&firstPlugin;
+        PluginPtr *ptr = firstPtr;
         while (ptr) {
             if (ptr->name == currentKey->name) {
                 ptr->plugin->run(&event);
@@ -90,14 +87,4 @@ void Mechy::runPlugin(bool isDown, bool isUp, KBD *currentKey) {
             ptr = ptr->next;
         }
     }
-}
-
-void Plugin::begin() {
-}
-
-void Plugin::tick() {
-}
-
-bool Plugin::override(uint8_t name, Event *event) {
-    return KBD_CONTINUE;
 }

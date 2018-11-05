@@ -1,9 +1,8 @@
 #pragma once
 
 #include "priv/Event.h"
+#include "priv/Plugin.h"
 
-class Mechy;
-class Plugin;
 
 struct PluginPtr {
   uint8_t name;
@@ -21,18 +20,8 @@ public:
     void processKeyEvent(bool isPressed, KBD *currentKey);
 protected:
     Event event;
-    PluginPtr firstPlugin;
+    PluginPtr *firstPtr;
     PluginPtr *lastPtr;
 
     void runPlugin(bool isDown, bool isUp, KBD *currentKey);
-};
-
-
-class Plugin {
-public:
-    virtual void begin();
-    virtual void tick();
-    virtual bool override(uint8_t name, Event *event);
-    virtual void run(Event *event) = 0;
-    Mechy *mechy;
 };

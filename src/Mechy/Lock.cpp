@@ -6,7 +6,7 @@ Lock::Lock() {
     is_locked = false;
 }
 
-bool Lock::override(uint8_t name, Event *event) {
+bool Lock::override(uint8_t name, Event *UNUSED(event)) {
     if (!is_locked || name == FN_LOCK)  return KBD_CONTINUE;
     return KBD_HALT;
 }
