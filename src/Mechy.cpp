@@ -47,7 +47,7 @@ void Mechy::processKeyEvent(bool isPressed, KBD *currentKey) {
 
         currentKey->isPressed = true;
         currentKey->started = millis();
-        runPlugin(true, false, currentKey);
+        runPlugin(KEY_STATE_PRESSED, currentKey);
     }
     else if (currentKey->isPressed) {
         // if the key was just pressed, ignore debouncing LOW signals
@@ -57,18 +57,18 @@ void Mechy::processKeyEvent(bool isPressed, KBD *currentKey) {
 
         if (!isPressed) {
             currentKey->isPressed = false;
-            runPlugin(false, true, currentKey);
+            runPlugin(KEY_STATE_RELEASED, currentKey);
             currentKey->started = millis();
         }
         else {
-            runPlugin(false, false, currentKey);
+            runPlugin(KEY_STATE_HELD, currentKey);
         }
     }
 }
 
-void Mechy::runPlugin(bool isDown, bool isUp, KBD *currentKey) {
+void Mechy::runPlugin(uint8_t keyState, KBD *currentKey) {
     event.key = currentKey->key;
-    event.keyState = isDown ? KEY_STATE_PRESSED : (isUp ? KEY_STATE_RELEASED : KEY_STATE_HELD);
+    event.keyState = keyState;
     event.duration = millis() - currentKey->started;
 
     bool processing = KBD_CONTINUE;

@@ -23,5 +23,5 @@ protected:
     PluginPtr *firstPtr;
     PluginPtr *lastPtr;
 
-    void runPlugin(bool isDown, bool isUp, KBD *currentKey);
+    void runPlugin(uint8_t keyState, KBD *currentKey);
 };
