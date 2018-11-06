@@ -20,8 +20,10 @@ public:
     void processKeyEvent(bool isPressed, KBD *currentKey);
 protected:
     Event event;
-    PluginPtr *firstPtr;
-    PluginPtr *lastPtr;
+    PluginPtr *firstPluginPtr;
 
     void runPlugin(uint8_t keyState, KBD *currentKey);
+
+private:
+    inline void appendPluginPtr(PluginPtr *ptr);
 };
