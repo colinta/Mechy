@@ -11,6 +11,14 @@ struct PluginPtr {
 };
 
 
+struct KBDDataPtr {
+    KBD *kbd;
+    bool isPressed;
+    unsigned long started;
+    KBDDataPtr *next;
+};
+
+
 class Mechy {
 public:
     Mechy();
@@ -21,9 +29,12 @@ public:
 protected:
     Event event;
     PluginPtr *firstPluginPtr;
+    KBDDataPtr *firstKBDPtr;
 
-    void runPlugin(uint8_t keyState, KBD *currentKey);
+    void runPlugin(uint8_t keyState, KBDDataPtr *kbdData, uint16_t duration);
 
 private:
     inline void appendPluginPtr(PluginPtr *ptr);
+    inline void appendKBDPtr(KBDDataPtr *ptr);
+    inline KBDDataPtr *removeKBDPtr(KBDDataPtr *ptr);
 };

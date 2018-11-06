@@ -17,7 +17,7 @@ protected:
     char **macros;
 };
 
-#define MM(n) { .name = FN_MACRO, .key = (MCR_ZERO + n), .isPressed = false, .started = 0 }
+#define MM(n) { .name = FN_MACRO, .key = (MCR_ZERO + n) }
 #define MM_0 MM(0)
 #define MM_1 MM(1)
 #define MM_2 MM(2)

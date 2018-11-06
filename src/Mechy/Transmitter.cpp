@@ -40,24 +40,31 @@ void Transmitter::begin() {
 }
 
 void Transmitter::scan() {
+    bool anyChange = false;
     for (uint8_t row = 0; row < ROWS; row++) {
         digitalWrite(pinRows[row], LOW);
         for (uint8_t col = 0; col < COLS; col++) {
             bool isPressed = !digitalRead(pinCols[col]);
-            processKeyEvent(isPressed, row, col);
+            anyChange = processKeyEvent(isPressed, row, col) || anyChange;
         }
         digitalWrite(pinRows[row], HIGH);
     }
 
     flushQueue();
+    // ug terrible debouncing
+    if (anyChange) {
+        delay(10);
+    }
 }
 
-void Transmitter::processKeyEvent(bool isPressed, uint8_t row, uint8_t col) {
+// return true if wasPressed != isPressed, ie. change event
+bool Transmitter::processKeyEvent(bool isPressed, uint8_t row, uint8_t col) {
     bool *wasPressed = keyPressed + (COLS * row) + col;
-    if (*wasPressed == isPressed) { return; }
+    if (*wasPressed == isPressed) { return false; }
 
     *wasPressed = isPressed;
     pushEvent(row, col, isPressed);
+    return true;
 }
 
 void Transmitter::pushEvent(uint8_t row, uint8_t col, bool isPressed) {

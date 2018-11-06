@@ -26,8 +26,6 @@
 struct KBD {
     uint8_t name;
     uint16_t key;
-    bool isPressed;
-    unsigned long started;
 };
 
 struct Event {
@@ -41,4 +39,4 @@ struct Event {
     bool isHeld();
 };
 
-#define ____ {.name = FN_NONE, .key = MCHY_NONE, .isPressed = false, .started = 0 }
+#define ____ {.name = FN_NONE, .key = MCHY_NONE }

@@ -25,6 +25,7 @@ void Scanner::begin(Mechy *_mechy) {
 }
 
 void Scanner::scan() {
+    delay(10);
     mechy->_tick();
     for (uint8_t row = 0; row < ROWS; row++) {
         digitalWrite(pinRows[row], LOW);

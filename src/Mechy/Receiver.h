@@ -15,6 +15,7 @@ protected:
     uint8_t COLS;
     KBD *currentKey;
     KBD *keys;
+    KBDDataPtr *firstKBDPtr;
 
     void listen();
     void holdCheck();
@@ -26,4 +27,7 @@ protected:
     bool transmitterHasData();
     void sendReadyState();
     void sendReadingState();
+
+    inline void appendKBDPtr(KBDDataPtr *ptr);
+    inline void removeKBDPtr(KBDDataPtr *ptr);
 };

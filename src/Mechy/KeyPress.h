@@ -12,7 +12,7 @@ public:
 protected:
 };
 
-#define KC(k) { .name = FN_KEYPRESS, .key = k, .isPressed = false, .started = 0 }
+#define KC(k) { .name = FN_KEYPRESS, .key = k }
 
 #define KC_A KC('a')
 #define KC_B KC('b')

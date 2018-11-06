@@ -6,6 +6,39 @@ Receiver::Receiver(KBD *_keys, uint8_t rows, uint8_t cols, uint8_t _dataPin, uin
     COLS = cols;
     dataPin = _dataPin;
     clockPin = _clockPin;
+    firstKBDPtr = NULL;
+}
+
+inline void Receiver::appendKBDPtr(KBDDataPtr *ptr) {
+    ptr->next = NULL;
+    if (firstKBDPtr) {
+        KBDDataPtr *lastPtr = firstKBDPtr;
+        while (lastPtr->next) {
+            lastPtr = lastPtr->next;
+        }
+        lastPtr->next = ptr;
+    }
+    else {
+        firstKBDPtr = ptr;
+    }
+}
+
+inline void Receiver::removeKBDPtr(KBDDataPtr *ptr) {
+    if (!firstKBDPtr || firstKBDPtr == ptr) {
+        firstKBDPtr = ptr->next;
+        free(ptr);
+        return;
+    }
+
+    KBDDataPtr *kbdPtr = firstKBDPtr;
+    while (kbdPtr->next) {
+        if (kbdPtr->next == ptr) {
+            kbdPtr->next = ptr->next;
+            break;
+        }
+        kbdPtr = kbdPtr->next;
+    }
+    free(ptr);
 }
 
 void Receiver::begin() {
@@ -39,6 +72,23 @@ listenBody:
     currentKey = keys + (COLS * row) + col;
     mechy->processKeyEvent(isPressed, currentKey);
 
+    if (isPressed) {
+        KBDDataPtr *ptr = (KBDDataPtr*)malloc(sizeof(KBDDataPtr));
+        ptr->kbd = currentKey;
+        ptr->isPressed = true;
+        appendKBDPtr(ptr);
+    }
+    else {
+        KBDDataPtr *findPtr = firstKBDPtr;
+        while (findPtr) {
+            if (findPtr->kbd == currentKey) {
+                removeKBDPtr(findPtr);
+                break;
+            }
+            findPtr = findPtr->next;
+        }
+    }
+
     bool done = getOneTransmitterBit();
     if (!done) {
         goto listenBody;
@@ -46,13 +96,11 @@ listenBody:
 }
 
 void Receiver::holdCheck() {
-    for (uint8_t row = 0; row < ROWS; row++) {
-        for (uint8_t col = 0; col < COLS; col++) {
-            currentKey = keys + (COLS * row) + col;
-            if (currentKey->isPressed) {
-                mechy->processKeyEvent(true, currentKey);
-            }
-        }
+    KBDDataPtr *kbdData = firstKBDPtr;
+    while (kbdData) {
+        if (!kbdData->isPressed)  continue;
+        mechy->processKeyEvent(true, kbdData->kbd);
+        kbdData = kbdData->next;
     }
 }
 

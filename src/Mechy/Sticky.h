@@ -44,8 +44,8 @@ protected:
     void clearStickyMods();
 };
 
-#define ST_SFT { .name = FN_STICKY, .key = STK_SFT, .isPressed = false, .started = 0 }
-#define ST_CTL { .name = FN_STICKY, .key = STK_CTL, .isPressed = false, .started = 0 }
-#define ST_ALT { .name = FN_STICKY, .key = STK_ALT, .isPressed = false, .started = 0 }
-#define ST_GUI { .name = FN_STICKY, .key = STK_GUI, .isPressed = false, .started = 0 }
-#define ST_HYP { .name = FN_STICKY, .key = HYPER, .isPressed = false, .started = 0 }
+#define ST_SFT { .name = FN_STICKY, .key = STK_SFT }
+#define ST_CTL { .name = FN_STICKY, .key = STK_CTL }
+#define ST_ALT { .name = FN_STICKY, .key = STK_ALT }
+#define ST_GUI { .name = FN_STICKY, .key = STK_GUI }
+#define ST_HYP { .name = FN_STICKY, .key = HYPER }
