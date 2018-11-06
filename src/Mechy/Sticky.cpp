@@ -9,13 +9,13 @@
 
 
 Sticky::Sticky() {
-  hyper_state = 0;
-  hyper_down = 0;
-  mods_down_state = 0;
-  sticky_state = 0;
-  sticky_lock = 0;
-  prev_mods = 0;
-  should_clear = false;
+    hyper_state = 0;
+    hyper_down = 0;
+    mods_down_state = 0;
+    sticky_state = 0;
+    sticky_lock = 0;
+    prev_mods = 0;
+    should_clear = false;
 }
 
 void Sticky::tick() {

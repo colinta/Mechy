@@ -9,9 +9,9 @@ Receiver::Receiver(KBD *_keys, uint8_t rows, uint8_t cols, uint8_t _dataPin, uin
 }
 
 void Receiver::begin() {
-  pinMode(dataPin, INPUT);
-  pinMode(clockPin, OUTPUT);
-  digitalWrite(clockPin, HIGH);
+    pinMode(dataPin, INPUT);
+    pinMode(clockPin, OUTPUT);
+    digitalWrite(clockPin, HIGH);
 }
 
 void Receiver::tick() {

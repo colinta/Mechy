@@ -5,9 +5,9 @@
 
 
 struct PluginPtr {
-  uint8_t name;
-  Plugin *plugin;
-  PluginPtr *next;
+    uint8_t name;
+    Plugin *plugin;
+    PluginPtr *next;
 };
 
 

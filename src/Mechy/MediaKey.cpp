@@ -5,10 +5,10 @@ MediaKey::MediaKey() {
 }
 
 void MediaKey::run(Event *event) {
-  if (event->isPressed()) {
-    Media.send(event->key);
-  }
-  else if (event->isReleased()) {
-    Media.clear();
-  }
+    if (event->isPressed()) {
+        Media.send(event->key);
+    }
+    else if (event->isReleased()) {
+        Media.clear();
+    }
 }

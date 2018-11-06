@@ -53,79 +53,79 @@ void Transmitter::scan() {
 }
 
 void Transmitter::processKeyEvent(bool isPressed, uint8_t row, uint8_t col) {
-  bool *wasPressed = keyPressed + (COLS * row) + col;
-  if (*wasPressed == isPressed) { return; }
+    bool *wasPressed = keyPressed + (COLS * row) + col;
+    if (*wasPressed == isPressed) { return; }
 
-  *wasPressed = isPressed;
-  pushEvent(row, col, isPressed);
+    *wasPressed = isPressed;
+    pushEvent(row, col, isPressed);
 }
 
 void Transmitter::pushEvent(uint8_t row, uint8_t col, bool isPressed) {
-  if (queuePtr == QUEUE_LEN)  return;
+    if (queuePtr == QUEUE_LEN)  return;
 
-  // 0   1 2 3 4   5 6 7
-  // _   _______   _____
-  // |   \ col /   \row/
-  // |    -----     ---
-  // \--isPressed
-  byte bits = row | (col << 3) | (isPressed ? 0b10000000 : 0b00000000);
-  queue[queuePtr] = bits;
-  queuePtr++;
+    // 0   1 2 3 4   5 6 7
+    // _   _______   _____
+    // |   \ col /   \row/
+    // |    -----     ---
+    // \--isPressed
+    byte bits = row | (col << 3) | (isPressed ? 0b10000000 : 0b00000000);
+    queue[queuePtr] = bits;
+    queuePtr++;
 
-  sendHasData();
+    sendHasData();
 }
 
 void Transmitter::flushQueue() {
-  if (!supervisorIsReady()) { return; }
+    if (!supervisorIsReady()) { return; }
 
-  if (queuePtr == 0) {
-    return;
-  }
-
-  sendAckAndWait();
-
-  for (uint8_t queueIndex = 0; queueIndex < queuePtr; queueIndex++) {
-    byte bits = queue[queueIndex];
-    // transmitted as:
-    // [row]   [col]     [isPressed]
-    // 7 6 5   4 3 2 1   0
-    for (uint8_t bitIndex = 0; bitIndex < 8; bitIndex++) {
-      sendOneBit((bits >> bitIndex) & 1);
+    if (queuePtr == 0) {
+        return;
     }
 
-    waitForReady();
-    if (queueIndex == queuePtr - 1) {
-      sendNoData();
-    }
-    else {
-      sendHasData();
-    }
-    waitForReading();
-  }
+    sendAckAndWait();
 
-  queuePtr = 0;
+    for (uint8_t queueIndex = 0; queueIndex < queuePtr; queueIndex++) {
+        byte bits = queue[queueIndex];
+        // transmitted as:
+        // [row]   [col]     [isPressed]
+        // 7 6 5   4 3 2 1   0
+        for (uint8_t bitIndex = 0; bitIndex < 8; bitIndex++) {
+            sendOneBit((bits >> bitIndex) & 1);
+        }
+
+        waitForReady();
+        if (queueIndex == queuePtr - 1) {
+            sendNoData();
+        }
+        else {
+            sendHasData();
+        }
+        waitForReading();
+    }
+
+    queuePtr = 0;
 }
 
 void Transmitter::sendOneBit(bool bit) {
-  waitForReady();
-  digitalWrite(dataPin, bit);
-  waitForReading();
+    waitForReady();
+    digitalWrite(dataPin, bit);
+    waitForReading();
 }
 
 void Transmitter::debounce()  { delayMicroseconds(100); }
 bool Transmitter::supervisorIsReady()  { return !digitalRead(clockPin); }
 void Transmitter::waitForReady() {
-  if (!supervisorIsReady())  while (!supervisorIsReady()) {};
-  debounce();
+    if (!supervisorIsReady())  while (!supervisorIsReady()) {};
+    debounce();
 }
 void Transmitter::waitForReading() {
-  if (supervisorIsReady())  while (supervisorIsReady()) {};
-  debounce();
+    if (supervisorIsReady())  while (supervisorIsReady()) {};
+    debounce();
 }
 void Transmitter::sendHasData() { digitalWrite(dataPin, LOW); }
 void Transmitter::sendNoData() { digitalWrite(dataPin, HIGH); }
 void Transmitter::sendAckAndWait() {
-  delayMicroseconds(1000);
-  digitalWrite(dataPin, HIGH);
-  waitForReading();
+    delayMicroseconds(1000);
+    digitalWrite(dataPin, HIGH);
+    waitForReading();
 }

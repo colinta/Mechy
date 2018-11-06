@@ -13,9 +13,9 @@ const uint8_t pinCols[COLS] = {9, 10, 16, 14, 15, 18, 19, 20, 21};
 Transmitter transmitter = Transmitter(DATA, CLK, pinRows, pinCols, ROWS, COLS);
 
 void setup() {
-  transmitter.begin();
+    transmitter.begin();
 }
 
 void loop() {
-  transmitter.scan();
+    transmitter.scan();
 }
