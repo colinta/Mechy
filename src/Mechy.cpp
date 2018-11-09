@@ -1,6 +1,9 @@
 #include "Mechy.h"
 
+#include <Keyboard.h>
+
 Mechy::Mechy() {
+    modifiers = 0;
     firstPluginPtr = NULL;
     firstKBDPtr = NULL;
     event = { .key = MCHY_NONE, .keyState = KEY_STATE_NONE, .duration = 0 };
@@ -64,6 +67,8 @@ void Mechy::add(uint8_t name, Plugin *plugin) {
 }
 
 void Mechy::_begin() {
+    Keyboard.begin();
+
     PluginPtr *ptr = firstPluginPtr;
     while (ptr) {
         ptr->plugin->begin();
@@ -76,6 +81,113 @@ void Mechy::_tick() {
     while (ptr) {
         ptr->plugin->tick();
         ptr = ptr->next;
+    }
+}
+
+void Mechy::sendKeyboardPress(uint8_t key) {
+    uint16_t modMask = 0;
+    uint16_t modShft = 0;
+    switch (key) {
+        case KEY_LEFT_CTRL:
+            modMask = MCHY_MASK_L_CTRL;
+            modShft = MCHY_BITL_L_CTRL;
+            break;
+        case KEY_RIGHT_CTRL:
+            modMask = MCHY_MASK_R_CTRL;
+            modShft = MCHY_BITL_R_CTRL;
+            break;
+        case KEY_LEFT_ALT:
+            modMask = MCHY_MASK_L_ALT;
+            modShft = MCHY_BITL_L_ALT;
+            break;
+        case KEY_RIGHT_ALT:
+            modMask = MCHY_MASK_R_ALT;
+            modShft = MCHY_BITL_R_ALT;
+            break;
+        case KEY_LEFT_GUI:
+            modMask = MCHY_MASK_L_GUI;
+            modShft = MCHY_BITL_L_GUI;
+            break;
+        case KEY_RIGHT_GUI:
+            modMask = MCHY_MASK_R_GUI;
+            modShft = MCHY_BITL_R_GUI;
+            break;
+        case KEY_LEFT_SHIFT:
+            modMask = MCHY_MASK_L_SHIFT;
+            modShft = MCHY_BITL_L_SHIFT;
+            break;
+        case KEY_RIGHT_SHIFT:
+            modMask = MCHY_MASK_R_SHIFT;
+            modShft = MCHY_BITL_R_SHIFT;
+            break;
+    }
+
+    if (modMask) {
+        uint16_t count = (modifiers & modMask) >> modShft;
+        if (count < 3) {
+            count += 1;
+            modifiers |= (count << modShft);
+            if (count == 1) {
+                Keyboard.press(key);
+            }
+        }
+    }
+    else {
+        Keyboard.press(key);
+    }
+}
+
+void Mechy::sendKeyboardRelease(uint8_t key) {
+    uint16_t modMask = 0;
+    uint16_t modShft = 0;
+    switch (key) {
+        case KEY_LEFT_CTRL:
+            modMask = MCHY_MASK_L_CTRL;
+            modShft = MCHY_BITL_L_CTRL;
+            break;
+        case KEY_RIGHT_CTRL:
+            modMask = MCHY_MASK_R_CTRL;
+            modShft = MCHY_BITL_R_CTRL;
+            break;
+        case KEY_LEFT_ALT:
+            modMask = MCHY_MASK_L_ALT;
+            modShft = MCHY_BITL_L_ALT;
+            break;
+        case KEY_RIGHT_ALT:
+            modMask = MCHY_MASK_R_ALT;
+            modShft = MCHY_BITL_R_ALT;
+            break;
+        case KEY_LEFT_GUI:
+            modMask = MCHY_MASK_L_GUI;
+            modShft = MCHY_BITL_L_GUI;
+            break;
+        case KEY_RIGHT_GUI:
+            modMask = MCHY_MASK_R_GUI;
+            modShft = MCHY_BITL_R_GUI;
+            break;
+        case KEY_LEFT_SHIFT:
+            modMask = MCHY_MASK_L_SHIFT;
+            modShft = MCHY_BITL_L_SHIFT;
+            break;
+        case KEY_RIGHT_SHIFT:
+            modMask = MCHY_MASK_R_SHIFT;
+            modShft = MCHY_BITL_R_SHIFT;
+            break;
+    }
+
+    if (modMask) {
+        uint16_t count = (modifiers & modMask) >> modShft;
+        if (count > 0) {
+            count -= 1;
+            modifiers &= ~(0b11 << modShft);
+            modifiers |= (count << modShft);
+            if (count == 0) {
+                Keyboard.release(key);
+            }
+        }
+    }
+    else {
+        Keyboard.release(key);
     }
 }
 

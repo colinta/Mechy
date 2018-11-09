@@ -4,15 +4,11 @@
 Keypress::Keypress() {
 }
 
-void Keypress::begin() {
-    Keyboard.begin();
-}
-
 void Keypress::run(Event *event) {
     if (event->isPressed()) {
-        Keyboard.press(event->key);
+        mechy->sendKeyboardPress(event->key);
     }
     else if (event->isReleased()) {
-        Keyboard.release(event->key);
+        mechy->sendKeyboardRelease(event->key);
     }
 }

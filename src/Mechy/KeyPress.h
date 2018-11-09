@@ -6,7 +6,6 @@
 class Keypress: public Plugin {
 public:
     Keypress();
-    void begin();
     void run(Event *event);
 
 protected:

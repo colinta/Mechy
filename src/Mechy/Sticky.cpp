@@ -120,10 +120,10 @@ void Sticky::updateMods() {
         }
 
         if (prev_mods & mod_mask) {
-            Keyboard.release(mod_key);
+            mechy->sendKeyboardRelease(mod_key);
         }
         else {
-            Keyboard.press(mod_key);
+            mechy->sendKeyboardPress(mod_key);
         }
     }
     prev_mods = current;
