@@ -2,7 +2,7 @@
 
 #include "priv/Constants.h"
 #include "priv/Event.h"
-#include "priv/Plugin.h"
+#include "Mechy/Plugin.h"
 
 
 struct PluginPtr {
