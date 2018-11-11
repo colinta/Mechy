@@ -9,38 +9,6 @@ Receiver::Receiver(KBD *_keys, uint8_t rows, uint8_t cols, uint8_t _dataPin, uin
     firstKBDPtr = NULL;
 }
 
-inline void Receiver::appendKBDPtr(KBDDataPtr *ptr) {
-    ptr->next = NULL;
-    if (firstKBDPtr) {
-        KBDDataPtr *lastPtr = firstKBDPtr;
-        while (lastPtr->next) {
-            lastPtr = lastPtr->next;
-        }
-        lastPtr->next = ptr;
-    }
-    else {
-        firstKBDPtr = ptr;
-    }
-}
-
-inline void Receiver::removeKBDPtr(KBDDataPtr *ptr) {
-    if (!firstKBDPtr || firstKBDPtr == ptr) {
-        firstKBDPtr = ptr->next;
-        free(ptr);
-        return;
-    }
-
-    KBDDataPtr *kbdPtr = firstKBDPtr;
-    while (kbdPtr->next) {
-        if (kbdPtr->next == ptr) {
-            kbdPtr->next = ptr->next;
-            break;
-        }
-        kbdPtr = kbdPtr->next;
-    }
-    free(ptr);
-}
-
 void Receiver::begin() {
     pinMode(dataPin, INPUT);
     pinMode(clockPin, OUTPUT);
@@ -118,6 +86,38 @@ bool Receiver::getOneTransmitterBit() {
     sendReadingState();
     debounce();
     return digitalRead(dataPin);
+}
+
+inline void Receiver::appendKBDPtr(KBDDataPtr *ptr) {
+    ptr->next = NULL;
+    if (firstKBDPtr) {
+        KBDDataPtr *lastPtr = firstKBDPtr;
+        while (lastPtr->next) {
+            lastPtr = lastPtr->next;
+        }
+        lastPtr->next = ptr;
+    }
+    else {
+        firstKBDPtr = ptr;
+    }
+}
+
+inline void Receiver::removeKBDPtr(KBDDataPtr *ptr) {
+    if (!firstKBDPtr || firstKBDPtr == ptr) {
+        firstKBDPtr = ptr->next;
+        free(ptr);
+        return;
+    }
+
+    KBDDataPtr *kbdPtr = firstKBDPtr;
+    while (kbdPtr->next) {
+        if (kbdPtr->next == ptr) {
+            kbdPtr->next = ptr->next;
+            break;
+        }
+        kbdPtr = kbdPtr->next;
+    }
+    free(ptr);
 }
 
 void Receiver::debounce() { delayMicroseconds(10); }
