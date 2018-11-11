@@ -8,8 +8,8 @@
 
 #define ROWS 5
 #define COLS 4
-const uint8_t pinRows[] = {1, 0, 4, 5, 6};
-const uint8_t pinCols[] = {9, 10, 16, 14};
+const uint8_t pinRows[] = {_D3, _D2, _D4, _C6, _D7};
+const uint8_t pinCols[] = {_B5, _B6, _B2, _B3};
 
 KBD keys[ROWS][COLS] = {
     // macros

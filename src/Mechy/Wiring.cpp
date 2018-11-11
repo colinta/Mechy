@@ -1,4 +1,3 @@
-#include <Arduino.h>
 #include "../priv/Constants.h"
 #include "Wiring.h"
 

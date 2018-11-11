@@ -1,5 +1,7 @@
 #pragma once
 
+#include <Arduino.h>
+
 namespace Wiring {
     void pinMode(uint8_t pin, uint8_t);
     bool digitalRead(uint8_t pin);

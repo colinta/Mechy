@@ -1,5 +1,6 @@
 #include <Arduino.h>
 
+#include "Wiring.h"
 #include "Transmitter.h"
 
 #define QUEUE_LEN 20
@@ -23,31 +24,31 @@ Transmitter::Transmitter(uint8_t _dataPin, uint8_t _clockPin, const uint8_t *_pi
 }
 
 void Transmitter::begin() {
-    pinMode(dataPin, OUTPUT);
-    pinMode(clockPin, INPUT);
-    digitalWrite(dataPin, HIGH);
+    Wiring::pinMode(dataPin, OUTPUT);
+    Wiring::pinMode(clockPin, INPUT);
+    Wiring::digitalWrite(dataPin, HIGH);
 
     for (uint8_t i = 0; i < COLS; i++) {
         uint8_t colPin = pinCols[i];
-        pinMode(colPin, INPUT_PULLUP);
+        Wiring::pinMode(colPin, INPUT_PULLUP);
     }
 
     for (uint8_t i = 0; i < ROWS; i++) {
         uint8_t rowPin = pinRows[i];
-        pinMode(rowPin, OUTPUT);
-        digitalWrite(rowPin, HIGH);
+        Wiring::pinMode(rowPin, OUTPUT);
+        Wiring::digitalWrite(rowPin, HIGH);
     }
 }
 
 void Transmitter::scan() {
     bool anyChange = false;
     for (uint8_t row = 0; row < ROWS; row++) {
-        digitalWrite(pinRows[row], LOW);
+        Wiring::digitalWrite(pinRows[row], LOW);
         for (uint8_t col = 0; col < COLS; col++) {
-            bool isPressed = !digitalRead(pinCols[col]);
+            bool isPressed = !Wiring::digitalRead(pinCols[col]);
             anyChange = processKeyEvent(isPressed, row, col) || anyChange;
         }
-        digitalWrite(pinRows[row], HIGH);
+        Wiring::digitalWrite(pinRows[row], HIGH);
     }
 
     flushQueue();
@@ -115,12 +116,12 @@ void Transmitter::flushQueue() {
 
 void Transmitter::sendOneBit(bool bit) {
     waitForReady();
-    digitalWrite(dataPin, bit);
+    Wiring::digitalWrite(dataPin, bit);
     waitForReading();
 }
 
 void Transmitter::debounce()  { delayMicroseconds(100); }
-bool Transmitter::supervisorIsReady()  { return !digitalRead(clockPin); }
+bool Transmitter::supervisorIsReady()  { return !Wiring::digitalRead(clockPin); }
 void Transmitter::waitForReady() {
     if (!supervisorIsReady())  while (!supervisorIsReady()) {};
     debounce();
@@ -129,10 +130,10 @@ void Transmitter::waitForReading() {
     if (supervisorIsReady())  while (supervisorIsReady()) {};
     debounce();
 }
-void Transmitter::sendHasData() { digitalWrite(dataPin, LOW); }
-void Transmitter::sendNoData() { digitalWrite(dataPin, HIGH); }
+void Transmitter::sendHasData() { Wiring::digitalWrite(dataPin, LOW); }
+void Transmitter::sendNoData() { Wiring::digitalWrite(dataPin, HIGH); }
 void Transmitter::sendAckAndWait() {
     delayMicroseconds(1000);
-    digitalWrite(dataPin, HIGH);
+    Wiring::digitalWrite(dataPin, HIGH);
     waitForReading();
 }

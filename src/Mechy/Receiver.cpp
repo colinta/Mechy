@@ -1,3 +1,4 @@
+#include "Wiring.h"
 #include "Receiver.h"
 
 Receiver::Receiver(KBD *_keys, uint8_t rows, uint8_t cols, uint8_t _dataPin, uint8_t _clockPin) {
@@ -10,9 +11,9 @@ Receiver::Receiver(KBD *_keys, uint8_t rows, uint8_t cols, uint8_t _dataPin, uin
 }
 
 void Receiver::begin() {
-    pinMode(dataPin, INPUT);
-    pinMode(clockPin, OUTPUT);
-    digitalWrite(clockPin, HIGH);
+    Wiring::pinMode(dataPin, INPUT);
+    Wiring::pinMode(clockPin, OUTPUT);
+    Wiring::digitalWrite(clockPin, HIGH);
 }
 
 void Receiver::tick() {
@@ -85,7 +86,7 @@ bool Receiver::getOneTransmitterBit() {
     delayForTransmitter();
     sendReadingState();
     debounce();
-    return digitalRead(dataPin);
+    return Wiring::digitalRead(dataPin);
 }
 
 inline void Receiver::appendKBDPtr(KBDDataPtr *ptr) {
@@ -122,7 +123,7 @@ inline void Receiver::removeKBDPtr(KBDDataPtr *ptr) {
 
 void Receiver::debounce() { delayMicroseconds(10); }
 void Receiver::delayForTransmitter() { delayMicroseconds(1000); }
-bool Receiver::transmitterDidAck() { return digitalRead(dataPin); }
-bool Receiver::transmitterHasData() { return !digitalRead(dataPin); }
-void Receiver::sendReadyState() { digitalWrite(clockPin, LOW); }
-void Receiver::sendReadingState() { digitalWrite(clockPin, HIGH); }
+bool Receiver::transmitterDidAck() { return Wiring::digitalRead(dataPin); }
+bool Receiver::transmitterHasData() { return !Wiring::digitalRead(dataPin); }
+void Receiver::sendReadyState() { Wiring::digitalWrite(clockPin, LOW); }
+void Receiver::sendReadingState() { Wiring::digitalWrite(clockPin, HIGH); }
