@@ -7,8 +7,9 @@ Mechy is designed around C++ keyboard `Plugin` classes, and included in the main
 
 Includes support for split keyboards, see the example files.
 
-- Numpad.ino
-- Main.ino
-- Transmitter.ino
+- Basic.ino - I copied and modified my XD75 layout
+- Numpad.ino - simple 4x5 layout
+- LeftSplit.ino - left side of a BFO9000 keyboard
+- RightSplit.ino - right side of a BFO9000 keyboard
 
 † *pronounced "Mech Key", if that wasn't obvious*
