@@ -29,6 +29,6 @@ protected:
     void sendReadyState();
     void sendReadingState();
 
-    inline void appendKBDPtr(KBDDataPtr* ptr);
+    inline void pushKBDPtr(KBDDataPtr* ptr);
     inline void removeKBDPtr(KBDDataPtr* ptr);
 };

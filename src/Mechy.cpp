@@ -81,7 +81,7 @@ void Mechy::processKeyEvent(bool isPressed, KBD* currentKey) {
         else {
             ptr = (KBDDataPtr*)malloc(sizeof(KBDDataPtr));
             ptr->kbd = currentKey;
-            appendKBDPtr(ptr);
+            pushKBDPtr(ptr);
         }
 
         ptr->isPressed = true;
@@ -243,18 +243,9 @@ inline void Mechy::appendPluginPtr(PluginPtr* ptr) {
     }
 }
 
-inline void Mechy::appendKBDPtr(KBDDataPtr* ptr) {
-    ptr->next = NULL;
-    if (firstKBDPtr) {
-        KBDDataPtr* lastPtr = firstKBDPtr;
-        while (lastPtr->next) {
-            lastPtr = lastPtr->next;
-        }
-        lastPtr->next = ptr;
-    }
-    else {
-        firstKBDPtr = ptr;
-    }
+inline void Mechy::pushKBDPtr(KBDDataPtr* ptr) {
+    ptr->next = firstKBDPtr;
+    firstKBDPtr = ptr;
 }
 
 inline KBDDataPtr* Mechy::removeKBDPtr(KBDDataPtr* ptr) {

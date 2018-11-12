@@ -46,7 +46,7 @@ listenBody:
         KBDDataPtr* ptr = (KBDDataPtr*)malloc(sizeof(KBDDataPtr));
         ptr->kbd = currentKey;
         ptr->isPressed = true;
-        appendKBDPtr(ptr);
+        pushKBDPtr(ptr);
     }
     else {
         KBDDataPtr* findPtr = firstKBDPtr;
@@ -90,18 +90,9 @@ bool Receiver::getOneTransmitterBit() {
     return Wiring::digitalRead(dataPin);
 }
 
-inline void Receiver::appendKBDPtr(KBDDataPtr* ptr) {
-    ptr->next = NULL;
-    if (firstKBDPtr) {
-        KBDDataPtr* lastPtr = firstKBDPtr;
-        while (lastPtr->next) {
-            lastPtr = lastPtr->next;
-        }
-        lastPtr->next = ptr;
-    }
-    else {
-        firstKBDPtr = ptr;
-    }
+inline void Receiver::pushKBDPtr(KBDDataPtr* ptr) {
+    ptr->next = firstKBDPtr;
+    firstKBDPtr = ptr;
 }
 
 inline void Receiver::removeKBDPtr(KBDDataPtr* ptr) {

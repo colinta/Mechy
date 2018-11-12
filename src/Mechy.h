@@ -41,6 +41,6 @@ protected:
 
 private:
     inline void appendPluginPtr(PluginPtr* ptr);
-    inline void appendKBDPtr(KBDDataPtr* ptr);
+    inline void pushKBDPtr(KBDDataPtr* ptr);
     inline KBDDataPtr* removeKBDPtr(KBDDataPtr* ptr);
 };
