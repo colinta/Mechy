@@ -55,11 +55,12 @@ void setup() {
     mechy.add(FN_STICKY, &sticky);
     mechy.add(FN_LOCK, &lock);
     mechy.add(FN_MACRO, &macro);
-    mechy.add(FN_NONE, &receiver);
 
     scanner.begin(&mechy);
+    receiver.begin(&mechy);
 }
 
 void loop() {
     scanner.scan();
+    receiver.scan();
 }

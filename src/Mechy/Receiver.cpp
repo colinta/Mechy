@@ -10,13 +10,14 @@ Receiver::Receiver(KBD* _keys, uint8_t rows, uint8_t cols, uint8_t _dataPin, uin
     firstKBDPtr = NULL;
 }
 
-void Receiver::begin() {
+void Receiver::begin(Mechy* _mechy) {
+    mechy = _mechy;
     Wiring::pinMode(dataPin, INPUT);
     Wiring::pinMode(clockPin, OUTPUT);
     Wiring::digitalWrite(clockPin, HIGH);
 }
 
-void Receiver::tick() {
+void Receiver::scan() {
     listen();
     holdCheck();
 }

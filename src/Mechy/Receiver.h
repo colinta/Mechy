@@ -2,11 +2,11 @@
 
 #include "Mechy.h"
 
-class Receiver: public Plugin {
+class Receiver {
 public:
     Receiver(KBD* keys, uint8_t rows, uint8_t cols, uint8_t dataPin, uint8_t clockPin);
-    void begin();
-    void tick();
+    void begin(Mechy* mechy);
+    void scan();
 
 protected:
     uint8_t dataPin;
@@ -16,6 +16,7 @@ protected:
     KBD* currentKey;
     KBD* keys;
     KBDDataPtr* firstKBDPtr;
+    Mechy* mechy;
 
     void listen();
     void holdCheck();
