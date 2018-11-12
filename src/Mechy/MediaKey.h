@@ -6,6 +6,7 @@
 class MediaKey: public Plugin {
 public:
     MediaKey();
+    uint8_t defaultName();
     void run(Event* event);
 
 protected:

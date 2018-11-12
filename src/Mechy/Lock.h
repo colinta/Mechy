@@ -10,6 +10,7 @@ enum {
 class Lock: public Plugin {
 public:
     Lock();
+    uint8_t defaultName();
     bool override(uint8_t name, Event* event);
     void run(Event* event);
 

@@ -8,6 +8,10 @@ Macro::Macro(uint8_t _count, const char **_macros) {
     macros = (char**)_macros;
 }
 
+uint8_t Macro::defaultName() {
+    return FN_MACRO;
+}
+
 void Macro::run(Event* event) {
     int16_t macro_index = event->key - MCR_ZERO;
 

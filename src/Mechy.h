@@ -23,6 +23,7 @@ struct KBDDataPtr {
 class Mechy {
 public:
     Mechy();
+    void add(Plugin* plugin);
     void add(uint8_t name, Plugin* plugin);
     void _begin();
     void _tick();

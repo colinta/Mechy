@@ -6,6 +6,10 @@ Lock::Lock() {
     is_locked = false;
 }
 
+uint8_t Lock::defaultName() {
+    return FN_LOCK;
+}
+
 bool Lock::override(uint8_t name, Event* UNUSED(event)) {
     if (!is_locked || name == FN_LOCK)  return KBD_CONTINUE;
     return KBD_HALT;

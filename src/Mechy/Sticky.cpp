@@ -18,6 +18,10 @@ Sticky::Sticky() {
     should_clear = false;
 }
 
+uint8_t Sticky::defaultName() {
+    return FN_STICKY;
+}
+
 void Sticky::tick() {
     if (should_clear) {
         clearStickyMods();

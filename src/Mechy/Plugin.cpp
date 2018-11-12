@@ -1,5 +1,9 @@
 #include "Plugin.h"
 
+uint8_t Plugin::defaultName() {
+    return FN_NONE;
+}
+
 void Plugin::begin() {
 }
 

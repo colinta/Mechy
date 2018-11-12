@@ -4,6 +4,10 @@
 MediaKey::MediaKey() {
 }
 
+uint8_t MediaKey::defaultName() {
+    return FN_MEDIA;
+}
+
 void MediaKey::run(Event* event) {
     if (event->isPressed()) {
         Media.send(event->key);

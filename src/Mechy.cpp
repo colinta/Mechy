@@ -9,6 +9,10 @@ Mechy::Mechy() {
     event = { .key = MCHY_NONE, .keyState = KEY_STATE_NONE, .duration = 0 };
 }
 
+void Mechy::add(Plugin* plugin) {
+    add(plugin->defaultName(), plugin);
+}
+
 void Mechy::add(uint8_t name, Plugin* plugin) {
     PluginPtr* ptr = (PluginPtr*)malloc(sizeof(PluginPtr));
     ptr->name = name;

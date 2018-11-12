@@ -22,6 +22,7 @@ enum {
 class Sticky: public Plugin {
 public:
     Sticky();
+    uint8_t defaultName();
     void tick();
     bool override(uint8_t name, Event* event);
     void run(Event* event);
