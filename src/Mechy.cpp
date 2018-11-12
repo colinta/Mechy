@@ -4,6 +4,7 @@
 
 Mechy::Mechy() {
     modifiers = 0;
+    layerStackPtr = NULL;
     firstResponderPtr = NULL;
     firstPluginPtr = NULL;
     firstKBDPtr = NULL;
@@ -63,6 +64,37 @@ void Mechy::add(uint8_t name, Plugin* plugin) {
     appendPluginPtr(ptr);
 }
 
+void Mechy::pushLayer(uint8_t layer) {
+    LayerStackPtr* layerPtr = (LayerStackPtr*)malloc(sizeof(LayerStackPtr));
+    layerPtr->value = layer;
+    layerPtr->prev = layerStackPtr;
+    layerStackPtr = layerPtr;
+
+    updateLayer(layer);
+}
+
+void Mechy::popLayer() {
+    uint8_t layer = 0;
+    if (layerStackPtr) {
+        LayerStackPtr* prev = layerStackPtr->prev;
+        free(layerStackPtr);
+        layerStackPtr = prev;
+        if (prev) {
+            layer = prev->value;
+        }
+    }
+
+    updateLayer(layer);
+}
+
+void Mechy::updateLayer(uint8_t layer) {
+    ResponderPtr* respPtr = firstResponderPtr;
+    while (respPtr) {
+        respPtr->responder->gotoLayer(layer);
+        respPtr = respPtr->next;
+    }
+}
+
 void Mechy::processKeyEvent(Layout* layout, uint8_t row, uint8_t col, bool isPressed) {
     unsigned long now = millis();
 
@@ -98,6 +130,7 @@ void Mechy::processKeyEvent(Layout* layout, uint8_t row, uint8_t col, bool isPre
         // create it and append it.
         KBDDataPtr* ptr = NULL;
         KBD* kbd = layout->getKey(row, col);
+
         if (kbd && kbdData) {
             ptr = kbdData;
         }
@@ -305,3 +338,4 @@ inline KBDDataPtr* Mechy::removeKBDPtr(KBDDataPtr* ptr) {
 bool KBDDataPtr::matches(Layout* layout, uint8_t row, uint8_t col) {
     return this->layout == layout && this->row == row && this->col == col;
 }
+

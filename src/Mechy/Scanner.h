@@ -10,6 +10,7 @@ public:
     Scanner(KBD* keys, const uint8_t* pinRows, const uint8_t* pinCols, uint8_t ROWS, uint8_t COLS);
     void begin();
     void scan();
+    void gotoLayer(uint8_t layer);
 
 protected:
     uint8_t ROWS;

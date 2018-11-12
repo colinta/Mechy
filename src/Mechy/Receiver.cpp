@@ -1,22 +1,20 @@
 #include "Wiring.h"
 #include "Receiver.h"
 
-void Receiver::construct(Layout* _layout, uint8_t _ROWS, uint8_t _COLS, uint8_t _dataPin, uint8_t _clockPin) {
+void Receiver::construct(Layout* _layout, uint8_t _dataPin, uint8_t _clockPin) {
     layout = _layout;
-    ROWS = _ROWS;
-    COLS = _COLS;
     dataPin = _dataPin;
     clockPin = _clockPin;
     firstKBDPtr = NULL;
 }
 
-Receiver::Receiver(Layout* layout, uint8_t ROWS, uint8_t COLS, uint8_t dataPin, uint8_t clockPin) {
-    construct(layout, ROWS, COLS, dataPin, clockPin);
+Receiver::Receiver(Layout* layout, uint8_t dataPin, uint8_t clockPin) : Responder() {
+    construct(layout, dataPin, clockPin);
 }
 
-Receiver::Receiver(KBD* keys, uint8_t ROWS, uint8_t COLS, uint8_t dataPin, uint8_t clockPin) {
+Receiver::Receiver(KBD* keys, uint8_t ROWS, uint8_t COLS, uint8_t dataPin, uint8_t clockPin) : Responder() {
     Layout* layout = new Layout(ROWS, COLS, keys);
-    construct(layout, ROWS, COLS, dataPin, clockPin);
+    construct(layout, dataPin, clockPin);
 }
 
 void Receiver::begin() {
@@ -28,6 +26,10 @@ void Receiver::begin() {
 void Receiver::scan() {
     listen();
     holdCheck();
+}
+
+void Receiver::gotoLayer(uint8_t layer) {
+    layout->gotoLayer(layer);
 }
 
 void Receiver::listen() {

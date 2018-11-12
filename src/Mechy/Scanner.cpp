@@ -9,11 +9,11 @@ void Scanner::construct(Layout* _layout, const uint8_t* _pinRows, const uint8_t*
     COLS = _COLS;
 }
 
-Scanner::Scanner(Layout* layout, const uint8_t* pinRows, const uint8_t* pinCols, uint8_t ROWS, uint8_t COLS) {
+Scanner::Scanner(Layout* layout, const uint8_t* pinRows, const uint8_t* pinCols, uint8_t ROWS, uint8_t COLS) : Responder() {
     construct(layout, pinRows, pinCols, ROWS, COLS);
 }
 
-Scanner::Scanner(KBD* keys, const uint8_t* pinRows, const uint8_t* pinCols, uint8_t ROWS, uint8_t COLS) {
+Scanner::Scanner(KBD* keys, const uint8_t* pinRows, const uint8_t* pinCols, uint8_t ROWS, uint8_t COLS) : Responder() {
     Layout* layout = new Layout(ROWS, COLS, keys);
     construct(layout, pinRows, pinCols, ROWS, COLS);
 }
@@ -41,4 +41,8 @@ void Scanner::scan() {
         }
         Wiring::digitalWrite(pinRows[row], HIGH);
     }
+}
+
+void Scanner::gotoLayer(uint8_t layer) {
+    layout->gotoLayer(layer);
 }

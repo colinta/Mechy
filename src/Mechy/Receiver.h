@@ -6,16 +6,15 @@
 
 class Receiver : public Responder {
 public:
-    Receiver(Layout* layout, uint8_t ROWS, uint8_t COLS, uint8_t dataPin, uint8_t clockPin);
+    Receiver(Layout* layout, uint8_t dataPin, uint8_t clockPin);
     Receiver(KBD* keys, uint8_t ROWS, uint8_t COLS, uint8_t dataPin, uint8_t clockPin);
     void begin();
     void scan();
+    void gotoLayer(uint8_t layer);
 
 protected:
     uint8_t dataPin;
     uint8_t clockPin;
-    uint8_t ROWS;
-    uint8_t COLS;
     Layout* layout;
     KBDDataPtr* firstKBDPtr;
 
@@ -34,5 +33,5 @@ protected:
     inline void removeKBDPtr(KBDDataPtr* ptr);
 
 private:
-    void construct(Layout* layout, uint8_t ROWS, uint8_t COLS, uint8_t dataPin, uint8_t clockPin);
+    void construct(Layout* layout, uint8_t dataPin, uint8_t clockPin);
 };

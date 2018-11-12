@@ -20,6 +20,12 @@ struct ResponderPtr {
 };
 
 
+struct LayerStackPtr {
+    uint8_t value;
+    LayerStackPtr* prev;
+};
+
+
 struct KBDDataPtr {
     Layout* layout;
     KBD* kbd;
@@ -46,14 +52,19 @@ public:
     void sendKeyboardPress(uint8_t k);
     void sendKeyboardRelease(uint8_t k);
 
+    void pushLayer(uint8_t layer);
+    void popLayer();
+
 protected:
     Event event;
+    LayerStackPtr* layerStackPtr;
     ResponderPtr* firstResponderPtr;
     PluginPtr* firstPluginPtr;
     KBDDataPtr* firstKBDPtr;
     uint16_t modifiers;
 
     void runPlugin(uint8_t keyState, KBDDataPtr* kbdData, uint16_t duration);
+    void updateLayer(uint8_t layer);
 
 private:
     inline void appendPluginPtr(PluginPtr* ptr);
