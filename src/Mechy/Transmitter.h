@@ -14,7 +14,7 @@ protected:
     uint8_t COLS;
     bool* keyPressed;
 
-    bool processKeyEvent(bool isPressed, uint8_t row, uint8_t col);
+    bool detectKeyChange(bool isPressed, uint8_t row, uint8_t col);
     void pushEvent(uint8_t row, uint8_t col, bool isPressed);
     void flushQueue();
     void sendOneBit(bool bit);

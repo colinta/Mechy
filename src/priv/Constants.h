@@ -46,12 +46,13 @@
 #define KBD_HALT false
 #define KBD_CONTINUE true
 
-#define FN_NONE     0
-#define FN_KEYPRESS 1
-#define FN_MEDIA    2
-#define FN_STICKY   3
-#define FN_LOCK     4
-#define FN_MACRO    5
+#define FN_NONE       0
+#define FN_KEYPRESS   1
+#define FN_MEDIA      2
+#define FN_STICKY     3
+#define FN_LOCK       4
+#define FN_MACRO      5
+#define FN_GOTO_LAYER 6
 #define FN_USER_0    128
 
 #define MCHY_NONE     0

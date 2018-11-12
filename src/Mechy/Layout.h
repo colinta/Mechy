@@ -18,22 +18,24 @@ struct KeyboardList {
 
 class Layout {
 public:
-    Layout();
-    Layout(KBD* layer1);
-    Layout(KBD* layer1, KBD* layer2);
-    Layout(KBD* layer1, KBD* layer2, KBD* layer3);
-    Layout(KBD* layer1, KBD* layer2, KBD* layer3, KBD* layer4);
+    Layout(uint8_t ROWS, uint8_t COLS);
+    Layout(uint8_t ROWS, uint8_t COLS, KBD* layer1);
+    Layout(uint8_t ROWS, uint8_t COLS, KBD* layer1, KBD* layer2);
+    Layout(uint8_t ROWS, uint8_t COLS, KBD* layer1, KBD* layer2, KBD* layer3);
+    Layout(uint8_t ROWS, uint8_t COLS, KBD* layer1, KBD* layer2, KBD* layer3, KBD* layer4);
 
     void addLayer(KBD* layer);
-    KBD* getKey(uint8_t row, uint8_t col, uint8_t ROWS, uint8_t COLS);
+    KBD* getKey(uint8_t row, uint8_t col);
     void gotoLayer(uint8_t layerIndex);
     uint8_t layer();
 
 protected:
-    KBD* getInLayer(KBD* keys, uint8_t row, uint8_t col, uint8_t ROWS, uint8_t COLS);
+    uint8_t ROWS;
+    uint8_t COLS;
     uint8_t currentLayerIndex;
     LayerList* firstLayerPtr;
+    KBD* getInLayer(KBD* keys, uint8_t row, uint8_t col);
 
 private:
-    void construct();
+    void construct(uint8_t ROWS, uint8_t COLS);
 };

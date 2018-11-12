@@ -4,6 +4,7 @@
 #include "priv/Event.h"
 #include "Mechy/Responder.h"
 #include "Mechy/Plugin.h"
+#include "Mechy/Layout.h"
 
 
 struct PluginPtr {
@@ -20,10 +21,15 @@ struct ResponderPtr {
 
 
 struct KBDDataPtr {
+    Layout* layout;
     KBD* kbd;
+    uint8_t row;
+    uint8_t col;
     bool isPressed;
     unsigned long started;
     KBDDataPtr* next;
+
+    bool matches(Layout* layout, uint8_t row, uint8_t col);
 };
 
 
@@ -35,7 +41,7 @@ public:
     void attach(Responder* responder);
     void begin();
     void tick();
-    void processKeyEvent(bool isPressed, KBD* currentKey);
+    void processKeyEvent(Layout* layout, uint8_t row, uint8_t col, bool isPressed);
 
     void sendKeyboardPress(uint8_t k);
     void sendKeyboardRelease(uint8_t k);

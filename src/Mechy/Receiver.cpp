@@ -10,13 +10,13 @@ void Receiver::construct(Layout* _layout, uint8_t _ROWS, uint8_t _COLS, uint8_t 
     firstKBDPtr = NULL;
 }
 
-Receiver::Receiver(Layout* layout, uint8_t rows, uint8_t cols, uint8_t dataPin, uint8_t clockPin) {
-    construct(layout, rows, cols, dataPin, clockPin);
+Receiver::Receiver(Layout* layout, uint8_t ROWS, uint8_t COLS, uint8_t dataPin, uint8_t clockPin) {
+    construct(layout, ROWS, COLS, dataPin, clockPin);
 }
 
-Receiver::Receiver(KBD* keys, uint8_t rows, uint8_t cols, uint8_t dataPin, uint8_t clockPin) {
-    Layout* layout = new Layout(keys);
-    construct(layout, rows, cols, dataPin, clockPin);
+Receiver::Receiver(KBD* keys, uint8_t ROWS, uint8_t COLS, uint8_t dataPin, uint8_t clockPin) {
+    Layout* layout = new Layout(ROWS, COLS, keys);
+    construct(layout, ROWS, COLS, dataPin, clockPin);
 }
 
 void Receiver::begin() {
@@ -47,19 +47,20 @@ listenBody:
     uint8_t row = input & 0b111;
     uint8_t col = (input >> 3) & 0b1111;
     bool isPressed = !!(input >> 7);
-    currentKey = layout->getKey(row, col, ROWS, COLS);
-    mechy->processKeyEvent(isPressed, currentKey);
+    mechy->processKeyEvent(layout, row, col, isPressed);
 
     if (isPressed) {
         KBDDataPtr* ptr = (KBDDataPtr*)malloc(sizeof(KBDDataPtr));
-        ptr->kbd = currentKey;
+        ptr->layout = layout;
+        ptr->row = row;
+        ptr->col = col;
         ptr->isPressed = true;
         pushKBDPtr(ptr);
     }
     else {
         KBDDataPtr* findPtr = firstKBDPtr;
         while (findPtr) {
-            if (findPtr->kbd == currentKey) {
+            if (findPtr->matches(layout, row, col)) {
                 removeKBDPtr(findPtr);
                 break;
             }
@@ -77,7 +78,7 @@ void Receiver::holdCheck() {
     KBDDataPtr* kbdData = firstKBDPtr;
     while (kbdData) {
         if (!kbdData->isPressed)  continue;
-        mechy->processKeyEvent(true, kbdData->kbd);
+        mechy->processKeyEvent(layout, kbdData->row, kbdData->col, true);
         kbdData = kbdData->next;
     }
 }
