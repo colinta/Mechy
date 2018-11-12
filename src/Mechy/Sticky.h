@@ -23,8 +23,8 @@ class Sticky: public Plugin {
 public:
     Sticky();
     void tick();
-    bool override(uint8_t name, Event *event);
-    void run(Event *event);
+    bool override(uint8_t name, Event* event);
+    void run(Event* event);
 
 protected:
     bool should_clear;

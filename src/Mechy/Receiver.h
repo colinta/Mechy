@@ -4,7 +4,7 @@
 
 class Receiver: public Plugin {
 public:
-    Receiver(KBD *keys, uint8_t rows, uint8_t cols, uint8_t dataPin, uint8_t clockPin);
+    Receiver(KBD* keys, uint8_t rows, uint8_t cols, uint8_t dataPin, uint8_t clockPin);
     void begin();
     void tick();
 
@@ -13,9 +13,9 @@ protected:
     uint8_t clockPin;
     uint8_t ROWS;
     uint8_t COLS;
-    KBD *currentKey;
-    KBD *keys;
-    KBDDataPtr *firstKBDPtr;
+    KBD* currentKey;
+    KBD* keys;
+    KBDDataPtr* firstKBDPtr;
 
     void listen();
     void holdCheck();
@@ -28,6 +28,6 @@ protected:
     void sendReadyState();
     void sendReadingState();
 
-    inline void appendKBDPtr(KBDDataPtr *ptr);
-    inline void removeKBDPtr(KBDDataPtr *ptr);
+    inline void appendKBDPtr(KBDDataPtr* ptr);
+    inline void removeKBDPtr(KBDDataPtr* ptr);
 };

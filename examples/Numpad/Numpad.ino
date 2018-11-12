@@ -32,7 +32,7 @@ Keypress keypress = Keypress();
 MediaKey mediakey = MediaKey();
 Sticky sticky = Sticky();
 Lock lock = Lock();
-const char *macros[4] = {"a", "1", "2", "four"};
+const char* macros[4] = {"a", "1", "2", "four"};
 Macro macro = Macro(4, macros);
 
 void setup() {

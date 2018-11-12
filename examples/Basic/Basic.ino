@@ -17,7 +17,7 @@ KBD mainKeys[] = {
 };
 
 
-const char *macros[7] = {"", "", "", "", "", "", ""};
+const char* macros[7] = {"", "", "", "", "", "", ""};
 
 Scanner scanner = Scanner(mainKeys, pinRows, pinCols, ROWS, COLS);
 

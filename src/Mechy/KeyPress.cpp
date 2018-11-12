@@ -4,7 +4,7 @@
 Keypress::Keypress() {
 }
 
-void Keypress::run(Event *event) {
+void Keypress::run(Event* event) {
     if (event->isPressed()) {
         mechy->sendKeyboardPress(event->key);
     }

@@ -6,12 +6,12 @@ Lock::Lock() {
     is_locked = false;
 }
 
-bool Lock::override(uint8_t name, Event *UNUSED(event)) {
+bool Lock::override(uint8_t name, Event* UNUSED(event)) {
     if (!is_locked || name == FN_LOCK)  return KBD_CONTINUE;
     return KBD_HALT;
 }
 
-void Lock::run(Event *event) {
+void Lock::run(Event* event) {
     if (event->isPressed() || event->isReleased()) {
         switch (event->key) {
             case LOCK_1:

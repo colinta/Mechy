@@ -9,8 +9,8 @@ Mechy::Mechy() {
     event = { .key = MCHY_NONE, .keyState = KEY_STATE_NONE, .duration = 0 };
 }
 
-void Mechy::add(uint8_t name, Plugin *plugin) {
-    PluginPtr *ptr = (PluginPtr*)malloc(sizeof(PluginPtr));
+void Mechy::add(uint8_t name, Plugin* plugin) {
+    PluginPtr* ptr = (PluginPtr*)malloc(sizeof(PluginPtr));
     ptr->name = name;
     ptr->plugin = plugin;
     ptr->next = NULL;
@@ -22,7 +22,7 @@ void Mechy::add(uint8_t name, Plugin *plugin) {
 void Mechy::_begin() {
     Keyboard.begin();
 
-    PluginPtr *ptr = firstPluginPtr;
+    PluginPtr* ptr = firstPluginPtr;
     while (ptr) {
         ptr->plugin->begin();
         ptr = ptr->next;
@@ -30,20 +30,20 @@ void Mechy::_begin() {
 }
 
 void Mechy::_tick() {
-    PluginPtr *ptr = firstPluginPtr;
+    PluginPtr* ptr = firstPluginPtr;
     while (ptr) {
         ptr->plugin->tick();
         ptr = ptr->next;
     }
 }
 
-void Mechy::processKeyEvent(bool isPressed, KBD *currentKey) {
+void Mechy::processKeyEvent(bool isPressed, KBD* currentKey) {
     unsigned long now = millis();
 
     // find the prev key event data, if present, and trim away any key events
     // that are finished (!isPressed) and old (finished > 10ms ago).
-    KBDDataPtr *findPtr = firstKBDPtr;
-    KBDDataPtr *kbdData = NULL;
+    KBDDataPtr* findPtr = firstKBDPtr;
+    KBDDataPtr* kbdData = NULL;
     while (findPtr) {
         if (findPtr->kbd == currentKey) {
             kbdData = findPtr;
@@ -70,7 +70,7 @@ void Mechy::processKeyEvent(bool isPressed, KBD *currentKey) {
     if (!currentKeyIsPressed && isPressed) {
         // kbdData may or may not be NULL, if it exists reuse it, otherwise
         // create it and append it.
-        KBDDataPtr *ptr;
+        KBDDataPtr* ptr;
         if (kbdData) {
             ptr = kbdData;
         }
@@ -203,20 +203,20 @@ void Mechy::sendKeyboardRelease(uint8_t key) {
     }
 }
 
-void Mechy::runPlugin(uint8_t keyState, KBDDataPtr *kbdData, uint16_t duration) {
+void Mechy::runPlugin(uint8_t keyState, KBDDataPtr* kbdData, uint16_t duration) {
     event.key = kbdData->kbd->key;
     event.keyState = keyState;
     event.duration = duration;
 
     bool processing = KBD_CONTINUE;
-    PluginPtr *ptr = firstPluginPtr;
+    PluginPtr* ptr = firstPluginPtr;
     while (ptr) {
         processing = ptr->plugin->override(kbdData->kbd->name, &event) && processing;
         ptr = ptr->next;
     }
 
     if (processing == KBD_CONTINUE) {
-        PluginPtr *ptr = firstPluginPtr;
+        PluginPtr* ptr = firstPluginPtr;
         while (ptr) {
             if (ptr->name == kbdData->kbd->name) {
                 ptr->plugin->run(&event);
@@ -226,9 +226,9 @@ void Mechy::runPlugin(uint8_t keyState, KBDDataPtr *kbdData, uint16_t duration) 
     }
 }
 
-inline void Mechy::appendPluginPtr(PluginPtr *ptr) {
+inline void Mechy::appendPluginPtr(PluginPtr* ptr) {
     if (firstPluginPtr) {
-        PluginPtr *lastPtr = firstPluginPtr;
+        PluginPtr* lastPtr = firstPluginPtr;
         while (lastPtr->next) {
             lastPtr = lastPtr->next;
         }
@@ -239,10 +239,10 @@ inline void Mechy::appendPluginPtr(PluginPtr *ptr) {
     }
 }
 
-inline void Mechy::appendKBDPtr(KBDDataPtr *ptr) {
+inline void Mechy::appendKBDPtr(KBDDataPtr* ptr) {
     ptr->next = NULL;
     if (firstKBDPtr) {
-        KBDDataPtr *lastPtr = firstKBDPtr;
+        KBDDataPtr* lastPtr = firstKBDPtr;
         while (lastPtr->next) {
             lastPtr = lastPtr->next;
         }
@@ -253,14 +253,14 @@ inline void Mechy::appendKBDPtr(KBDDataPtr *ptr) {
     }
 }
 
-inline KBDDataPtr *Mechy::removeKBDPtr(KBDDataPtr *ptr) {
+inline KBDDataPtr* Mechy::removeKBDPtr(KBDDataPtr* ptr) {
     if (!firstKBDPtr || firstKBDPtr == ptr) {
         firstKBDPtr = ptr->next;
         free(ptr);
         return firstKBDPtr;
     }
 
-    KBDDataPtr *kbdPtr = firstKBDPtr;
+    KBDDataPtr* kbdPtr = firstKBDPtr;
     while (kbdPtr->next) {
         if (kbdPtr->next == ptr) {
             kbdPtr->next = ptr->next;

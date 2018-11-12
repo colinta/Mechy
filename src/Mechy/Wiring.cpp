@@ -1,8 +1,8 @@
 #include "../priv/Constants.h"
 #include "Wiring.h"
 
-uint8_t *_directionRegisterPtr(uint8_t pin);
-uint8_t *_portRegisterPtr(uint8_t pin);
+uint8_t* _directionRegisterPtr(uint8_t pin);
+uint8_t* _portRegisterPtr(uint8_t pin);
 uint8_t _pinRegister(uint8_t pin);
 uint8_t _pinMask(uint8_t pin);
 void _ddrModeOutput(uint8_t pin);
@@ -50,7 +50,7 @@ namespace Wiring {
 }
 
 void _ddrModeOutput(uint8_t pin) {
-    uint8_t *ddr = _directionRegisterPtr(pin);
+    uint8_t* ddr = _directionRegisterPtr(pin);
     uint8_t pinMask = _pinMask(pin);
     bit_on(*ddr, pinMask);
 }
@@ -66,26 +66,26 @@ void _ddrModePullup(uint8_t pin) {
 }
 
 void _ddrInput(uint8_t pin) {
-    uint8_t *ddr = _directionRegisterPtr(pin);
+    uint8_t* ddr = _directionRegisterPtr(pin);
     uint8_t pinMask = _pinMask(pin);
     bit_off(*ddr, pinMask);
 }
 
 // output LOW or floating input
 void _pinOutputLow(uint8_t pin) {
-    uint8_t *port = _portRegisterPtr(pin);
+    uint8_t* port = _portRegisterPtr(pin);
     uint8_t pinMask = _pinMask(pin);
     bit_off(*port, pinMask);
 }
 
 // output HIGH or INPUT_PULLUP
 void _pinOutputHigh(uint8_t pin) {
-    uint8_t *port = _portRegisterPtr(pin);
+    uint8_t* port = _portRegisterPtr(pin);
     uint8_t pinMask = _pinMask(pin);
     bit_on(*port, pinMask);
 }
 
-uint8_t *_directionRegisterPtr(uint8_t pin) {
+uint8_t* _directionRegisterPtr(uint8_t pin) {
     switch (pin) {
     case _B0: case _B1: case _B2: case _B3: case _B4: case _B5: case _B6: case _B7:
         return &DDRB;
@@ -133,7 +133,7 @@ uint8_t _pinMask(uint8_t pin) {
     return 0;
 }
 
-uint8_t *_portRegisterPtr(uint8_t pin) {
+uint8_t* _portRegisterPtr(uint8_t pin) {
     switch (pin) {
     case _B0: case _B1: case _B2: case _B3: case _B4: case _B5: case _B6: case _B7:
         return &PORTB;

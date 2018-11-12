@@ -42,7 +42,7 @@ Keypress keypress = Keypress();
 MediaKey mediakey = MediaKey();
 Sticky sticky = Sticky();
 Lock lock = Lock();
-const char *macros[7] = {"", "", "", "", "", "", ""};
+const char* macros[7] = {"", "", "", "", "", "", ""};
 Macro macro = Macro(7, macros);
 Receiver receiver = Receiver(rightKeys, ROWS, COLS, DATA, CLK);
 

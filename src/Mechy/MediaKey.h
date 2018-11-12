@@ -6,7 +6,7 @@
 class MediaKey: public Plugin {
 public:
     MediaKey();
-    void run(Event *event);
+    void run(Event* event);
 
 protected:
 };

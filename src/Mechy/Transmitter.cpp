@@ -8,7 +8,7 @@ byte queue[QUEUE_LEN];
 uint8_t queuePtr = 0;
 
 
-Transmitter::Transmitter(uint8_t _dataPin, uint8_t _clockPin, const uint8_t *_pinRows, const uint8_t *_pinCols, uint8_t rows, uint8_t cols) {
+Transmitter::Transmitter(uint8_t _dataPin, uint8_t _clockPin, const uint8_t* _pinRows, const uint8_t* _pinCols, uint8_t rows, uint8_t cols) {
     dataPin = _dataPin;
     clockPin = _clockPin;
     pinRows = _pinRows;
@@ -16,7 +16,7 @@ Transmitter::Transmitter(uint8_t _dataPin, uint8_t _clockPin, const uint8_t *_pi
     ROWS = rows;
     COLS = cols;
     keyPressed = (bool*)malloc(sizeof(bool) * (rows * cols));
-    bool *pressedPtr = keyPressed;
+    bool* pressedPtr = keyPressed;
     for (uint8_t i = 0; i < ROWS * COLS; i++) {
         *pressedPtr = false;
         ++pressedPtr;
@@ -60,7 +60,7 @@ void Transmitter::scan() {
 
 // return true if wasPressed != isPressed, ie. change event
 bool Transmitter::processKeyEvent(bool isPressed, uint8_t row, uint8_t col) {
-    bool *wasPressed = keyPressed + (COLS * row) + col;
+    bool* wasPressed = keyPressed + (COLS * row) + col;
     if (*wasPressed == isPressed) { return false; }
 
     *wasPressed = isPressed;

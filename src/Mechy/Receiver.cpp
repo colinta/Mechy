@@ -1,7 +1,7 @@
 #include "Wiring.h"
 #include "Receiver.h"
 
-Receiver::Receiver(KBD *_keys, uint8_t rows, uint8_t cols, uint8_t _dataPin, uint8_t _clockPin) {
+Receiver::Receiver(KBD* _keys, uint8_t rows, uint8_t cols, uint8_t _dataPin, uint8_t _clockPin) {
     keys = _keys;
     ROWS = rows;
     COLS = cols;
@@ -42,13 +42,13 @@ listenBody:
     mechy->processKeyEvent(isPressed, currentKey);
 
     if (isPressed) {
-        KBDDataPtr *ptr = (KBDDataPtr*)malloc(sizeof(KBDDataPtr));
+        KBDDataPtr* ptr = (KBDDataPtr*)malloc(sizeof(KBDDataPtr));
         ptr->kbd = currentKey;
         ptr->isPressed = true;
         appendKBDPtr(ptr);
     }
     else {
-        KBDDataPtr *findPtr = firstKBDPtr;
+        KBDDataPtr* findPtr = firstKBDPtr;
         while (findPtr) {
             if (findPtr->kbd == currentKey) {
                 removeKBDPtr(findPtr);
@@ -65,7 +65,7 @@ listenBody:
 }
 
 void Receiver::holdCheck() {
-    KBDDataPtr *kbdData = firstKBDPtr;
+    KBDDataPtr* kbdData = firstKBDPtr;
     while (kbdData) {
         if (!kbdData->isPressed)  continue;
         mechy->processKeyEvent(true, kbdData->kbd);
@@ -89,10 +89,10 @@ bool Receiver::getOneTransmitterBit() {
     return Wiring::digitalRead(dataPin);
 }
 
-inline void Receiver::appendKBDPtr(KBDDataPtr *ptr) {
+inline void Receiver::appendKBDPtr(KBDDataPtr* ptr) {
     ptr->next = NULL;
     if (firstKBDPtr) {
-        KBDDataPtr *lastPtr = firstKBDPtr;
+        KBDDataPtr* lastPtr = firstKBDPtr;
         while (lastPtr->next) {
             lastPtr = lastPtr->next;
         }
@@ -103,14 +103,14 @@ inline void Receiver::appendKBDPtr(KBDDataPtr *ptr) {
     }
 }
 
-inline void Receiver::removeKBDPtr(KBDDataPtr *ptr) {
+inline void Receiver::removeKBDPtr(KBDDataPtr* ptr) {
     if (!firstKBDPtr || firstKBDPtr == ptr) {
         firstKBDPtr = ptr->next;
         free(ptr);
         return;
     }
 
-    KBDDataPtr *kbdPtr = firstKBDPtr;
+    KBDDataPtr* kbdPtr = firstKBDPtr;
     while (kbdPtr->next) {
         if (kbdPtr->next == ptr) {
             kbdPtr->next = ptr->next;

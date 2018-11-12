@@ -8,7 +8,7 @@ Macro::Macro(uint8_t _count, const char **_macros) {
     macros = (char**)_macros;
 }
 
-void Macro::run(Event *event) {
+void Macro::run(Event* event) {
     int16_t macro_index = event->key - MCR_ZERO;
 
     if (macro_index < 0 || macro_index >= count) {

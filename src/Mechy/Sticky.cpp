@@ -25,14 +25,14 @@ void Sticky::tick() {
     }
 }
 
-bool Sticky::override(uint8_t name, Event *event) {
+bool Sticky::override(uint8_t name, Event* event) {
     if (name != FN_STICKY && event->isPressed() && (hyper_state || sticky_state)) {
         should_clear = true;
     }
     return KBD_CONTINUE;
 }
 
-void Sticky::run(Event *event) {
+void Sticky::run(Event* event) {
     uint8_t modkey_mask = 0;
     switch (event->key) {
         case STK_SFT:
