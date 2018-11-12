@@ -26,7 +26,7 @@ void Scanner::begin(Mechy *_mechy) {
 }
 
 void Scanner::scan() {
-    delay(10);
+    delay(1);
     mechy->_tick();
     for (uint8_t row = 0; row < ROWS; row++) {
         Wiring::digitalWrite(pinRows[row], LOW);

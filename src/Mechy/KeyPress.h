@@ -90,6 +90,7 @@ protected:
 #define KC_F24 KC(KEY_F24)
 
 #define KC_ESC KC(KEY_ESC)
+#define KC_INS KC(KEY_INSERT)
 #define KC_DEL KC(KEY_DELETE)
 #define KC_BSPC KC(KEY_BACKSPACE)
 #define KC_ENT KC(KEY_RETURN)
