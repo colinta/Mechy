@@ -1,12 +1,21 @@
 #include "Wiring.h"
 #include "Scanner.h"
 
-Scanner::Scanner(KBD* _keys, const uint8_t* _pinRows, const uint8_t* _pinCols, uint8_t _ROWS, uint8_t _COLS) {
-    keys = _keys;
+void Scanner::construct(Layout* _layout, const uint8_t* _pinRows, const uint8_t* _pinCols, uint8_t _ROWS, uint8_t _COLS) {
+    layout = _layout;
     pinRows = _pinRows;
     pinCols = _pinCols;
     ROWS = _ROWS;
     COLS = _COLS;
+}
+
+Scanner::Scanner(Layout* layout, const uint8_t* pinRows, const uint8_t* pinCols, uint8_t rows, uint8_t cols) {
+    construct(layout, pinRows, pinCols, rows, cols);
+}
+
+Scanner::Scanner(KBD* keys, const uint8_t* pinRows, const uint8_t* pinCols, uint8_t rows, uint8_t cols) {
+    Layout* layout = new Layout(keys);
+    construct(layout, pinRows, pinCols, rows, cols);
 }
 
 void Scanner::begin() {
@@ -28,7 +37,7 @@ void Scanner::scan() {
         Wiring::digitalWrite(pinRows[row], LOW);
         for (uint8_t col = 0; col < COLS; col++) {
             bool isPressed = !Wiring::digitalRead(pinCols[col]);
-            currentKey = keys + (COLS * row) + col;
+            currentKey = layout->getKey(row, col, ROWS, COLS);
             mechy->processKeyEvent(isPressed, currentKey);
         }
         Wiring::digitalWrite(pinRows[row], HIGH);

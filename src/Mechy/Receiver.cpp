@@ -1,13 +1,22 @@
 #include "Wiring.h"
 #include "Receiver.h"
 
-Receiver::Receiver(KBD* _keys, uint8_t _ROWS, uint8_t _COLS, uint8_t _dataPin, uint8_t _clockPin) {
-    keys = _keys;
+void Receiver::construct(Layout* _layout, uint8_t _ROWS, uint8_t _COLS, uint8_t _dataPin, uint8_t _clockPin) {
+    layout = _layout;
     ROWS = _ROWS;
     COLS = _COLS;
     dataPin = _dataPin;
     clockPin = _clockPin;
     firstKBDPtr = NULL;
+}
+
+Receiver::Receiver(Layout* layout, uint8_t rows, uint8_t cols, uint8_t dataPin, uint8_t clockPin) {
+    construct(layout, rows, cols, dataPin, clockPin);
+}
+
+Receiver::Receiver(KBD* keys, uint8_t rows, uint8_t cols, uint8_t dataPin, uint8_t clockPin) {
+    Layout* layout = new Layout(keys);
+    construct(layout, rows, cols, dataPin, clockPin);
 }
 
 void Receiver::begin() {
@@ -38,7 +47,7 @@ listenBody:
     uint8_t row = input & 0b111;
     uint8_t col = (input >> 3) & 0b1111;
     bool isPressed = !!(input >> 7);
-    currentKey = keys + (COLS * row) + col;
+    currentKey = layout->getKey(row, col, ROWS, COLS);
     mechy->processKeyEvent(isPressed, currentKey);
 
     if (isPressed) {

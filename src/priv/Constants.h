@@ -55,6 +55,7 @@
 #define FN_USER_0    128
 
 #define MCHY_NONE     0
+#define MCHY_TRANS     0
 
 #define MCHY_MASK_L_SHIFT 0b0000000000000011
 #define MCHY_BITL_L_SHIFT                  0

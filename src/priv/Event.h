@@ -20,3 +20,4 @@ struct Event {
 };
 
 #define ____ {.name = FN_NONE, .key = MCHY_NONE }
+#define vvvv { .name = FN_NONE, .key = MCHY_TRANS }
