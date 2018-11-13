@@ -50,17 +50,18 @@ void setup() {
     Wiring::pinMode(_D5, INPUT);
     Wiring::pinMode(_B0, INPUT);
 
-    mechy.add(FN_KEYPRESS, &keypress);
-    mechy.add(FN_MEDIA, &mediakey);
-    mechy.add(FN_STICKY, &sticky);
-    mechy.add(FN_LOCK, &lock);
-    mechy.add(FN_MACRO, &macro);
+    mechy.add(&keypress);
+    mechy.add(&mediakey);
+    mechy.add(&sticky);
+    mechy.add(&lock);
+    mechy.add(&macro);
 
-    scanner.begin(&mechy);
-    receiver.begin(&mechy);
+    mechy.attach(&scanner);
+    mechy.attach(&receiver);
+
+    mechy.begin();
 }
 
 void loop() {
-    scanner.scan();
-    receiver.scan();
+    mechy.tick();
 }

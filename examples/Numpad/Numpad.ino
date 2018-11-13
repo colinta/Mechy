@@ -6,22 +6,24 @@
 #include <Mechy/Lock.h>
 #include <Mechy/Macro.h>
 
-#define ROWS 5
+#define ROWS 6
 #define COLS 4
-const uint8_t pinRows[] = {_D3, _D2, _D4, _C6, _D7};
+const uint8_t pinRows[] = {_D3, _D2, _D4, _C6, _D7, _E6};
 const uint8_t pinCols[] = {_B5, _B6, _B2, _B3};
 
 KBD keys[ROWS][COLS] = {
+    // some regular keys, using the shorthands and macros
+    {  KC_A, KC_BSPC,   KC('b'), KC(KEY_F12)  },
     // macros
     {  MM_0 , MM_1, MM_2, MM(3) },
-    // some regular keys, using the shorthands and macros
-    {  KC_A,   KC('b'), KC(KEY_F12), KC_BSPC  },
-    // media keys: vol+, play, vol- and the "no-op" key
+    // media keys: vol+, play, vol-
     {  MD_VOLU, MD_PLAY, MD_VOLD, MD(MEDIA_PLAY)  },
     // lock keys,     simple modifier keys
     {  LK_1 , LK_2,   KC_SFT, KC_GUI  },
     // sticky keys - hyper is ctrl+alt+gui
     {  ST_CTL , ST_ALT, ST_GUI, ST_HYPER  },
+    // no-op and transitive keys (for when using layers)
+    { ____, vvvv, vvvv, ____}
 };
 
 
@@ -32,19 +34,21 @@ Keypress keypress = Keypress();
 MediaKey mediakey = MediaKey();
 Sticky sticky = Sticky();
 Lock lock = Lock();
-const char* macros[4] = {"a", "1", "2", "four"};
+const char* macros[4] = {"abcdefg", "1234509876", "my password is password", "potato"};
 Macro macro = Macro(4, macros);
 
 void setup() {
-    mechy.add(FN_KEYPRESS, &keypress);
-    mechy.add(FN_MEDIA, &mediakey);
-    mechy.add(FN_STICKY, &sticky);
-    mechy.add(FN_LOCK, &lock);
-    mechy.add(FN_MACRO, &macro);
+    mechy.add(&keypress);
+    mechy.add(&mediakey);
+    mechy.add(&sticky);
+    mechy.add(&lock);
+    mechy.add(&macro);
 
-    scanner.begin(&mechy);
+    mechy.attach(&scanner);
+
+    mechy.begin();
 }
 
 void loop() {
-    scanner.scan();
+    mechy.tick();
 }
