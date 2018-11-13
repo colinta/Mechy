@@ -1,11 +1,12 @@
 #pragma once
 
 #include "Mechy.h"
+#include "Responder.h"
 
-class Scanner {
+class Scanner : public Responder {
 public:
     Scanner(KBD* keys, const uint8_t* pinRows, const uint8_t* pinCols, uint8_t rows, uint8_t cols);
-    void begin(Mechy* mechy);
+    void begin();
     void scan();
 
 protected:
@@ -15,5 +16,4 @@ protected:
     KBD* keys;
     const uint8_t* pinRows;
     const uint8_t* pinCols;
-    Mechy* mechy;
 };

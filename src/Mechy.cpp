@@ -4,9 +4,49 @@
 
 Mechy::Mechy() {
     modifiers = 0;
+    firstResponderPtr = NULL;
     firstPluginPtr = NULL;
     firstKBDPtr = NULL;
     event = { .key = MCHY_NONE, .keyState = KEY_STATE_NONE, .duration = 0 };
+}
+
+void Mechy::begin() {
+    Keyboard.begin();
+
+    ResponderPtr* respPtr = firstResponderPtr;
+    while (respPtr) {
+        respPtr->responder->begin();
+        respPtr = respPtr->next;
+    }
+
+    PluginPtr* pluginPtr = firstPluginPtr;
+    while (pluginPtr) {
+        pluginPtr->plugin->begin();
+        pluginPtr = pluginPtr->next;
+    }
+}
+
+void Mechy::tick() {
+    ResponderPtr* respPtr = firstResponderPtr;
+    while (respPtr) {
+        respPtr->responder->scan();
+        respPtr = respPtr->next;
+    }
+
+    PluginPtr* pluginPtr = firstPluginPtr;
+    while (pluginPtr) {
+        pluginPtr->plugin->tick();
+        pluginPtr = pluginPtr->next;
+    }
+}
+
+void Mechy::attach(Responder* responder) {
+    ResponderPtr* ptr = (ResponderPtr*)malloc(sizeof(ResponderPtr));
+    ptr->responder = responder;
+    ptr->next = NULL;
+    responder->mechy = this;
+
+    pushResponderPtr(ptr);
 }
 
 void Mechy::add(Plugin* plugin) {
@@ -21,24 +61,6 @@ void Mechy::add(uint8_t name, Plugin* plugin) {
     plugin->mechy = this;
 
     appendPluginPtr(ptr);
-}
-
-void Mechy::_begin() {
-    Keyboard.begin();
-
-    PluginPtr* ptr = firstPluginPtr;
-    while (ptr) {
-        ptr->plugin->begin();
-        ptr = ptr->next;
-    }
-}
-
-void Mechy::_tick() {
-    PluginPtr* ptr = firstPluginPtr;
-    while (ptr) {
-        ptr->plugin->tick();
-        ptr = ptr->next;
-    }
 }
 
 void Mechy::processKeyEvent(bool isPressed, KBD* currentKey) {
@@ -241,6 +263,11 @@ inline void Mechy::appendPluginPtr(PluginPtr* ptr) {
     else {
         firstPluginPtr = ptr;
     }
+}
+
+inline void Mechy::pushResponderPtr(ResponderPtr* ptr) {
+    ptr->next = firstResponderPtr;
+    firstResponderPtr = ptr;
 }
 
 inline void Mechy::pushKBDPtr(KBDDataPtr* ptr) {

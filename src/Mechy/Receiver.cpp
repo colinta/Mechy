@@ -1,17 +1,16 @@
 #include "Wiring.h"
 #include "Receiver.h"
 
-Receiver::Receiver(KBD* _keys, uint8_t rows, uint8_t cols, uint8_t _dataPin, uint8_t _clockPin) {
+Receiver::Receiver(KBD* _keys, uint8_t _ROWS, uint8_t _COLS, uint8_t _dataPin, uint8_t _clockPin) {
     keys = _keys;
-    ROWS = rows;
-    COLS = cols;
+    ROWS = _ROWS;
+    COLS = _COLS;
     dataPin = _dataPin;
     clockPin = _clockPin;
     firstKBDPtr = NULL;
 }
 
-void Receiver::begin(Mechy* _mechy) {
-    mechy = _mechy;
+void Receiver::begin() {
     Wiring::pinMode(dataPin, INPUT);
     Wiring::pinMode(clockPin, OUTPUT);
     Wiring::digitalWrite(clockPin, HIGH);

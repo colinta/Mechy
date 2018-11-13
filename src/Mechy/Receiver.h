@@ -1,11 +1,12 @@
 #pragma once
 
 #include "Mechy.h"
+#include "Responder.h"
 
-class Receiver {
+class Receiver : public Responder {
 public:
-    Receiver(KBD* keys, uint8_t rows, uint8_t cols, uint8_t dataPin, uint8_t clockPin);
-    void begin(Mechy* mechy);
+    Receiver(KBD* keys, uint8_t ROWS, uint8_t COLS, uint8_t dataPin, uint8_t clockPin);
+    void begin();
     void scan();
 
 protected:
@@ -16,7 +17,6 @@ protected:
     KBD* currentKey;
     KBD* keys;
     KBDDataPtr* firstKBDPtr;
-    Mechy* mechy;
 
     void listen();
     void holdCheck();

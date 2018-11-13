@@ -1,15 +1,15 @@
 #include "Wiring.h"
 #include "Scanner.h"
 
-Scanner::Scanner(KBD* _keys, const uint8_t* _pinRows, const uint8_t* _pinCols, uint8_t rows, uint8_t cols) {
+Scanner::Scanner(KBD* _keys, const uint8_t* _pinRows, const uint8_t* _pinCols, uint8_t _ROWS, uint8_t _COLS) {
     keys = _keys;
     pinRows = _pinRows;
     pinCols = _pinCols;
-    ROWS = rows;
-    COLS = cols;
+    ROWS = _ROWS;
+    COLS = _COLS;
 }
 
-void Scanner::begin(Mechy* _mechy) {
+void Scanner::begin() {
     for (uint8_t i = 0; i < COLS; i++) {
         uint8_t colPin = pinCols[i];
         Wiring::pinMode(colPin, INPUT_PULLUP);
@@ -20,14 +20,10 @@ void Scanner::begin(Mechy* _mechy) {
         Wiring::pinMode(rowPin, OUTPUT);
         Wiring::digitalWrite(rowPin, HIGH);
     }
-
-    mechy = _mechy;
-    mechy->_begin();
 }
 
 void Scanner::scan() {
     delay(1);
-    mechy->_tick();
     for (uint8_t row = 0; row < ROWS; row++) {
         Wiring::digitalWrite(pinRows[row], LOW);
         for (uint8_t col = 0; col < COLS; col++) {
