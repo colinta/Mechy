@@ -1,6 +1,8 @@
 #include "Wiring.h"
 #include "Receiver.h"
 
+#define NUM_BITS 11
+
 void Receiver::construct(Layout* _layout, uint8_t _dataPin, uint8_t _clockPin) {
     layout = _layout;
     dataPin = _dataPin;
@@ -38,17 +40,17 @@ void Receiver::listen() {
     awaitAck();
 
 listenBody:
-    byte input = 0;
-    for (uint8_t i = 0; i < 8; i++) {
+    uint16_t input = 0;
+    for (uint8_t i = 0; i < NUM_BITS; i++) {
         bool oneBit = getOneTransmitterBit();
         if (oneBit) {
             input |= 1 << i;
         }
     }
 
-    uint8_t row = input & 0b111;
-    uint8_t col = (input >> 3) & 0b1111;
-    bool isPressed = !!(input >> 7);
+    uint8_t row = input & 0b11111;
+    uint8_t col = (input >> 5) & 0b11111;
+    bool isPressed = !!(input >> 10);
     mechy->processKeyEvent(layout, row, col, isPressed);
 
     if (isPressed) {

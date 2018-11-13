@@ -3,8 +3,9 @@
 #include "Wiring.h"
 #include "Transmitter.h"
 
+#define NUM_BITS 11
 #define QUEUE_LEN 20
-byte queue[QUEUE_LEN];
+uint16_t queue[QUEUE_LEN];
 uint8_t queuePtr = 0;
 
 
@@ -71,12 +72,15 @@ bool Transmitter::detectKeyChange(bool isPressed, uint8_t row, uint8_t col) {
 void Transmitter::pushEvent(uint8_t row, uint8_t col, bool isPressed) {
     if (queuePtr == QUEUE_LEN)  return;
 
-    // 0   1 2 3 4   5 6 7
-    // _   _______   _____
-    // |   \ col /   \row/
-    // |    -----     ---
+    // 11 10 9 8 7 6   5 4 3 2 1
+    // _   _________   _________
+    // |   \  col  /   \  row  /
+    // |    -------     -------
     // \--isPressed
-    byte bits = row | (col << 3) | (isPressed ? 0b10000000 : 0b00000000);
+    uint16_t bits = (isPressed ? 0b10000000000 : 0b00000000000);
+    bits |= ((uint16_t)col) << 5;
+    bits |= (uint16_t)row;
+
     queue[queuePtr] = bits;
     queuePtr++;
 
@@ -93,11 +97,11 @@ void Transmitter::flushQueue() {
     sendAckAndWait();
 
     for (uint8_t queueIndex = 0; queueIndex < queuePtr; queueIndex++) {
-        byte bits = queue[queueIndex];
+        uint16_t bits = queue[queueIndex];
         // transmitted as:
-        // [row]   [col]     [isPressed]
-        // 7 6 5   4 3 2 1   0
-        for (uint8_t bitIndex = 0; bitIndex < 8; bitIndex++) {
+        // [row]         [col]        [isPressed]
+        // 0 1 2 3 4 5   6 7 8 9 10   11
+        for (uint8_t bitIndex = 0; bitIndex < NUM_BITS; bitIndex++) {
             sendOneBit((bits >> bitIndex) & 1);
         }
 
