@@ -1,7 +1,7 @@
 #include <Mechy.h>
 #include <Mechy/KeyPress.h>
 #include <Mechy/GotoLayer.h>
-#include <Mechy/Keyboard/DZ60.h>
+#include <Mechy/Hardware/DZ60.h>
 
 KBD mainKeys[] = LAYOUT_60(
     KC_ESC , KC_1   , KC_2   , KC_3   , KC_4   , KC_5   , KC_6   , KC_7   , KC_8   , KC_9   , KC_0   , KC_MINS, KC_EQL ,     KC_BSPC     ,
@@ -32,7 +32,7 @@ Layout layout = Layout(ROWS, COLS, mainKeys, lowerKeys, upperKeys);
 Scanner scanner = Scanner(&layout, pinRows, pinCols, ROWS, COLS);
 
 Mechy mechy = Mechy();
-Keyboard keyboard = Keyboard(&mechy);
+Hardware hardware = Hardware(&mechy);
 
 void setup() {
     mechy.add(new Keypress());
@@ -41,10 +41,10 @@ void setup() {
     mechy.attach(&scanner);
 
     mechy.begin();
-    keyboard.begin();
+    hardware.begin();
 }
 
 void loop() {
     mechy.tick();
-    keyboard.tick();
+    hardware.tick();
 }

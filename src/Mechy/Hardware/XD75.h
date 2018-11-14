@@ -36,9 +36,9 @@ const uint8_t pinCols[] = { _F0, _F1, _E6, _C7, _C6, _B6, _D4, _B1, _B7, _B5, _B
 #define GP103_LED_PIN    _F4
 #define KEYCAPS_LED_PIN  _F5
 
-class Keyboard {
+class Hardware {
 public:
-    Keyboard(Mechy* _mechy) {
+    Hardware(Mechy* _mechy) {
         mechy = _mechy;
         didSetCaps = false;
     }

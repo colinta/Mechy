@@ -71,10 +71,16 @@ KBD keys[] = LAYOUT_60(
 #include "../Wiring.h"
 
 #define CAPS_LED_PIN _B2
+#define RGB_PIN _E2
 
-class Keyboard {
+#define ROWS 5
+#define COLS 15
+const uint8_t pinRows[] = { _D0, _D1, _D2, _D3, _D5 };
+const uint8_t pinCols[] = { _F0, _F1, _E6, _C7, _C6, _B7, _D4, _B1, _B0, _B5, _B4, _D7, _D6, _B3, _F4 };
+
+class Hardware {
 public:
-    Keyboard(Mechy* _mechy) {
+    Hardware(Mechy* _mechy) {
         mechy = _mechy;
         didSetCaps = false;
     }
@@ -84,7 +90,7 @@ public:
     }
     void tick() {
         if (!didSetCaps) {
-            Wiring::digitalWrite(CAPS_LED_PIN, turnOn);
+            Wiring::digitalWrite(CAPS_LED_PIN, mechy->isCapsOn());
         }
     }
     void capsLedWrite(bool turnOn) {

@@ -1,6 +1,5 @@
 #include "Mechy.h"
 #include "TapHold.h"
-#include <Keyboard.h>
 
 #define TAPHOLD_DELAY 250
 

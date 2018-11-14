@@ -24,9 +24,9 @@ const uint8_t pinCols[] = { _F1, _F0, _B0, _C7, _F4, _F5, _F6, _F7, _D4, _D6, _B
     k30, k31, k32, k33, k34, k35, k36, k37, k38, k39, k3a, k3b  \
 }
 
-class Keyboard {
+class Hardware {
 public:
-    Keyboard(Mechy* _mechy) {
+    Hardware(Mechy* _mechy) {
     }
     void begin() {
     }

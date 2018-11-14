@@ -2,7 +2,7 @@
 #include <Mechy/KeyPress.h>
 #include <Mechy/MediaKey.h>
 #include <Mechy/GotoLayer.h>
-#include <Mechy/Keyboard/Planck.h>
+#include <Mechy/Hardware/Planck.h>
 
 KBD mainKeys[] = LAYOUT(
     KC_TAB , KC_Q   , KC_W   , KC_E   , KC_R   , KC_T   , KC_Y   , KC_U   , KC_I   , KC_O   , KC_P   , KC_BSPC,
@@ -30,16 +30,16 @@ Layout layout = Layout(ROWS, COLS, mainKeys, lowerKeys, upperKeys);
 Scanner scanner = Scanner(&layout, pinRows, pinCols, ROWS, COLS);
 
 Mechy mechy = Mechy();
-Keyboard keyboard = Keyboard(&mechy);
+Hardware hardware = Hardware(&mechy);
 
 void setup() {
     mechy.add(new Keypress());
     mechy.attach(&scanner);
     mechy.begin();
-    keyboard.begin();
+    hardware.begin();
 }
 
 void loop() {
     mechy.tick();
-    keyboard.tick();
+    hardware.tick();
 }

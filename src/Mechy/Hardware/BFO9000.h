@@ -34,9 +34,9 @@ const uint8_t pinCols[] = { _B5, _B6, _B2, _B3, _B1, _F7, _F6, _F5, _F4};
 #define CLK _D0
 #define RGB_PIN _B4
 
-class Keyboard {
+class Hardware {
 public:
-    Keyboard(Mechy* UNUSED(_mechy)) {
+    Hardware(Mechy* UNUSED(_mechy)) {
     }
     void begin() {
     }
