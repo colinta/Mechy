@@ -1,5 +1,4 @@
 #include <Mechy.h>
-#include <Mechy/Scanner.h>
 #include <Mechy/KeyPress.h>
 #include <Mechy/MediaKey.h>
 #include <Mechy/Sticky.h>

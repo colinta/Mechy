@@ -5,6 +5,7 @@
 #include "Mechy/Responder.h"
 #include "Mechy/Plugin.h"
 #include "Mechy/Layout.h"
+#include "Mechy/Scanner.h"
 
 
 struct PluginPtr {
