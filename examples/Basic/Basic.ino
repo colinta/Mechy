@@ -19,7 +19,7 @@ Scanner scanner = Scanner(keys, pinRows, pinCols, ROWS, COLS);
 Mechy mechy = Mechy();
 
 void setup() {
-    mechy.add(new Keypress());
+    mechy.add(new KeyPress());
     mechy.attach(&scanner);
     mechy.begin();
 }

@@ -22,7 +22,7 @@ See the examples first to see if this library appeals to you:
 Usage
 =====
 
-Include the main library (`Mechy.h`), include your plugins (`Mechy/Keypress.h`, `Mechy/MediaKey.h`), define the pins for your keyboard (see examples).  Then define your layout, create a few objects, and add `mechy.begin()` and `mechy.tick()` to `setup()` and `loop()`.  Easy! (I think.)
+Include the main library (`Mechy.h`), include your plugins (`Mechy/KeyPress.h`, `Mechy/MediaKey.h`), define the pins for your keyboard (see examples).  Then define your layout, create a few objects, and add `mechy.begin()` and `mechy.tick()` to `setup()` and `loop()`.  Easy! (I think.)
 
 If a keyboard is available (in [`Keyboards.h`](https://github.com/colinta/Mechy/blob/master/src/Mechy/Keyboards)) the process is even slightly easier: the pins will be defined for you, and you can create a `Hardware` instance.  This will make it easy to use keyboard features like LEDs and sound.  The `Hardware` author needs to write this class to support what that keyboard is capable of, or you can use it as a starting point and do your own thing!
 
@@ -53,25 +53,25 @@ void loop() {
 }
 ```
 
-###### Keypress
+###### KeyPress
 
 The most basic plugin, sends any printable key press and basic modifiers.
 
 ```c++
-#include <Mechy/Keypress.h>
+#include <Mechy/KeyPress.h>
 
 KBD mainKeys[] = { KC_ESC, KC_A, KC_LSFT };
 
 Mechy mechy = Mechy();
-Keypress keypress = Keypress();
+KeyPress keypress = KeyPress();
 mechy.add(&keypress)
 
 // or if you prefer:
 Mechy mechy = Mechy();
-mechy.add(new Keypress());
+mechy.add(new KeyPress());
 ```
 
-See [Keypress.h](https://github.com/colinta/Mechy/blob/master/src/Mechy/Keypress.h#L17) for defined keys.
+See [KeyPress.h](https://github.com/colinta/Mechy/blob/master/src/Mechy/KeyPress.h#L17) for defined keys.
 
 ###### MediaKey
 

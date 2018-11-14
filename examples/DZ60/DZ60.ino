@@ -35,7 +35,7 @@ Mechy mechy = Mechy();
 Hardware hardware = Hardware(&mechy);
 
 void setup() {
-    mechy.add(new Keypress());
+    mechy.add(new KeyPress());
     mechy.add(new GotoLayer());
 
     mechy.attach(&scanner);

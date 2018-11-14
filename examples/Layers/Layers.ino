@@ -57,7 +57,7 @@ Scanner scanner = Scanner(&layout, pinRows, pinCols, ROWS, COLS);
 Mechy mechy = Mechy();
 
 void setup() {
-    mechy.add(new Keypress());
+    mechy.add(new KeyPress());
     mechy.add(new MediaKey());
     mechy.add(new GotoLayer());
     mechy.add(new Macro(7, macros));

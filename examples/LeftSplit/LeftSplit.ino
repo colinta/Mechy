@@ -37,7 +37,7 @@ KBD rightKeys[] = {
 Scanner scanner = Scanner(leftKeys, pinRows, pinCols, ROWS, COLS);
 Mechy mechy = Mechy();
 
-Keypress keypress = Keypress();
+KeyPress keypress = KeyPress();
 MediaKey mediakey = MediaKey();
 Sticky sticky = Sticky();
 Lock lock = Lock();

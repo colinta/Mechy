@@ -1,14 +1,14 @@
 #include "KeyPress.h"
 
 
-Keypress::Keypress() {
+KeyPress::KeyPress() {
 }
 
-uint8_t Keypress::defaultName() {
+uint8_t KeyPress::defaultName() {
     return FN_KEYPRESS;
 }
 
-void Keypress::run(Event* event) {
+void KeyPress::run(Event* event) {
     uint16_t mods = (event->key & (MOD_LSFT | MOD_LGUI | MOD_LCTL | MOD_LALT));
 
     if (event->isPressed()) {

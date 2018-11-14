@@ -3,9 +3,9 @@
 #include <Keyboard.h>
 #include "Mechy.h"
 
-class Keypress: public Plugin {
+class KeyPress: public Plugin {
 public:
-    Keypress();
+    KeyPress();
     uint8_t defaultName();
     void run(Event* event);
 
