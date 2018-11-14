@@ -18,3 +18,5 @@ public:
 #define GOTO_1 GOTO(1)
 #define GOTO_2 GOTO(2)
 #define GOTO_3 GOTO(3)
+#define LOWER GOTO(1)
+#define RAISE GOTO(2)

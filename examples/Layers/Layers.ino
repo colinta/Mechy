@@ -7,8 +7,8 @@
 
 #define ROWS 5
 #define COLS 15
-const uint8_t pinRows[] = {_D0, _D1, _D2, _D3, _D5};
-const uint8_t pinCols[] = {_F0, _F1, _E6, _C7, _C6, _B6, _D4, _B1, _B7, _B5, _B4, _D7, _D6, _B3, _B0};
+const uint8_t pinRows[] = { _D0, _D1, _D2, _D3, _D5};
+const uint8_t pinCols[] = { _F0, _F1, _E6, _C7, _C6, _B6, _D4, _B1, _B7, _B5, _B4, _D7, _D6, _B3, _B0};
 
 
 KBD mainKeys[] = {

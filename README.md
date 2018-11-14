@@ -95,6 +95,7 @@ Also I don't have much support for "transitive" keys.  If you use the `vvvv` mac
 #include <Mechy/GotoLayer.h>
 
 KBD mainKeys[] = { GOTO_1, GOTO_2, GOTO_3 };
+//    a.k.a.     { LOWER , RAISE , GOTO_3 };
 
 Mechy mechy = Mechy();
 mechy.add(new GotoLayer());
