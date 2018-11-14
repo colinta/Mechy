@@ -1,13 +1,13 @@
 Mechy
 -----
 
-This is a mechanical keyboard library, in the same spirit as QMK but it doesn't share any code with that project.  Only supports the Atmega32u4 for now, but support for other microcontrollers was in mind.
+This is a mechanical keyboard library, in the same spirit as QMK but it doesn't share any code with that project.  Only supports the Atmega32u4 for now, but support for other microcontrollers was in mind.  As other boards become supported I'll make sure to list them here and include examples for them.
 
 Mechy is designed around C++ `Plugin` classes, and included in the main bundle are a bunch of plugins.  I tried to make Mechy focused on being well designed, but it's also compact and, I think, more intuitive for new programmers than TMK/QMK.
 
 Btw I'll make lots of comparisons to QMK here and I'll try not to disparage it.  It's a fantastic tool, and is responsible for the rise in interest in mechanical keyboards.  I have to make the comparisons because it's the only other keyboard firmware tool that I'm familiar with.  I found it a bit clunky and I couldn't get the split code to work on my BFO-9000, so I started this project.
 
-Mechy is built using Arduino but this will change.  Arduino does unfortunate things in their USB/HID code (the TX/RXLED on/off "feature") that prevents it from working with some boards, like the XD75.  So I'd like to transition away from Arduino and rely instead on a Makefile/CLI.  I could use some help on that!  I've already ported all the pinMode/digitalRead/digitalWrite code (see `Wiring.h/cpp`) so that all the ports/pins can be utilized, and I have a work-in-progress folder where I copied all the relevant Arduino libaries, I just need to get them to compile and linked.  I don't really know how to use `avr-gcc/avr-g++`.
+Mechy is built using Arduino but this *might* change.  Arduino does unfortunate things in their USB/HID code (the TX/RXLED on/off "feature") that prevents it from working with some boards, like the XD75.  So I'd like to transition away from Arduino and rely instead on a Makefile/CLI.  I could use some help on that!  I've already ported all the pinMode/digitalRead/digitalWrite code (see `Wiring.h/cpp`) so that ALL the I/O ports/pins can be utilized, and I have a work-in-progress folder where I copied all the relevant Arduino libaries, I just need to get them to compile and linked.  I don't really know how to use `avr-gcc/avr-g++`.
 
 See the examples first to see if this library appeals to you:
 
@@ -19,7 +19,7 @@ See the examples first to see if this library appeals to you:
 Usage
 =====
 
-Include the main library (`Mechy.h`) and scanner (`Mechy/Scanner.h`), include your plugins (`Mechy/Keypress.h`, `Mechy/MediaKey.h`), define the pins using the pins defined in `Constants.h`.  DON'T use Arduino pin numbers, they *don't work* here!  Then define your layout, create a few objects, and add `mechy.begin()` and `mechy.tick()` to `setup()` and `loop()`.  Easy! (I think.)
+Include the main library (`Mechy.h`) and scanner (`Mechy/Scanner.h`), include your plugins (`Mechy/Keypress.h`, `Mechy/MediaKey.h`), define the pins (you can copy the examples, they are all written for the Atmega32u4).  Then define your layout, create a few objects, and add `mechy.begin()` and `mechy.tick()` to `setup()` and `loop()`.  Easy! (I think.)
 
 API
 ===
@@ -126,7 +126,7 @@ This is only for password macros at the moment, but I'd like to add support for 
 
 KBD mainKeys[] = { MM_0, MM_1, MM_2 };
 
-// If this is a private keyboard you can hardcode them, otherwise look at
+// If this is a "private" keyboard you can hardcode them, otherwise look at
 // Layers.ino for how I put them in a secrets file.  They'll still be visible to
 // someone who gets your keyboard and knows what to look for.
 const char* macros[7] = {"", "", "", "", "", "", ""};
@@ -194,35 +194,39 @@ This is the "right half" of the split code.  It implements the sending side of t
 
 ###### Wiring
 
-This is a re-implementation of Arduino's `wiring.c` code, but with support for all the pins on the Atmega32u4.  It's used internally, so you MUST use the pins as they are defined in `Constants.h`
+This is a re-implementation of Arduino's `wiring.c` code, but with support for all the pins on the Atmega32u4.  It's used internally, and I recommend you use the pins as they are defined in `Constants.h`, but they are compatible with the "digital pin numbers" that Arduino uses.  I.e. Arduino refers to PB0 as "11" in `pinMode` and `digitalRead/Write`, so the value for _B0 is also 11.  The values don't have any other meaning, they just need to be unique.
 
 ```c
-#define _B0  8
-#define _B1  9
-#define _B2 10
-#define _B3 11
-#define _B4 28
-#define _B5 29
-#define _B6 30
+#define _B0 11
+#define _B1 15
+#define _B2 16
+#define _B3 14
+#define _B4  8
+#define _B5  9
+#define _B6 10
 #define _B7 12
-#define _C6 31
-#define _C7 32
-#define _D0 18
-#define _D1 19
-#define _D2 20
-#define _D3 21
-#define _D4 25
-#define _D5 22
-#define _D6 26
-#define _D7 27
-#define _E2 33
-#define _E6  1
-#define _F0 41
-#define _F1 40
-#define _F4 39
-#define _F5 38
-#define _F6 37
-#define _F7 36
+
+#define _C6  5
+#define _C7 13
+
+#define _D0  3
+#define _D1  2
+#define _D2  0
+#define _D3  1
+#define _D4  4
+#define _D5 17
+#define _D6 22
+#define _D7  6
+
+#define _E2 23
+#define _E6  7
+
+#define _F0 24
+#define _F1 25
+#define _F4 21
+#define _F5 20
+#define _F6 19
+#define _F7 18
 ```
 
 (the numbers refer to the pin location on the Atmega32u4 chip, but the values don't matter as long as they're unique).

@@ -1,35 +1,35 @@
 #pragma once
 
-#define _B0  8
-#define _B1  9
-#define _B2 10
-#define _B3 11
-#define _B4 28
-#define _B5 29
-#define _B6 30
+#define _B0 11
+#define _B1 15
+#define _B2 16
+#define _B3 14
+#define _B4  8
+#define _B5  9
+#define _B6 10
 #define _B7 12
 
-#define _C6 31
-#define _C7 32
+#define _C6  5
+#define _C7 13
 
-#define _D0 18
-#define _D1 19
-#define _D2 20
-#define _D3 21
-#define _D4 25
-#define _D5 22
-#define _D6 26
-#define _D7 27
+#define _D0  3
+#define _D1  2
+#define _D2  0
+#define _D3  1
+#define _D4  4
+#define _D5 17
+#define _D6 22
+#define _D7  6
 
-#define _E2 33
-#define _E6  1
+#define _E2 23
+#define _E6  7
 
-#define _F0 41
-#define _F1 40
-#define _F4 39
-#define _F5 38
-#define _F6 37
-#define _F7 36
+#define _F0 24
+#define _F1 25
+#define _F4 21
+#define _F5 20
+#define _F6 19
+#define _F7 18
 
 
 #define bit_get(p, m) ((p) & (m))
