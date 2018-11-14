@@ -168,10 +168,12 @@ void Mechy::runPlugin(uint8_t keyState, KBD* kbd, uint16_t duration) {
     event.duration = duration;
 
     bool processing = KBD_CONTINUE;
-    PluginPtr* ptr = firstPluginPtr;
-    while (ptr) {
-        processing = ptr->plugin->override(keyHandlerName, &event) && processing;
-        ptr = ptr->next;
+    if (keyState == KEY_STATE_PRESSED) {
+        PluginPtr* ptr = firstPluginPtr;
+        while (ptr) {
+            processing = ptr->plugin->override(keyHandlerName, &event) && processing;
+            ptr = ptr->next;
+        }
     }
 
     if (processing == KBD_CONTINUE) {
