@@ -53,6 +53,7 @@
 #define FN_LOCK       4
 #define FN_MACRO      5
 #define FN_GOTO_LAYER 6
+#define FN_TAP_HOLD   7
 #define FN_USER_0    128
 
 #define MCHY_NONE     0

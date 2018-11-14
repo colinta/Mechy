@@ -47,10 +47,16 @@ public:
     void attach(Responder* responder);
     void begin();
     void tick();
+
     void processKeyEvent(Layout* layout, uint8_t row, uint8_t col, bool isPressed);
+    void runPlugin(uint8_t keyState, KBD* kbd, uint16_t duration);
 
     void sendKeyboardPress(uint8_t k);
     void sendKeyboardRelease(uint8_t k);
+
+    uint16_t currentModifiers();
+    void updateModifiers(uint16_t mchyModifiers);
+    void clearModifiers();
 
     void pushLayer(uint8_t layer);
     void popLayer();
@@ -63,7 +69,6 @@ protected:
     KBDDataPtr* firstKBDPtr;
     uint16_t modifiers;
 
-    void runPlugin(uint8_t keyState, KBDDataPtr* kbdData, uint16_t duration);
     void updateLayer(uint8_t layer);
 
 private:
