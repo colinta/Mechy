@@ -8,8 +8,11 @@ uint8_t GotoLayer::defaultName() {
 }
 
 void GotoLayer::run(Event* event) {
+    uint8_t layer = event->key & 0b1111;
+    // uint8_t behavior = event->key >> 4;
+
     if (event->isPressed()) {
-        mechy->pushLayer(1);
+        mechy->pushLayer(layer);
     }
     else if (event->isReleased()) {
         mechy->popLayer();

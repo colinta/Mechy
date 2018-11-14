@@ -3,10 +3,16 @@
 #include "Plugin.h"
 #include "../priv/Event.h"
 
+enum THBehavior {
+    TH_PRESS,
+    TH_MODIFIER,
+};
+
 struct TapHoldKey {
     uint8_t keyIndex;
     KBD tapKey;
     KBD holdKey;
+    THBehavior behavior;
     TapHoldKey* next;
 };
 
@@ -14,6 +20,7 @@ struct TapHoldEvent {
     bool isActive;
     KBD tapKey;
     KBD holdKey;
+    THBehavior behavior;
     uint16_t modifierSnapshot;
 };
 
@@ -24,11 +31,12 @@ public:
     void begin();
     void run(Event* event);
 
-    static uint16_t add(KBD, KBD);
+    static uint16_t add(KBD, KBD, THBehavior);
 protected:
     static uint8_t keys;
     TapHoldEvent* eventArray;
     static TapHoldKey* keyPtrStack;
 };
 
-#define TH(k1, k2) { .name = FN_TAP_HOLD, .key = TapHold::add(k1, k2) }
+#define TH(k1, k2) { .name = FN_TAP_HOLD, .key = TapHold::add(k1, k2, TH_PRESS) }
+#define LT(k1, k2) { .name = FN_TAP_HOLD, .key = TapHold::add(k1, k2, TH_MODIFIER) }

@@ -23,3 +23,15 @@ protected:
 #define MD_PREV  MD(MEDIA_PREV)
 #define MD_FFD   MD(MEDIA_FFD)
 #define MD_RWD   MD(MEDIA_RWD)
+
+// QMK compat:
+#define KC_VOLU  MD_VOLU
+#define KC_VOLD  MD_VOLD
+#define KC_MPLY  MD_PLAY
+#define KC_MUTE  MD_MUTE
+#define KC_PAUSE MD_PAUSE
+#define KC_STOP  MD_STOP
+#define KC_MNXT  MD_NEXT
+#define KC_PREV  MD_PREV
+#define KC_FFD   MD_FFD
+#define KC_RWD   MD_RWD

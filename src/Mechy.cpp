@@ -75,17 +75,16 @@ void Mechy::pushLayer(uint8_t layer) {
 }
 
 void Mechy::popLayer() {
-    uint8_t layer = 0;
     if (layerStackPtr) {
-        LayerStackPtr* prev = layerStackPtr->prev;
         free(layerStackPtr);
-        layerStackPtr = prev;
-        if (prev) {
-            layer = prev->value;
-        }
+        layerStackPtr = layerStackPtr->prev;
     }
 
-    updateLayer(layer);
+    updateLayer(layerStackPtr ? layerStackPtr->value : 0);
+}
+
+uint8_t Mechy::currentLayer() {
+    return (layerStackPtr ? layerStackPtr->value : 0);
 }
 
 void Mechy::updateLayer(uint8_t layer) {

@@ -63,6 +63,7 @@ public:
 
     void pushLayer(uint8_t layer);
     void popLayer();
+    uint8_t currentLayer();
 
 protected:
     Event event;
