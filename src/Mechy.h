@@ -52,6 +52,8 @@ public:
     void processKeyEvent(Layout* layout, uint8_t row, uint8_t col, bool isPressed);
     void runPlugin(uint8_t keyState, KBD* kbd, uint16_t duration);
 
+    bool isCapsOn();
+
     void sendKeyboardPress(uint8_t k);
     void sendKeyboardRelease(uint8_t k);
 
@@ -69,6 +71,8 @@ protected:
     PluginPtr* firstPluginPtr;
     KBDDataPtr* firstKBDPtr;
     uint16_t modifiers;
+
+    bool capsIsOn;
 
     void updateLayer(uint8_t layer);
 

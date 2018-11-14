@@ -4,6 +4,7 @@
 
 Mechy::Mechy() {
     modifiers = 0;
+    capsIsOn = false;
     layerStackPtr = NULL;
     firstResponderPtr = NULL;
     firstPluginPtr = NULL;
@@ -187,6 +188,10 @@ void Mechy::runPlugin(uint8_t keyState, KBD* kbd, uint16_t duration) {
     }
 }
 
+bool Mechy::isCapsOn() {
+    return capsIsOn;
+}
+
 void Mechy::sendKeyboardPress(uint8_t key) {
     uint16_t modMask = 0;
     uint16_t modShft = 0;
@@ -222,6 +227,9 @@ void Mechy::sendKeyboardPress(uint8_t key) {
     case KEY_RIGHT_SHIFT:
         modMask = MCHY_MASK_R_SHIFT;
         modShft = MCHY_BITL_R_SHIFT;
+        break;
+    case KEY_CAPS_LOCK:
+        capsIsOn = !capsIsOn;
         break;
     }
 
