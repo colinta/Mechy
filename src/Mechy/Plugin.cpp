@@ -14,5 +14,9 @@ bool Plugin::override(uint8_t UNUSED(name), Event* UNUSED(event), Plugin* UNUSED
     return KBD_CONTINUE;
 }
 
+bool Plugin::is(uint8_t UNUSED(event_type), Event* UNUSED(event)) {
+    return false;
+}
+
 void Plugin::run(Event* UNUSED(event)) {
 }

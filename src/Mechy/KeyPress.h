@@ -8,6 +8,7 @@ public:
     KeyPress();
     uint8_t defaultName();
     void run(Event* event);
+    bool is(uint8_t event_type, Event* event);
 
 protected:
 };
@@ -120,6 +121,7 @@ protected:
 #define MOD_LGUI (1 << 9)
 #define MOD_LCTL (1 << 10)
 #define MOD_LALT (1 << 11)
+#define MOD_ANY  (0b111100000000)
 
 #define LSFT(k) ((k) | MOD_LSFT)
 #define LGUI(k) ((k) | MOD_LGUI)

@@ -11,6 +11,7 @@ public:
     virtual void begin();
     virtual void tick();
     virtual bool override(uint8_t name, Event* event, Plugin* plugin);
+    virtual bool is(uint8_t event_type, Event* event);
     virtual void run(Event* event);
 
     Mechy* mechy;

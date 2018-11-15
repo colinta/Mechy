@@ -8,6 +8,24 @@ uint8_t KeyPress::defaultName() {
     return FN_KEYPRESS;
 }
 
+bool KeyPress::is(uint8_t event_type, Event* event) {
+    if (event->key & MOD_ANY && event_type == EVENT_MODIFIER)  return true;
+    else if (
+        event->key == KEY_LEFT_SHIFT ||
+        event->key == KEY_LEFT_CTRL ||
+        event->key == KEY_LEFT_ALT ||
+        event->key == KEY_LEFT_GUI ||
+        event->key == KEY_RIGHT_SHIFT ||
+        event->key == KEY_RIGHT_CTRL ||
+        event->key == KEY_RIGHT_ALT ||
+        event->key == KEY_RIGHT_GUI)
+    {
+        return event_type == EVENT_MODIFIER;
+    }
+
+    return event_type == EVENT_KEYPRESS;
+}
+
 void KeyPress::run(Event* event) {
     if (event->isPressed()) {
         if (event->key & MOD_LSFT) { mechy->sendKeyboardPress(KEY_LEFT_SHIFT); }
