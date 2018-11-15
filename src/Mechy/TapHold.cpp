@@ -1,7 +1,9 @@
 #include "Mechy.h"
 #include "TapHold.h"
 
+#ifndef TAPHOLD_DELAY
 #define TAPHOLD_DELAY 250
+#endif
 
 TapHold::TapHold() {
     eventArray = NULL;
