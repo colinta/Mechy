@@ -4,6 +4,15 @@
 #include "Responder.h"
 #include "Layout.h"
 
+struct ReceiverEventPtr {
+    Layout* layout;
+    uint8_t row;
+    uint8_t col;
+    ReceiverEventPtr* next;
+
+    bool matches(Layout* layout, uint8_t row, uint8_t col);
+};
+
 class Receiver : public Responder {
 public:
     Receiver(Layout* layout, uint8_t dataPin, uint8_t clockPin);
@@ -16,7 +25,7 @@ protected:
     uint8_t dataPin;
     uint8_t clockPin;
     Layout* layout;
-    EventPtr* firstEventPtr;
+    ReceiverEventPtr* firstEventPtr;
 
     void listen();
     void holdCheck();
@@ -29,8 +38,8 @@ protected:
     void sendReadyState();
     void sendReadingState();
 
-    inline void pushEventPtr(EventPtr* ptr);
-    inline void removeEventPtr(EventPtr* ptr);
+    inline void pushEventPtr(ReceiverEventPtr* ptr);
+    inline void removeEventPtr(ReceiverEventPtr* ptr);
 
 private:
     void construct(Layout* layout, uint8_t dataPin, uint8_t clockPin);

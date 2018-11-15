@@ -54,15 +54,14 @@ listenBody:
     mechy->processKeyEvent(layout, row, col, isPressed);
 
     if (isPressed) {
-        EventPtr* ptr = (EventPtr*)malloc(sizeof(EventPtr));
+        ReceiverEventPtr* ptr = (ReceiverEventPtr*)malloc(sizeof(ReceiverEventPtr));
         ptr->layout = layout;
         ptr->row = row;
         ptr->col = col;
-        ptr->isPressed = true;
         pushEventPtr(ptr);
     }
     else {
-        EventPtr* findPtr = firstEventPtr;
+        ReceiverEventPtr* findPtr = firstEventPtr;
         while (findPtr) {
             if (findPtr->matches(layout, row, col)) {
                 removeEventPtr(findPtr);
@@ -79,9 +78,8 @@ listenBody:
 }
 
 void Receiver::holdCheck() {
-    EventPtr* kbdData = firstEventPtr;
+    ReceiverEventPtr* kbdData = firstEventPtr;
     while (kbdData) {
-        if (!kbdData->isPressed)  continue;
         mechy->processKeyEvent(layout, kbdData->row, kbdData->col, true);
         kbdData = kbdData->next;
     }
@@ -103,19 +101,19 @@ bool Receiver::getOneTransmitterBit() {
     return Wiring::digitalRead(dataPin);
 }
 
-inline void Receiver::pushEventPtr(EventPtr* ptr) {
+inline void Receiver::pushEventPtr(ReceiverEventPtr* ptr) {
     ptr->next = firstEventPtr;
     firstEventPtr = ptr;
 }
 
-inline void Receiver::removeEventPtr(EventPtr* ptr) {
+inline void Receiver::removeEventPtr(ReceiverEventPtr* ptr) {
     if (!firstEventPtr || firstEventPtr == ptr) {
         firstEventPtr = ptr->next;
         free(ptr);
         return;
     }
 
-    EventPtr* kbdPtr = firstEventPtr;
+    ReceiverEventPtr* kbdPtr = firstEventPtr;
     while (kbdPtr->next) {
         if (kbdPtr->next == ptr) {
             kbdPtr->next = ptr->next;
@@ -132,3 +130,7 @@ bool Receiver::transmitterDidAck() { return Wiring::digitalRead(dataPin); }
 bool Receiver::transmitterHasData() { return !Wiring::digitalRead(dataPin); }
 void Receiver::sendReadyState() { Wiring::digitalWrite(clockPin, LOW); }
 void Receiver::sendReadingState() { Wiring::digitalWrite(clockPin, HIGH); }
+
+bool ReceiverEventPtr::matches(Layout* layout, uint8_t row, uint8_t col) {
+    return this->layout == layout && this->row == row && this->col == col;
+}
