@@ -16,7 +16,7 @@ protected:
     uint8_t dataPin;
     uint8_t clockPin;
     Layout* layout;
-    KBDDataPtr* firstKBDPtr;
+    EventPtr* firstEventPtr;
 
     void listen();
     void holdCheck();
@@ -29,8 +29,8 @@ protected:
     void sendReadyState();
     void sendReadingState();
 
-    inline void pushKBDPtr(KBDDataPtr* ptr);
-    inline void removeKBDPtr(KBDDataPtr* ptr);
+    inline void pushEventPtr(EventPtr* ptr);
+    inline void removeEventPtr(EventPtr* ptr);
 
 private:
     void construct(Layout* layout, uint8_t dataPin, uint8_t clockPin);

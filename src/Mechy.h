@@ -27,14 +27,14 @@ struct LayerStackPtr {
 };
 
 
-struct KBDDataPtr {
+struct EventPtr {
     Layout* layout;
     KBD* kbd;
     uint8_t row;
     uint8_t col;
     bool isPressed;
     unsigned long started;
-    KBDDataPtr* next;
+    EventPtr* next;
 
     bool matches(Layout* layout, uint8_t row, uint8_t col);
 };
@@ -65,12 +65,14 @@ public:
     void popLayer();
     uint8_t currentLayer();
 
+    EventPtr* events();
+
 protected:
     Event event;
     LayerStackPtr* layerStackPtr;
     ResponderPtr* firstResponderPtr;
     PluginPtr* firstPluginPtr;
-    KBDDataPtr* firstKBDPtr;
+    EventPtr* firstEventPtr;
     uint16_t modifiers;
 
     bool capsIsOn;
@@ -80,6 +82,6 @@ protected:
 private:
     inline void pushPluginPtr(PluginPtr* ptr);
     inline void pushResponderPtr(ResponderPtr* ptr);
-    inline void pushKBDPtr(KBDDataPtr* ptr);
-    inline KBDDataPtr* removeKBDPtr(KBDDataPtr* ptr);
+    inline void pushKBDPtr(EventPtr* ptr);
+    inline EventPtr* removeKBDPtr(EventPtr* ptr);
 };

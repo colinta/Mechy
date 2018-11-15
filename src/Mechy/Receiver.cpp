@@ -7,7 +7,7 @@ void Receiver::construct(Layout* _layout, uint8_t _dataPin, uint8_t _clockPin) {
     layout = _layout;
     dataPin = _dataPin;
     clockPin = _clockPin;
-    firstKBDPtr = NULL;
+    firstEventPtr = NULL;
 }
 
 Receiver::Receiver(Layout* layout, uint8_t dataPin, uint8_t clockPin) : Responder() {
@@ -54,18 +54,18 @@ listenBody:
     mechy->processKeyEvent(layout, row, col, isPressed);
 
     if (isPressed) {
-        KBDDataPtr* ptr = (KBDDataPtr*)malloc(sizeof(KBDDataPtr));
+        EventPtr* ptr = (EventPtr*)malloc(sizeof(EventPtr));
         ptr->layout = layout;
         ptr->row = row;
         ptr->col = col;
         ptr->isPressed = true;
-        pushKBDPtr(ptr);
+        pushEventPtr(ptr);
     }
     else {
-        KBDDataPtr* findPtr = firstKBDPtr;
+        EventPtr* findPtr = firstEventPtr;
         while (findPtr) {
             if (findPtr->matches(layout, row, col)) {
-                removeKBDPtr(findPtr);
+                removeEventPtr(findPtr);
                 break;
             }
             findPtr = findPtr->next;
@@ -79,7 +79,7 @@ listenBody:
 }
 
 void Receiver::holdCheck() {
-    KBDDataPtr* kbdData = firstKBDPtr;
+    EventPtr* kbdData = firstEventPtr;
     while (kbdData) {
         if (!kbdData->isPressed)  continue;
         mechy->processKeyEvent(layout, kbdData->row, kbdData->col, true);
@@ -103,19 +103,19 @@ bool Receiver::getOneTransmitterBit() {
     return Wiring::digitalRead(dataPin);
 }
 
-inline void Receiver::pushKBDPtr(KBDDataPtr* ptr) {
-    ptr->next = firstKBDPtr;
-    firstKBDPtr = ptr;
+inline void Receiver::pushEventPtr(EventPtr* ptr) {
+    ptr->next = firstEventPtr;
+    firstEventPtr = ptr;
 }
 
-inline void Receiver::removeKBDPtr(KBDDataPtr* ptr) {
-    if (!firstKBDPtr || firstKBDPtr == ptr) {
-        firstKBDPtr = ptr->next;
+inline void Receiver::removeEventPtr(EventPtr* ptr) {
+    if (!firstEventPtr || firstEventPtr == ptr) {
+        firstEventPtr = ptr->next;
         free(ptr);
         return;
     }
 
-    KBDDataPtr* kbdPtr = firstKBDPtr;
+    EventPtr* kbdPtr = firstEventPtr;
     while (kbdPtr->next) {
         if (kbdPtr->next == ptr) {
             kbdPtr->next = ptr->next;

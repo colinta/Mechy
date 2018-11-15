@@ -8,7 +8,7 @@ Mechy::Mechy() {
     layerStackPtr = NULL;
     firstResponderPtr = NULL;
     firstPluginPtr = NULL;
-    firstKBDPtr = NULL;
+    firstEventPtr = NULL;
     event = { .key = MCHY_NONE, .keyState = KEY_STATE_NONE, .duration = 0 };
 }
 
@@ -95,13 +95,17 @@ void Mechy::updateLayer(uint8_t layer) {
     }
 }
 
+EventPtr* Mechy::events() {
+    return firstEventPtr;
+}
+
 void Mechy::processKeyEvent(Layout* layout, uint8_t row, uint8_t col, bool isPressed) {
     unsigned long now = millis();
 
     // find the prev key event data, if present, and trim away any key events
     // that are finished (!isPressed) and old (finished > 10ms ago).
-    KBDDataPtr* findPtr = firstKBDPtr;
-    KBDDataPtr* kbdData = NULL;
+    EventPtr* findPtr = firstEventPtr;
+    EventPtr* kbdData = NULL;
     while (findPtr) {
         if (findPtr->matches(layout, row, col)) {
             kbdData = findPtr;
@@ -128,14 +132,14 @@ void Mechy::processKeyEvent(Layout* layout, uint8_t row, uint8_t col, bool isPre
     if (!currentKeyIsPressed && isPressed) {
         // kbdData may or may not be NULL, if it exists reuse it, otherwise
         // create it and append it.
-        KBDDataPtr* ptr = NULL;
+        EventPtr* ptr = NULL;
         KBD* kbd = layout->getKey(row, col);
 
         if (kbd && kbdData) {
             ptr = kbdData;
         }
         else if (kbd) {
-            ptr = (KBDDataPtr*)malloc(sizeof(KBDDataPtr));
+            ptr = (EventPtr*)malloc(sizeof(EventPtr));
             ptr->layout = layout;
             ptr->row = row;
             ptr->col = col;
@@ -411,19 +415,19 @@ inline void Mechy::pushResponderPtr(ResponderPtr* ptr) {
     firstResponderPtr = ptr;
 }
 
-inline void Mechy::pushKBDPtr(KBDDataPtr* ptr) {
-    ptr->next = firstKBDPtr;
-    firstKBDPtr = ptr;
+inline void Mechy::pushKBDPtr(EventPtr* ptr) {
+    ptr->next = firstEventPtr;
+    firstEventPtr = ptr;
 }
 
-inline KBDDataPtr* Mechy::removeKBDPtr(KBDDataPtr* ptr) {
-    if (!firstKBDPtr || firstKBDPtr == ptr) {
-        firstKBDPtr = ptr->next;
+inline EventPtr* Mechy::removeKBDPtr(EventPtr* ptr) {
+    if (!firstEventPtr || firstEventPtr == ptr) {
+        firstEventPtr = ptr->next;
         free(ptr);
-        return firstKBDPtr;
+        return firstEventPtr;
     }
 
-    KBDDataPtr* kbdPtr = firstKBDPtr;
+    EventPtr* kbdPtr = firstEventPtr;
     while (kbdPtr->next) {
         if (kbdPtr->next == ptr) {
             kbdPtr->next = ptr->next;
@@ -436,7 +440,6 @@ inline KBDDataPtr* Mechy::removeKBDPtr(KBDDataPtr* ptr) {
     return NULL;
 }
 
-bool KBDDataPtr::matches(Layout* layout, uint8_t row, uint8_t col) {
+bool EventPtr::matches(Layout* layout, uint8_t row, uint8_t col) {
     return this->layout == layout && this->row == row && this->col == col;
 }
-
