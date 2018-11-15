@@ -62,7 +62,7 @@ void Mechy::add(uint8_t name, Plugin* plugin) {
     ptr->next = NULL;
     plugin->mechy = this;
 
-    appendPluginPtr(ptr);
+    pushPluginPtr(ptr);
 }
 
 void Mechy::pushLayer(uint8_t layer) {
@@ -393,17 +393,9 @@ void Mechy::clearModifiers() {
     modifiers = 0;
 }
 
-inline void Mechy::appendPluginPtr(PluginPtr* ptr) {
-    if (firstPluginPtr) {
-        PluginPtr* lastPtr = firstPluginPtr;
-        while (lastPtr->next) {
-            lastPtr = lastPtr->next;
-        }
-        lastPtr->next = ptr;
-    }
-    else {
-        firstPluginPtr = ptr;
-    }
+inline void Mechy::pushPluginPtr(PluginPtr* ptr) {
+    ptr->next = firstPluginPtr;
+    firstPluginPtr = ptr;
 }
 
 inline void Mechy::pushResponderPtr(ResponderPtr* ptr) {

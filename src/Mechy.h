@@ -78,7 +78,7 @@ protected:
     void updateLayer(uint8_t layer);
 
 private:
-    inline void appendPluginPtr(PluginPtr* ptr);
+    inline void pushPluginPtr(PluginPtr* ptr);
     inline void pushResponderPtr(ResponderPtr* ptr);
     inline void pushKBDPtr(KBDDataPtr* ptr);
     inline KBDDataPtr* removeKBDPtr(KBDDataPtr* ptr);
