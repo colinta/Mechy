@@ -25,7 +25,10 @@ void Macro::run(Event* event) {
             prev_macro = macro_index;
         }
         else {
+            uint16_t mods = mechy->currentModifiers();
+            mechy->updateModifiers(MCHY_MASK_L_SHIFT);
             Keyboard.print(macros[macro_index]);
+            mechy->updateModifiers(mods);
             prev_macro = count;
         }
     }
