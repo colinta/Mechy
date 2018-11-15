@@ -20,6 +20,7 @@ public:
     MouseKey();
     uint8_t defaultName();
     void begin();
+    bool is(uint8_t event_type, Event* event);
     void run(Event* event);
 };
 

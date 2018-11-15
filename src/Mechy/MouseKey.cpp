@@ -13,22 +13,34 @@ void MouseKey::begin() {
     Mouse.begin();
 }
 
+bool MouseKey::is(uint8_t event_type, Event* UNUSED(event)) {
+    switch (event->key) {
+    case MOUSEKEY_LCLK:
+    case MOUSEKEY_RCLK:
+    case MOUSEKEY_MCLK:
+    case MOUSEKEY_CLK4:
+        return event_type == EVENT_MOUSE;
+    default:
+        return false;
+    }
+}
+
 void MouseKey::run(Event* event) {
     char dx = 0, dy = 0;
     char button;
 
     switch (event->key) {
     case MOUSEKEY_UP:
-        dy = -5;
+        dy = -1;
         goto mouseMove;
     case MOUSEKEY_DOWN:
-        dy = 5;
+        dy = 1;
         goto mouseMove;
     case MOUSEKEY_LEFT:
-        dx = -5;
+        dx = -1;
         goto mouseMove;
     case MOUSEKEY_RIGHT:
-        dx = 5;
+        dx = 1;
         goto mouseMove;
     case MOUSEKEY_LCLK:
         button = MOUSE_LEFT;
@@ -49,11 +61,7 @@ void MouseKey::run(Event* event) {
     return;
 
 mouseMove:
-    if (mechy->currentModifiers() & MCHY_MASK_CTRL) {
-        dy /= 5;
-        dx /= 5;
-    }
-    else if (mechy->currentModifiers() & MCHY_MASK_SHIFT) {
+    if (mechy->currentModifiers() & MCHY_MASK_SHIFT) {
         dy *= 5;
         dx *= 5;
     }

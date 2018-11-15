@@ -61,12 +61,13 @@
 #define MCHY_TRANS    1
 
 /* EVENT TYPES */
-// typical keys (F1, A, ESC, DELETE), except modifiers
+// typical keys (F1, A, ESC, DELETE), but not modifiers
 #define EVENT_KEYPRESS 1
 // Shift, Control, Alt, Gui
 #define EVENT_MODIFIER 2
+#define EVENT_MOUSE 3
 // Mechy internals: Lock, etc
-#define EVENT_META 3
+#define EVENT_META 8
 
 /* EVENT key masks */
 // in general, events have 8bits of "data" and 8bits of "key space"
