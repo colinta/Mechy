@@ -9,7 +9,6 @@ Mechy::Mechy() {
     firstResponderPtr = NULL;
     firstPluginPtr = NULL;
     firstEventPtr = NULL;
-    event = { .key = MCHY_NONE, .keyState = KEY_STATE_NONE, .duration = 0 };
 }
 
 void Mechy::begin() {
@@ -167,9 +166,12 @@ void Mechy::processKeyEvent(Layout* layout, uint8_t row, uint8_t col, bool isPre
 
 void Mechy::runPlugin(uint8_t keyState, KBD* kbd, uint16_t duration) {
     uint8_t keyHandlerName = kbd->name;
-    event.key = kbd->key;
-    event.keyState = keyState;
-    event.duration = duration;
+
+    Event event = {
+        .key = kbd->key,
+        .keyState = keyState,
+        .duration = duration
+    };
 
     PluginPtr* ptr = firstPluginPtr;
     Plugin* plugin = NULL;

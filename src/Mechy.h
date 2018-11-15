@@ -68,7 +68,6 @@ public:
     EventPtr* events();
 
 protected:
-    Event event;
     LayerStackPtr* layerStackPtr;
     ResponderPtr* firstResponderPtr;
     PluginPtr* firstPluginPtr;
