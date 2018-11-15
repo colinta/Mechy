@@ -24,7 +24,7 @@ public:
     Sticky();
     uint8_t defaultName();
     void tick();
-    bool override(uint8_t name, Event* event);
+    bool override(uint8_t name, Event* event, Plugin* plugin);
     void run(Event* event);
 
 protected:

@@ -167,23 +167,28 @@ void Mechy::runPlugin(uint8_t keyState, KBD* kbd, uint16_t duration) {
     event.keyState = keyState;
     event.duration = duration;
 
+    PluginPtr* ptr = firstPluginPtr;
+    Plugin* plugin = NULL;
+    while (ptr) {
+        if (ptr->name == keyHandlerName) {
+            plugin = ptr->plugin;
+            break;
+        }
+        ptr = ptr->next;
+    }
+    if (!plugin)  return;
+
     bool processing = KBD_CONTINUE;
     if (keyState == KEY_STATE_PRESSED) {
-        PluginPtr* ptr = firstPluginPtr;
+        ptr = firstPluginPtr;
         while (ptr) {
-            processing = ptr->plugin->override(keyHandlerName, &event) && processing;
+            processing = ptr->plugin->override(keyHandlerName, &event, plugin) && processing;
             ptr = ptr->next;
         }
     }
 
     if (processing == KBD_CONTINUE) {
-        PluginPtr* ptr = firstPluginPtr;
-        while (ptr) {
-            if (ptr->name == keyHandlerName) {
-                ptr->plugin->run(&event);
-            }
-            ptr = ptr->next;
-        }
+        plugin->run(&event);
     }
 
     // changes to event.key need to be treated as "data storage"

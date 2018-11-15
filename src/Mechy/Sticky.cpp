@@ -29,7 +29,7 @@ void Sticky::tick() {
     }
 }
 
-bool Sticky::override(uint8_t name, Event* event) {
+bool Sticky::override(uint8_t name, Event* event, Plugin* UNUSED(plugin)) {
     if (name != FN_STICKY && event->isPressed() && (hyper_state || sticky_state)) {
         should_clear = true;
     }

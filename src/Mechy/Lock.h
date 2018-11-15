@@ -11,7 +11,7 @@ class Lock: public Plugin {
 public:
     Lock();
     uint8_t defaultName();
-    bool override(uint8_t name, Event* event);
+    bool override(uint8_t name, Event* event, Plugin* plugin);
     void run(Event* event);
 
 protected:
