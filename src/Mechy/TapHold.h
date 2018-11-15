@@ -38,5 +38,5 @@ protected:
     static TapHoldKey* keyPtrStack;
 };
 
-#define TH(k1, k2) { .name = FN_TAP_HOLD, .key = TapHold::add(k1, k2, TH_PRESS) }
-#define LT(k1, k2) { .name = FN_TAP_HOLD, .key = TapHold::add(k1, k2, TH_MODIFIER) }
+#define TH(tap, hold) { .name = FN_TAP_HOLD, .key = TapHold::add(tap, hold, TH_PRESS) }
+#define LT(hold, tap) { .name = FN_TAP_HOLD, .key = TapHold::add(tap, hold, TH_MODIFIER) }
