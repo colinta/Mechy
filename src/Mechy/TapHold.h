@@ -17,7 +17,6 @@ struct TapHoldKey {
 };
 
 struct TapHoldEvent {
-    bool isActive;
     KBD tapKey;
     KBD holdKey;
     THBehavior behavior;

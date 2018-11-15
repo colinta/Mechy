@@ -59,6 +59,24 @@
 #define MCHY_NONE     0
 #define MCHY_TRANS    1
 
+/* EVENT TYPES */
+// typical keys (F1, A, ESC, DELETE), except modifiers
+#define EVENT_KEYPRESS 1
+// Shift, Control, Alt, Gui
+#define EVENT_MODIFIER 2
+// Mechy internals: Lock, etc
+#define EVENT_META 3
+
+/* EVENT key masks */
+// in general, events have 8bits of "data" and 8bits of "key space"
+#define EVENT_KEY_MASK  0b0000000011111111
+#define EVENT_PLUG_MASK 0b1111111100000000
+// to encourage "best practices" here are some bit masks:
+#define EVENT_IS_ACTIVE 0b0010000000000000
+#define isEventActive(e) (e->key & EVENT_IS_ACTIVE)
+#define onEventActive(e) (e->key |= EVENT_IS_ACTIVE)
+#define offEventActive(e) (e->key &= ~(EVENT_IS_ACTIVE))
+
 #define MCHY_MASK_L_SHIFT 0b0000000000000011
 #define MCHY_BITL_L_SHIFT                  0
 #define MCHY_MASK_R_SHIFT 0b0000000000001100

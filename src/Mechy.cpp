@@ -185,6 +185,9 @@ void Mechy::runPlugin(uint8_t keyState, KBD* kbd, uint16_t duration) {
             ptr = ptr->next;
         }
     }
+
+    // changes to event.key need to be treated as "data storage"
+    kbd->key = event.key;
 }
 
 bool Mechy::isCapsOn() {
