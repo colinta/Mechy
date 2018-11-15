@@ -30,16 +30,17 @@ void TapHold::begin() {
 void TapHold::run(Event* event) {
     TapHoldEvent* keyPtr = eventArray + event->key;
 
+    if (event->isPressed()) {
+        onEventActive(event);
+    }
+
     switch (keyPtr->behavior) {
     case TH_PRESS:
         goto runPress;
     case TH_MODIFIER:
         goto runModifier;
     }
-
-    if (event->isPressed()) {
-        onEventActive(event);
-    }
+    return;
 
 runPress:
     if (event->isPressed()) {

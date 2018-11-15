@@ -7,8 +7,8 @@ class KeyPress: public Plugin {
 public:
     KeyPress();
     uint8_t defaultName();
-    void run(Event* event);
     bool is(uint8_t event_type, Event* event);
+    void run(Event* event);
 
 protected:
 };
