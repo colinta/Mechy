@@ -56,12 +56,14 @@ void loop() {
 
 ###### KeyPress
 
-The most basic plugin, sends any printable key press and modifiers, also supports HYPER (⌘⌥⌃⇧), MEH (⌥⌃⇧), and CAG (⌘⌥⌃) keys.
+The most basic plugin, sends any printable key press and modifiers, also supports HYPER (⌘⌥⌃⇧), MEH (⌥⌃⇧), and CAG (⌘⌥⌃) keys, and keyboard chords.
 
 ```c++
 #include <Mechy/KeyPress.h>
 
-KBD mainKeys[] = { KC_ESC, KC_A, KC_LSFT };
+// define a custom "cmd+tab" key:
+#define CMD_TAB KC(LGUI(KEY_TAB))
+KBD mainKeys[] = { KC_ESC, KC_A, CMD_TAB };
 ```
 
 See [KeyPress.h](https://github.com/colinta/Mechy/blob/master/src/Mechy/KeyPress.h#L17) for defined keys.
@@ -113,9 +115,6 @@ Also I don't have much support for "transparent" keys.  If you use the `vvvv` ma
 
 KBD mainKeys[] = { GOTO_1, GOTO_2, GOTO_3 };
 //    a.k.a.     { LOWER , RAISE , GOTO_3 };
-
-Mechy mechy = Mechy();
-mechy.add(new GotoLayer());
 ```
 
 See [GotoLayer.h](https://github.com/colinta/Mechy/blob/master/src/Mechy/GotoLayer.h#16) for defined keys.
@@ -128,16 +127,13 @@ A super simple Plugin, I wrote it as an early exercise.  This plugin listens for
 #include <Mechy/Lock.h>
 
 KBD mainKeys[] = { LK_1, LK_2 };
-
-Mechy mechy = Mechy();
-mechy.add(new Lock());
 ```
 
 See [Lock.h](https://github.com/colinta/Mechy/blob/master/src/Mechy/Lock.h#L15) for defined keys (it's only those two, so don't get excited).
 
 ###### Macro
 
-This is only for password macros at the moment, but I'd like to add support for key macros like `GUI+SHIFT+4` (screenshot on macOS), etc.
+This is only for password macros at the moment. To do keyboard macros like `CMD+SHIFT+4` you can use KeyPress.
 
 ```c++
 #include <Mechy/Macro.h>
