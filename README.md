@@ -56,7 +56,7 @@ void loop() {
 
 ###### KeyPress
 
-The most basic plugin, sends any printable key press and modifiers, also supports HYPER (⌘⌥⌃⇧), MEH (⌥⌃⇧), and NAV (⌘⌥⌃) keys.
+The most basic plugin, sends any printable key press and modifiers, also supports HYPER (⌘⌥⌃⇧), MEH (⌥⌃⇧), and CAG (⌘⌥⌃) keys.
 
 ```c++
 #include <Mechy/KeyPress.h>
@@ -106,7 +106,7 @@ Obviously it changes layers!  This is only the key listener part, to define mult
 
 I've only just finished this one, right now it only supports "hold for another layer", i.e. while the key is pressed it will activate another layer, when you release the key you'll bounce back to the previous layer.
 
-Also I don't have much support for "transitive" keys.  If you use the `vvvv` macro you can cascade up to the main/first layer, but that's all.  In the future I'd like to change this to support lots of layer pushing/popping features.
+Also I don't have much support for "transparent" keys.  If you use the `vvvv` macro you can cascade up to the main/first layer, but that's all.  In the future I'd like to change this to support lots of layer pushing/popping features.
 
 ```c++
 #include <Mechy/GotoLayer.h>
@@ -163,7 +163,7 @@ Good luck with this one, it's my own very opinionated version of how "sticky mod
 2. Press and hold the modifier and it will just work like a normal modifier.  This makes it easy to Command+click or to decide "nevermind I *don't* want to activate the modifier".
 3. Double tap the modifier to lock it, press it again to unlock it.
 
-Also supports HYPER, MEH, and NAV keys.  Btw the "nav" chord is my own invention, I couldn't find a name for it - it's the three modifiers at the bottom of an Apple keyboard, and I've always used them for window management commands.
+Also supports HYPER, MEH, and CAG keys.
 
 ###### Layout
 

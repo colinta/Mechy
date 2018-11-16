@@ -21,7 +21,7 @@ KBD keys[ROWS][COLS] = {
     {  LK_1 , LK_2,   KC_SFT, KC_GUI  },
     // sticky keys - hyper is ctrl+alt+gui
     {  ST_CTL , ST_ALT, ST_GUI, ST_HYPER  },
-    // no-op and transitive keys (for when using layers)
+    // no-op and transparent keys (for when using layers)
     { ____, vvvv, vvvv, ____}
 };
 
