@@ -7,7 +7,9 @@ enum {
     STK_CTL,
     STK_ALT,
     STK_GUI,
-    HYPER,
+    STK_HYP,
+    STK_MEH,
+    STK_NAV,
 };
 
 
@@ -29,8 +31,6 @@ public:
 
 protected:
     bool should_clear;
-    bool hyper_state;
-    bool hyper_down;
     uint8_t mods_down_state;
     uint8_t sticky_state;
     uint8_t sticky_lock;
@@ -49,4 +49,7 @@ protected:
 #define ST_CTL { .name = FN_STICKY, .key = STK_CTL }
 #define ST_ALT { .name = FN_STICKY, .key = STK_ALT }
 #define ST_GUI { .name = FN_STICKY, .key = STK_GUI }
-#define ST_HYP { .name = FN_STICKY, .key = HYPER }
+
+#define ST_HYP { .name = FN_STICKY, .key = STK_HYP }
+#define ST_MEH { .name = FN_STICKY, .key = STK_MEH }
+#define ST_NAV { .name = FN_STICKY, .key = STK_NAV }

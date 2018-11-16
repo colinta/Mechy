@@ -204,6 +204,8 @@ bool Mechy::isCapsOn() {
 }
 
 void Mechy::pressKey(uint8_t key) {
+    if (!key)  return;  // key 0 is an exlicipt NOOP
+
     switch (key) {
     case KEY_LEFT_CTRL:
         pressModifier(MOD_LCTL);
@@ -238,6 +240,8 @@ void Mechy::pressKey(uint8_t key) {
 }
 
 void Mechy::releaseKey(uint8_t key) {
+    if (!key)  return;  // key 0 is an exlicipt NOOP
+
     switch (key) {
     case KEY_LEFT_CTRL:
         releaseModifier(MOD_LCTL);

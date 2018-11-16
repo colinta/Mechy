@@ -9,8 +9,6 @@
 
 
 Sticky::Sticky() {
-    hyper_state = 0;
-    hyper_down = 0;
     mods_down_state = 0;
     sticky_state = 0;
     sticky_lock = 0;
@@ -30,64 +28,52 @@ void Sticky::tick() {
 }
 
 bool Sticky::override(uint8_t UNUSED(name), Event* event, Plugin* plugin) {
-    if ((plugin->is(EVENT_KEYPRESS, event) || plugin->is(EVENT_MOUSE, event)) && (hyper_state || sticky_state)) {
+    // uint16_t mods = mechy->currentModifiers();
+    // mechy->clearModifiers();
+    // Keyboard.println("in Sticky::override");
+    if ((plugin->is(EVENT_KEYPRESS, event) || plugin->is(EVENT_MOUSE, event)) && (sticky_state)) {
         should_clear = true;
     }
+    // Keyboard.println("done Sticky::override");
+    // mechy->updateModifiers(mods);
     return KBD_CONTINUE;
 }
 
 void Sticky::run(Event* event) {
-    uint8_t modkey_mask = 0;
-    switch (event->key) {
-        case STK_SFT:
-        case STK_CTL:
-        case STK_ALT:
-        case STK_GUI:
-            modkey_mask = modBit(event->key);
-            break;
-        case HYPER:
-            if (event->isPressed()) {
-                sticky_state = 0;
-                sticky_lock = 0;
-                hyper_state = !hyper_state;
-            }
-            hyper_down = event->isDown();
-            break;
-    }
+    uint8_t modkey_mask = modBit(event->key);
+    if (!modkey_mask)  return;
 
-    if (modkey_mask) {
-        if (event->isPressed()) {
-            if (sticky_lock & modkey_mask) {
-                sticky_state &= ~modkey_mask;
-                sticky_lock  &= ~modkey_mask;
-            }
-            else if (sticky_state & modkey_mask) {
-                 if ((millis() - sticky_lock_timer) < STICKY_LOCK_DELAY) {
-                    sticky_lock |= modkey_mask;
-                }
-                else {
-                    sticky_state &= ~modkey_mask;
-                }
+    if (event->isPressed()) {
+        if (sticky_lock & modkey_mask) {
+            sticky_state &= ~modkey_mask;
+            sticky_lock  &= ~modkey_mask;
+        }
+        else if ((sticky_state & modkey_mask) == modkey_mask) {
+             if ((millis() - sticky_lock_timer) < STICKY_LOCK_DELAY) {
+                sticky_lock |= modkey_mask;
             }
             else {
-                sticky_state |= modkey_mask;
-                sticky_auto_off_timer = millis();
+                sticky_state &= ~modkey_mask;
             }
-
-            mods_down_state |= modkey_mask;
         }
-        else if (event->isHeld() && event->duration > STICKY_AUTO_OFF) {
-            sticky_state &= ~modkey_mask;
+        else {
+            sticky_state |= modkey_mask;
+            sticky_auto_off_timer = millis();
         }
-        else if (event->isReleased()) {
-            if (sticky_state & modkey_mask) {
-                sticky_lock_timer = millis();
-            }
-            mods_down_state &= ~modkey_mask;
 
-            if (!mods_down_state) {
-                sticky_auto_off_timer = 0;
-            }
+        mods_down_state |= modkey_mask;
+    }
+    else if (event->isHeld() && event->duration > STICKY_AUTO_OFF) {
+        sticky_state &= ~modkey_mask;
+    }
+    else if (event->isReleased()) {
+        if (sticky_state & modkey_mask) {
+            sticky_lock_timer = millis();
+        }
+        mods_down_state &= ~modkey_mask;
+
+        if (!mods_down_state) {
+            sticky_auto_off_timer = 0;
         }
     }
 
@@ -101,14 +87,14 @@ uint8_t Sticky::modBit(uint16_t key) {
         case STK_CTL: case KEY_LEFT_CTRL:   return KEY_BIT_LCTL;
         case STK_ALT: case KEY_LEFT_ALT:    return KEY_BIT_LALT;
         case STK_GUI: case KEY_LEFT_GUI:    return KEY_BIT_LGUI;
+        case STK_HYP:    return KEY_BIT_LSFT | KEY_BIT_LGUI | KEY_BIT_LCTL | KEY_BIT_LALT;
+        case STK_MEH:    return KEY_BIT_LSFT | KEY_BIT_LCTL | KEY_BIT_LALT;
+        case STK_NAV:    return KEY_BIT_LGUI | KEY_BIT_LCTL | KEY_BIT_LALT;
     }
     return 0;
 }
 
 uint8_t Sticky::currentMods() {
-    if (hyper_state || hyper_down) {
-        return KEY_BIT_LCTL | KEY_BIT_LALT | KEY_BIT_LGUI;
-    }
     return mods_down_state | sticky_state | sticky_lock;
 }
 
@@ -135,6 +121,5 @@ void Sticky::updateMods() {
 
 void Sticky::clearStickyMods() {
     sticky_state = 0;
-    hyper_state = false;
     updateMods();
 }

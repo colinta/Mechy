@@ -9,10 +9,10 @@ uint8_t KeyPress::defaultName() {
 }
 
 bool KeyPress::is(uint8_t event_type, Event* event) {
-    // does this key have modifiers (meaning it is usually not *itself* a
-    // modifier)?  if so, match EVENT_MODIFIER
+    // does this key have modifiers in the data channel?  if so, match EVENT_MODIFIER
     if (event->key & DATA_MOD_ANY && event_type == EVENT_MODIFIER)  return true;
-    // is this a modifier key?  only match EVENT_MODIFIER
+
+    // is this a single modifier key?  only match EVENT_MODIFIER
     else if (
         event->key == KEY_LEFT_SHIFT ||
         event->key == KEY_LEFT_CTRL ||
@@ -25,8 +25,9 @@ bool KeyPress::is(uint8_t event_type, Event* event) {
     {
         return event_type == EVENT_MODIFIER;
     }
-    // all other keys - with or without modifiers - match EVENT_KEYPRESS
-    return event_type == EVENT_KEYPRESS;
+
+    // lastly if there is anything in the key mask, match EVENT_KEYPRESS
+    return (event->key & EVENT_KEY_MASK) && event_type == EVENT_KEYPRESS;
 }
 
 void KeyPress::run(Event* event) {

@@ -37,11 +37,12 @@ The heart of it all!  Create a Mechy instance, `add()` your plugins, `attach()` 
 
 ```c++
 Mechy mechy = Mechy();
-// create scanner
-// create plugins
+// Create a scanner with your keys array or Layout.  This class will generate events and send them to Mechy.
+Scanner scanner = Scanner(keys, pinRows, pinCols, ROWS, COLS);
 
 void setup() {
-  mechy.add(plugin);
+  // add all your plugins
+  mechy.add(new KeyPress());
 
   mechy.attach(scanner);  // and attach(receiver) if you have a split keyboard
 
@@ -55,20 +56,12 @@ void loop() {
 
 ###### KeyPress
 
-The most basic plugin, sends any printable key press and basic modifiers.
+The most basic plugin, sends any printable key press and modifiers, also supports HYPER (⌘⌥⌃⇧), MEH (⌥⌃⇧), and NAV (⌘⌥⌃) keys.
 
 ```c++
 #include <Mechy/KeyPress.h>
 
 KBD mainKeys[] = { KC_ESC, KC_A, KC_LSFT };
-
-Mechy mechy = Mechy();
-KeyPress keypress = KeyPress();
-mechy.add(&keypress)
-
-// or if you prefer:
-Mechy mechy = Mechy();
-mechy.add(new KeyPress());
 ```
 
 See [KeyPress.h](https://github.com/colinta/Mechy/blob/master/src/Mechy/KeyPress.h#L17) for defined keys.
@@ -77,15 +70,12 @@ See [KeyPress.h](https://github.com/colinta/Mechy/blob/master/src/Mechy/KeyPress
 
 Send play, pause, volume, track change keys.  I've only tested on macOS.
 
-Btw this plugin uses the "ArduinoMedia" Library at https://github.com/colinta/ArduinoMedia, I maintain this library but it's just a copy of some code I found online.  I'm not entirely sure where I found it actually...
+Btw this plugin uses the "ArduinoMedia" Library at https://github.com/colinta/ArduinoMedia. I maintain this library but it's just a copy of code I found in https://github.com/Nicohood/HID
 
 ```c++
 #include <Mechy/MediaKey.h>
 
 KBD mainKeys[] = { MD_PLAY, MD_VOLU, MD_FFD };
-
-Mechy mechy = Mechy();
-mechy.add(new MediaKey());
 ```
 
 See [Media.h](https://github.com/colinta/Mechy/blob/master/src/Mechy/Media.h#L15) for defined keys.
@@ -147,11 +137,13 @@ See [Macro.h](https://github.com/colinta/Mechy/blob/master/src/Mechy/Macro.h#L21
 
 ###### Sticky
 
-Good luck with this one, it's my own very opinionated version of how "sticky modifier keys" should work.
+Good luck with this one, it's my own very opinionated version of how "sticky modifier keys" should work.  But basically the same spirit as "One shot" keys in QMK.
 
 1. Press the modifier key once to activate it, then press any key to send "mod+key" and the modifier will be deactivated afterwards.
 2. Press and hold the modifier and it will just work like a normal modifier.  This makes it easy to Command+click or to decide "nevermind I *don't* want to activate the modifier".
 3. Double tap the modifier to lock it, press it again to unlock it.
+
+Also supports HYPER, MEH, and NAV keys.  Btw the "nav" chord is my own invention, I couldn't find a name for it - it's the three modifiers at the bottom of an Apple keyboard, and I've always used them for window management commands.
 
 ###### Layout
 
