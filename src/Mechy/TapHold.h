@@ -8,12 +8,12 @@ enum THBehavior {
     TH_MODIFIER,
 };
 
-struct TapHoldKey {
+struct TapHoldKeyList {
     uint8_t keyIndex;
     KBD tapKey;
     KBD holdKey;
     THBehavior behavior;
-    TapHoldKey* next;
+    TapHoldKeyList* next;
 };
 
 struct TapHoldEvent {
@@ -34,8 +34,9 @@ public:
 protected:
     static uint8_t keys;
     TapHoldEvent* eventArray;
-    static TapHoldKey* keyPtrStack;
+    static TapHoldKeyList* keyPtrStack;
 };
 
 #define TH(tap, hold) { .name = FN_TAP_HOLD, .key = TapHold::add(tap, hold, TH_PRESS) }
 #define LT(hold, tap) { .name = FN_TAP_HOLD, .key = TapHold::add(tap, hold, TH_MODIFIER) }
+#define MT(hold, tap) { .name = FN_TAP_HOLD, .key = TapHold::add(tap, hold, TH_MODIFIER) }

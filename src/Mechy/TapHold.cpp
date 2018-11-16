@@ -5,6 +5,14 @@
 #define TAPHOLD_DELAY 250
 #endif
 
+inline void sendKeyEvent(Mechy* mechy, uint16_t modifierSnapshot, KBD* kbd) {
+    uint16_t mods = mechy->currentModifiers();
+    mechy->updateModifiers(modifierSnapshot);
+    mechy->runPlugin(KEY_STATE_PRESSED, kbd, 0);
+    mechy->runPlugin(KEY_STATE_RELEASED, kbd, 1);
+    mechy->updateModifiers(mods);
+}
+
 TapHold::TapHold() {
     eventArray = NULL;
 }
@@ -15,14 +23,16 @@ uint8_t TapHold::defaultName() {
 
 void TapHold::begin() {
     TapHoldEvent* array = (TapHoldEvent*)malloc(sizeof(TapHoldEvent) * TapHold::keys);
-    TapHoldKey* ptr = TapHold::keyPtrStack;
+    TapHoldKeyList* ptr = TapHold::keyPtrStack;
+    TapHoldKeyList* next = NULL;
     while (ptr) {
         array[ptr->keyIndex].tapKey = ptr->tapKey;
         array[ptr->keyIndex].holdKey = ptr->holdKey;
         array[ptr->keyIndex].behavior = ptr->behavior;
         array[ptr->keyIndex].modifierSnapshot = 0;
+        next = ptr->next;
         free(ptr);
-        ptr = ptr->next;
+        ptr = next;
     }
     eventArray = array;
 }
@@ -51,19 +61,11 @@ runPress:
     }
     else if (isEventActive(event)) {
         if (event->isHeld() && event->duration > TAPHOLD_DELAY) {
-            uint16_t mods = mechy->currentModifiers();
-            mechy->updateModifiers(keyPtr->modifierSnapshot);
-            mechy->runPlugin(KEY_STATE_PRESSED, &keyPtr->holdKey, 0);
-            mechy->runPlugin(KEY_STATE_RELEASED, &keyPtr->holdKey, 1);
-            mechy->updateModifiers(mods);
+            sendKeyEvent(mechy, keyPtr->modifierSnapshot, &keyPtr->holdKey);
             unsetEventActive(event);
         }
         else if (event->isReleased()) {
-            uint16_t mods = mechy->currentModifiers();
-            mechy->updateModifiers(keyPtr->modifierSnapshot);
-            mechy->runPlugin(KEY_STATE_PRESSED, &keyPtr->tapKey, 0);
-            mechy->runPlugin(KEY_STATE_RELEASED, &keyPtr->tapKey, 1);
-            mechy->updateModifiers(mods);
+            sendKeyEvent(mechy, keyPtr->modifierSnapshot, &keyPtr->tapKey);
             unsetEventActive(event);
         }
     }
@@ -93,7 +95,7 @@ runModifier:
 
 uint16_t TapHold::add(KBD tapKey, KBD holdKey, THBehavior behavior) {
     uint8_t keyIndex = TapHold::keys;
-    TapHoldKey* ptr = (TapHoldKey*)malloc(sizeof(TapHoldKey));
+    TapHoldKeyList* ptr = (TapHoldKeyList*)malloc(sizeof(TapHoldKeyList));
     ptr->keyIndex = keyIndex;
     ptr->tapKey = tapKey;
     ptr->holdKey = holdKey;
@@ -105,4 +107,4 @@ uint16_t TapHold::add(KBD tapKey, KBD holdKey, THBehavior behavior) {
 }
 
 uint8_t TapHold::keys = 0;
-TapHoldKey* TapHold::keyPtrStack = NULL;
+TapHoldKeyList* TapHold::keyPtrStack = NULL;
