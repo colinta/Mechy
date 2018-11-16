@@ -55,6 +55,7 @@
 #define FN_GOTO_LAYER 6
 #define FN_TAP_HOLD   7
 #define FN_MOUSE_KEY  8
+#define FN_AUTO_SHIFT 9
 #define FN_USER_0    128
 
 #define MCHY_NONE     0
