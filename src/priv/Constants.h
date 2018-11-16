@@ -72,37 +72,38 @@
 /* EVENT key masks */
 // in general, events have 8bits of "data" and 8bits of "key space"
 #define EVENT_KEY_MASK  0b0000000011111111
-#define EVENT_PLUG_MASK 0b1111111100000000
+#define EVENT_DATA_MASK 0b1111111100000000
+
 // to encourage "best practices" here are some bit masks:
 #define EVENT_IS_ACTIVE 0b0010000000000000
 #define isEventActive(e) (e->key & EVENT_IS_ACTIVE)
-#define onEventActive(e) (e->key |= EVENT_IS_ACTIVE)
-#define offEventActive(e) (e->key &= ~(EVENT_IS_ACTIVE))
+#define setEventActive(e) (e->key |= EVENT_IS_ACTIVE)
+#define unsetEventActive(e) (e->key &= ~(EVENT_IS_ACTIVE))
 
 /* modifier masks that are used by Mechy */
-#define MCHY_MASK_L_SHIFT 0b0000000000000011
-#define MCHY_BITL_L_SHIFT                  0
-#define MCHY_MASK_R_SHIFT 0b0000000000001100
-#define MCHY_BITL_R_SHIFT                2
-#define MCHY_MASK_SHIFT   0b0000000000001111
+#define MOD_LSFT       0b0000000000000011
+#define MOD_BITL_LSFT                   0
+#define MOD_RSFT       0b0000000000001100
+#define MOD_BITL_RSFT                 2
+#define MOD_SHIFT      0b0000000000001111
 
-#define MCHY_MASK_L_CTRL  0b0000000000110000
-#define MCHY_BITL_L_CTRL               4
-#define MCHY_MASK_R_CTRL  0b0000000011000000
-#define MCHY_BITL_R_CTRL             6
-#define MCHY_MASK_CTRL    0b0000000011110000
+#define MOD_LCTL       0b0000000000110000
+#define MOD_BITL_LCTL               4
+#define MOD_RCTL       0b0000000011000000
+#define MOD_BITL_RCTL             6
+#define MOD_CTRL       0b0000000011110000
 
-#define MCHY_MASK_L_ALT   0b0000001100000000
-#define MCHY_BITL_L_ALT            8
-#define MCHY_MASK_R_ALT   0b0000110000000000
-#define MCHY_BITL_R_ALT         10
-#define MCHY_MASK_ALT     0b0000111100000000
+#define MOD_LALT       0b0000001100000000
+#define MOD_BITL_LALT           8
+#define MOD_RALT       0b0000110000000000
+#define MOD_BITL_RALT        10
+#define MOD_ALT        0b0000111100000000
 
-#define MCHY_MASK_L_GUI   0b0011000000000000
-#define MCHY_BITL_L_GUI       12
-#define MCHY_MASK_R_GUI   0b1100000000000000
-#define MCHY_BITL_R_GUI     14
-#define MCHY_MASK_GUI     0b1111000000000000
+#define MOD_LGUI       0b0011000000000000
+#define MOD_BITL_LGUI      12
+#define MOD_RGUI       0b1100000000000000
+#define MOD_BITL_RGUI    14
+#define MOD_GUI        0b1111000000000000
 
 /* user defined key macros */
 #define FN_USER(n)  (FN_USER_0 + n)

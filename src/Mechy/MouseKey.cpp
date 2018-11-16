@@ -61,7 +61,7 @@ void MouseKey::run(Event* event) {
     return;
 
 mouseMove:
-    if (mechy->currentModifiers() & MCHY_MASK_SHIFT) {
+    if (mechy->currentModifiers() & MOD_SHIFT) {
         dy *= 5;
         dx *= 5;
     }

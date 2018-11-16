@@ -54,8 +54,10 @@ public:
 
     bool isCapsOn();
 
-    void sendKeyboardPress(uint8_t k);
-    void sendKeyboardRelease(uint8_t k);
+    void pressKey(uint8_t k);
+    void pressModifier(uint16_t k);
+    void releaseKey(uint8_t k);
+    void releaseModifier(uint16_t k);
 
     uint16_t currentModifiers();
     void updateModifiers(uint16_t mchyModifiers);

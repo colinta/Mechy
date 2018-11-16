@@ -31,7 +31,7 @@ void TapHold::run(Event* event) {
     TapHoldEvent* keyPtr = eventArray + (event->key & EVENT_KEY_MASK);
 
     if (event->isPressed()) {
-        onEventActive(event);
+        setEventActive(event);
     }
 
     switch (keyPtr->behavior) {
@@ -40,7 +40,7 @@ void TapHold::run(Event* event) {
     case TH_MODIFIER:
         goto runModifier;
     default:
-        offEventActive(event);
+        unsetEventActive(event);
     }
 
     return;
@@ -56,7 +56,7 @@ runPress:
             mechy->runPlugin(KEY_STATE_PRESSED, &keyPtr->holdKey, 0);
             mechy->runPlugin(KEY_STATE_RELEASED, &keyPtr->holdKey, 1);
             mechy->updateModifiers(mods);
-            offEventActive(event);
+            unsetEventActive(event);
         }
         else if (event->isReleased()) {
             uint16_t mods = mechy->currentModifiers();
@@ -64,7 +64,7 @@ runPress:
             mechy->runPlugin(KEY_STATE_PRESSED, &keyPtr->tapKey, 0);
             mechy->runPlugin(KEY_STATE_RELEASED, &keyPtr->tapKey, 1);
             mechy->updateModifiers(mods);
-            offEventActive(event);
+            unsetEventActive(event);
         }
     }
     return;
@@ -72,7 +72,7 @@ runPress:
 runModifier:
     if (isEventActive(event) && event->isHeld() && event->duration > TAPHOLD_DELAY) {
         mechy->runPlugin(KEY_STATE_PRESSED, &keyPtr->holdKey, 0);
-        offEventActive(event);
+        unsetEventActive(event);
     }
     else if (event->isHeld() && event->duration > TAPHOLD_DELAY) {
         mechy->runPlugin(KEY_STATE_HELD, &keyPtr->holdKey, event->duration - TAPHOLD_DELAY);
@@ -86,7 +86,7 @@ runModifier:
         mechy->runPlugin(KEY_STATE_PRESSED, &keyPtr->tapKey, 0);
         mechy->runPlugin(KEY_STATE_RELEASED, &keyPtr->tapKey, 1);
         mechy->updateModifiers(mods);
-        offEventActive(event);
+        unsetEventActive(event);
     }
     return;
 }

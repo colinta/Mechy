@@ -203,113 +203,171 @@ bool Mechy::isCapsOn() {
     return capsIsOn;
 }
 
-void Mechy::sendKeyboardPress(uint8_t key) {
-    uint16_t modMask = 0;
-    uint16_t modShft = 0;
+void Mechy::pressKey(uint8_t key) {
     switch (key) {
     case KEY_LEFT_CTRL:
-        modMask = MCHY_MASK_L_CTRL;
-        modShft = MCHY_BITL_L_CTRL;
-        break;
+        pressModifier(MOD_LCTL);
+        return;
     case KEY_RIGHT_CTRL:
-        modMask = MCHY_MASK_R_CTRL;
-        modShft = MCHY_BITL_R_CTRL;
-        break;
+        pressModifier(MOD_RCTL);
+        return;
     case KEY_LEFT_ALT:
-        modMask = MCHY_MASK_L_ALT;
-        modShft = MCHY_BITL_L_ALT;
-        break;
+        pressModifier(MOD_LALT);
+        return;
     case KEY_RIGHT_ALT:
-        modMask = MCHY_MASK_R_ALT;
-        modShft = MCHY_BITL_R_ALT;
-        break;
+        pressModifier(MOD_RALT);
+        return;
     case KEY_LEFT_GUI:
-        modMask = MCHY_MASK_L_GUI;
-        modShft = MCHY_BITL_L_GUI;
-        break;
+        pressModifier(MOD_LGUI);
+        return;
     case KEY_RIGHT_GUI:
-        modMask = MCHY_MASK_R_GUI;
-        modShft = MCHY_BITL_R_GUI;
-        break;
+        pressModifier(MOD_RGUI);
+        return;
     case KEY_LEFT_SHIFT:
-        modMask = MCHY_MASK_L_SHIFT;
-        modShft = MCHY_BITL_L_SHIFT;
-        break;
+        pressModifier(MOD_LSFT);
+        return;
     case KEY_RIGHT_SHIFT:
-        modMask = MCHY_MASK_R_SHIFT;
-        modShft = MCHY_BITL_R_SHIFT;
-        break;
+        pressModifier(MOD_RSFT);
+        return;
     case KEY_CAPS_LOCK:
         capsIsOn = !capsIsOn;
         break;
     }
 
-    if (modMask) {
-        uint16_t count = (modifiers & modMask) >> modShft;
-        if (count < 3) {
-            count += 1;
-            modifiers |= (count << modShft);
-            if (count == 1) {
-                Keyboard.press(key);
-            }
-        }
+    Keyboard.press(key);
+}
+
+void Mechy::releaseKey(uint8_t key) {
+    switch (key) {
+    case KEY_LEFT_CTRL:
+        releaseModifier(MOD_LCTL);
+        return;
+    case KEY_RIGHT_CTRL:
+        releaseModifier(MOD_RCTL);
+        return;
+    case KEY_LEFT_ALT:
+        releaseModifier(MOD_LALT);
+        return;
+    case KEY_RIGHT_ALT:
+        releaseModifier(MOD_RALT);
+        return;
+    case KEY_LEFT_GUI:
+        releaseModifier(MOD_LGUI);
+        return;
+    case KEY_RIGHT_GUI:
+        releaseModifier(MOD_RGUI);
+        return;
+    case KEY_LEFT_SHIFT:
+        releaseModifier(MOD_LSFT);
+        return;
+    case KEY_RIGHT_SHIFT:
+        releaseModifier(MOD_RSFT);
+        return;
     }
-    else {
-        Keyboard.press(key);
+
+    Keyboard.release(key);
+}
+
+void Mechy::pressModifier(uint16_t modMask) {
+    uint16_t key = 0;
+    uint16_t modShft = 0;
+    switch (modMask) {
+    case MOD_LCTL:
+        key = KEY_LEFT_CTRL;
+        modShft = MOD_BITL_LCTL;
+        break;
+    case MOD_RCTL:
+        key = KEY_RIGHT_CTRL;
+        modShft = MOD_BITL_RCTL;
+        break;
+    case MOD_LALT:
+        key = KEY_LEFT_ALT;
+        modShft = MOD_BITL_LALT;
+        break;
+    case MOD_RALT:
+        key = KEY_RIGHT_ALT;
+        modShft = MOD_BITL_RALT;
+        break;
+    case MOD_LGUI:
+        key = KEY_LEFT_GUI;
+        modShft = MOD_BITL_LGUI;
+        break;
+    case MOD_RGUI:
+        key = KEY_RIGHT_GUI;
+        modShft = MOD_BITL_RGUI;
+        break;
+    case MOD_LSFT:
+        key = KEY_LEFT_SHIFT;
+        modShft = MOD_BITL_LSFT;
+        break;
+    case MOD_RSFT:
+        key = KEY_RIGHT_SHIFT;
+        modShft = MOD_BITL_RSFT;
+        break;
+    default:
+        return;
+    }
+
+    uint16_t count = (modifiers & modMask) >> modShft;
+    if (count < 3) {
+        count += 1;
+        modifiers |= (count << modShft);
+        if (count == 1) {
+            Keyboard.press(key);
+        }
     }
 }
 
-void Mechy::sendKeyboardRelease(uint8_t key) {
-    uint16_t modMask = 0;
+void Mechy::releaseModifier(uint16_t modMask) {
+    uint16_t key = 0;
     uint16_t modShft = 0;
-    switch (key) {
-    case KEY_LEFT_CTRL:
-        modMask = MCHY_MASK_L_CTRL;
-        modShft = MCHY_BITL_L_CTRL;
+    switch (modMask) {
+    case MOD_LCTL:
+        key = KEY_LEFT_CTRL;
+        modShft = MOD_BITL_LCTL;
         break;
-    case KEY_RIGHT_CTRL:
-        modMask = MCHY_MASK_R_CTRL;
-        modShft = MCHY_BITL_R_CTRL;
+    case MOD_RCTL:
+        key = KEY_RIGHT_CTRL;
+        modShft = MOD_BITL_RCTL;
         break;
-    case KEY_LEFT_ALT:
-        modMask = MCHY_MASK_L_ALT;
-        modShft = MCHY_BITL_L_ALT;
+    case MOD_LALT:
+        key = KEY_LEFT_ALT;
+        modShft = MOD_BITL_LALT;
         break;
-    case KEY_RIGHT_ALT:
-        modMask = MCHY_MASK_R_ALT;
-        modShft = MCHY_BITL_R_ALT;
+    case MOD_RALT:
+        key = KEY_RIGHT_ALT;
+        modShft = MOD_BITL_RALT;
         break;
-    case KEY_LEFT_GUI:
-        modMask = MCHY_MASK_L_GUI;
-        modShft = MCHY_BITL_L_GUI;
+    case MOD_LGUI:
+        key = KEY_LEFT_GUI;
+        modShft = MOD_BITL_LGUI;
         break;
-    case KEY_RIGHT_GUI:
-        modMask = MCHY_MASK_R_GUI;
-        modShft = MCHY_BITL_R_GUI;
+    case MOD_RGUI:
+        key = KEY_RIGHT_GUI;
+        modShft = MOD_BITL_RGUI;
         break;
-    case KEY_LEFT_SHIFT:
-        modMask = MCHY_MASK_L_SHIFT;
-        modShft = MCHY_BITL_L_SHIFT;
+    case MOD_LSFT:
+        key = KEY_LEFT_SHIFT;
+        modShft = MOD_BITL_LSFT;
         break;
-    case KEY_RIGHT_SHIFT:
-        modMask = MCHY_MASK_R_SHIFT;
-        modShft = MCHY_BITL_R_SHIFT;
+    case MOD_RSFT:
+        key = KEY_RIGHT_SHIFT;
+        modShft = MOD_BITL_RSFT;
         break;
+    default:
+        return;
     }
 
-    if (modMask) {
-        uint16_t count = (modifiers & modMask) >> modShft;
-        if (count > 0) {
-            count -= 1;
-            modifiers &= ~(0b11 << modShft);
-            modifiers |= (count << modShft);
-            if (count == 0) {
-                Keyboard.release(key);
-            }
+    uint16_t count = (modifiers & modMask) >> modShft;
+    if (count > 0) {
+        count -= 1;
+        modifiers &= ~(0b11 << modShft);
+        if (count == 0) {
+            Keyboard.release(key);
         }
-    }
-    else {
-        Keyboard.release(key);
+        else {
+            modifiers |= (count << modShft);
+        }
     }
 }
 
@@ -318,59 +376,59 @@ uint16_t Mechy::currentModifiers() {
 }
 
 void Mechy::updateModifiers(uint16_t newModifiers) {
-    if ((newModifiers & MCHY_MASK_L_CTRL) && !(modifiers & MCHY_MASK_L_CTRL)) {
+    if ((newModifiers & MOD_LCTL) && !(modifiers & MOD_LCTL)) {
         Keyboard.press(KEY_LEFT_CTRL);
     }
-    else if (!(newModifiers & MCHY_MASK_L_CTRL) && (modifiers & MCHY_MASK_L_CTRL)) {
+    else if (!(newModifiers & MOD_LCTL) && (modifiers & MOD_LCTL)) {
         Keyboard.release(KEY_LEFT_CTRL);
     }
 
-    if ((newModifiers & MCHY_MASK_R_CTRL) && !(modifiers & MCHY_MASK_R_CTRL)) {
+    if ((newModifiers & MOD_RCTL) && !(modifiers & MOD_RCTL)) {
         Keyboard.press(KEY_RIGHT_CTRL);
     }
-    else if (!(newModifiers & MCHY_MASK_R_CTRL) && (modifiers & MCHY_MASK_R_CTRL)) {
+    else if (!(newModifiers & MOD_RCTL) && (modifiers & MOD_RCTL)) {
         Keyboard.release(KEY_RIGHT_CTRL);
     }
 
-    if ((newModifiers & MCHY_MASK_L_ALT) && !(modifiers & MCHY_MASK_L_ALT)) {
+    if ((newModifiers & MOD_LALT) && !(modifiers & MOD_LALT)) {
         Keyboard.press(KEY_LEFT_ALT);
     }
-    else if (!(newModifiers & MCHY_MASK_L_ALT) && (modifiers & MCHY_MASK_L_ALT)) {
+    else if (!(newModifiers & MOD_LALT) && (modifiers & MOD_LALT)) {
         Keyboard.release(KEY_LEFT_ALT);
     }
 
-    if ((newModifiers & MCHY_MASK_R_ALT) && !(modifiers & MCHY_MASK_R_ALT)) {
+    if ((newModifiers & MOD_RALT) && !(modifiers & MOD_RALT)) {
         Keyboard.press(KEY_RIGHT_ALT);
     }
-    else if (!(newModifiers & MCHY_MASK_R_ALT) && (modifiers & MCHY_MASK_R_ALT)) {
+    else if (!(newModifiers & MOD_RALT) && (modifiers & MOD_RALT)) {
         Keyboard.release(KEY_RIGHT_ALT);
     }
 
-    if ((newModifiers & MCHY_MASK_L_GUI) && !(modifiers & MCHY_MASK_L_GUI)) {
+    if ((newModifiers & MOD_LGUI) && !(modifiers & MOD_LGUI)) {
         Keyboard.press(KEY_LEFT_GUI);
     }
-    else if (!(newModifiers & MCHY_MASK_L_GUI) && (modifiers & MCHY_MASK_L_GUI)) {
+    else if (!(newModifiers & MOD_LGUI) && (modifiers & MOD_LGUI)) {
         Keyboard.release(KEY_LEFT_GUI);
     }
 
-    if ((newModifiers & MCHY_MASK_R_GUI) && !(modifiers & MCHY_MASK_R_GUI)) {
+    if ((newModifiers & MOD_RGUI) && !(modifiers & MOD_RGUI)) {
         Keyboard.press(KEY_RIGHT_GUI);
     }
-    else if (!(newModifiers & MCHY_MASK_R_GUI) && (modifiers & MCHY_MASK_R_GUI)) {
+    else if (!(newModifiers & MOD_RGUI) && (modifiers & MOD_RGUI)) {
         Keyboard.release(KEY_RIGHT_GUI);
     }
 
-    if ((newModifiers & MCHY_MASK_L_SHIFT) && !(modifiers & MCHY_MASK_L_SHIFT)) {
+    if ((newModifiers & MOD_LSFT) && !(modifiers & MOD_LSFT)) {
         Keyboard.press(KEY_LEFT_SHIFT);
     }
-    else if (!(newModifiers & MCHY_MASK_L_SHIFT) && (modifiers & MCHY_MASK_L_SHIFT)) {
+    else if (!(newModifiers & MOD_LSFT) && (modifiers & MOD_LSFT)) {
         Keyboard.release(KEY_LEFT_SHIFT);
     }
 
-    if ((newModifiers & MCHY_MASK_R_SHIFT) && !(modifiers & MCHY_MASK_R_SHIFT)) {
+    if ((newModifiers & MOD_RSFT) && !(modifiers & MOD_RSFT)) {
         Keyboard.press(KEY_RIGHT_SHIFT);
     }
-    else if (!(newModifiers & MCHY_MASK_R_SHIFT) && (modifiers & MCHY_MASK_R_SHIFT)) {
+    else if (!(newModifiers & MOD_RSFT) && (modifiers & MOD_RSFT)) {
         Keyboard.release(KEY_RIGHT_SHIFT);
     }
 
@@ -378,28 +436,28 @@ void Mechy::updateModifiers(uint16_t newModifiers) {
 }
 
 void Mechy::clearModifiers() {
-    if (modifiers & MCHY_MASK_L_CTRL) {
+    if (modifiers & MOD_LCTL) {
         Keyboard.release(KEY_LEFT_CTRL);
     }
-    if (modifiers & MCHY_MASK_R_CTRL) {
+    if (modifiers & MOD_RCTL) {
         Keyboard.release(KEY_RIGHT_CTRL);
     }
-    if (modifiers & MCHY_MASK_L_ALT) {
+    if (modifiers & MOD_LALT) {
         Keyboard.release(KEY_LEFT_ALT);
     }
-    if (modifiers & MCHY_MASK_R_ALT) {
+    if (modifiers & MOD_RALT) {
         Keyboard.release(KEY_RIGHT_ALT);
     }
-    if (modifiers & MCHY_MASK_L_GUI) {
+    if (modifiers & MOD_LGUI) {
         Keyboard.release(KEY_LEFT_GUI);
     }
-    if (modifiers & MCHY_MASK_R_GUI) {
+    if (modifiers & MOD_RGUI) {
         Keyboard.release(KEY_RIGHT_GUI);
     }
-    if (modifiers & MCHY_MASK_L_SHIFT) {
+    if (modifiers & MOD_LSFT) {
         Keyboard.release(KEY_LEFT_SHIFT);
     }
-    if (modifiers & MCHY_MASK_R_SHIFT) {
+    if (modifiers & MOD_RSFT) {
         Keyboard.release(KEY_RIGHT_SHIFT);
     }
     modifiers = 0;

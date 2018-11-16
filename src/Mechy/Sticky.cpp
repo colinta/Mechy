@@ -29,8 +29,8 @@ void Sticky::tick() {
     }
 }
 
-bool Sticky::override(uint8_t name, Event* event, Plugin* UNUSED(plugin)) {
-    if (name != FN_STICKY && event->isPressed() && (hyper_state || sticky_state)) {
+bool Sticky::override(uint8_t UNUSED(name), Event* event, Plugin* plugin) {
+    if ((plugin->is(EVENT_KEYPRESS, event) || plugin->is(EVENT_MOUSE, event)) && (hyper_state || sticky_state)) {
         should_clear = true;
     }
     return KBD_CONTINUE;
@@ -124,10 +124,10 @@ void Sticky::updateMods() {
         }
 
         if (prev_mods & mod_mask) {
-            mechy->sendKeyboardRelease(mod_key);
+            mechy->releaseKey(mod_key);
         }
         else {
-            mechy->sendKeyboardPress(mod_key);
+            mechy->pressKey(mod_key);
         }
     }
     prev_mods = current;
