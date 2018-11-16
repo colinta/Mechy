@@ -8,8 +8,15 @@
 inline void sendKeyEvent(Mechy* mechy, uint16_t modifierSnapshot, KBD* kbd) {
     uint16_t mods = mechy->currentModifiers();
     mechy->updateModifiers(modifierSnapshot);
-    mechy->runPlugin(KEY_STATE_PRESSED, kbd, 0);
-    mechy->runPlugin(KEY_STATE_RELEASED, kbd, 1);
+    Event event = {
+        .name = kbd->name,
+        .key  = kbd->key,
+        .keyState = KEY_STATE_PRESSED,
+        .started = millis(),
+    };
+    mechy->runPlugin(&event);
+    event.keyState = KEY_STATE_RELEASED;
+    mechy->runPlugin(&event);
     mechy->updateModifiers(mods);
 }
 
@@ -60,7 +67,7 @@ runPress:
         keyPtr->modifierSnapshot = mechy->currentModifiers();
     }
     else if (isEventActive(event)) {
-        if (event->isHeld() && event->duration > TAPHOLD_DELAY) {
+        if (event->isHeld() && event->duration() > TAPHOLD_DELAY) {
             sendKeyEvent(mechy, keyPtr->modifierSnapshot, &keyPtr->holdKey);
             unsetEventActive(event);
         }
@@ -72,21 +79,46 @@ runPress:
     return;
 
 runModifier:
-    if (isEventActive(event) && event->isHeld() && event->duration > TAPHOLD_DELAY) {
-        mechy->runPlugin(KEY_STATE_PRESSED, &keyPtr->holdKey, 0);
+    if (isEventActive(event) && event->isHeld() && event->duration() > TAPHOLD_DELAY) {
+        Event keyEvent = {
+            .name = keyPtr->holdKey.name,
+            .key  = keyPtr->holdKey.key,
+            .keyState = KEY_STATE_PRESSED,
+            .started = event->started,
+        };
+        mechy->runPlugin(&keyEvent);
         unsetEventActive(event);
     }
-    else if (event->isHeld() && event->duration > TAPHOLD_DELAY) {
-        mechy->runPlugin(KEY_STATE_HELD, &keyPtr->holdKey, event->duration - TAPHOLD_DELAY);
+    else if (event->isHeld() && event->duration() > TAPHOLD_DELAY) {
+        Event keyEvent = {
+            .name = keyPtr->holdKey.name,
+            .key  = keyPtr->holdKey.key,
+            .keyState = KEY_STATE_HELD,
+            .started = event->started,
+        };
+        mechy->runPlugin(&keyEvent);
     }
-    else if (event->isReleased() && event->duration > TAPHOLD_DELAY) {
-        mechy->runPlugin(KEY_STATE_RELEASED, &keyPtr->holdKey, event->duration - TAPHOLD_DELAY);
+    else if (event->isReleased() && event->duration() > TAPHOLD_DELAY) {
+        Event keyEvent = {
+            .name = keyPtr->holdKey.name,
+            .key  = keyPtr->holdKey.key,
+            .keyState = KEY_STATE_RELEASED,
+            .started = event->started,
+        };
+        mechy->runPlugin(&keyEvent);
     }
     else if (event->isReleased()) {
         uint16_t mods = mechy->currentModifiers();
         mechy->updateModifiers(keyPtr->modifierSnapshot);
-        mechy->runPlugin(KEY_STATE_PRESSED, &keyPtr->tapKey, 0);
-        mechy->runPlugin(KEY_STATE_RELEASED, &keyPtr->tapKey, 1);
+        Event keyEvent = {
+            .name = keyPtr->tapKey.name,
+            .key  = keyPtr->tapKey.key,
+            .keyState = KEY_STATE_PRESSED,
+            .started = millis(),
+        };
+        mechy->runPlugin(&keyEvent);
+        keyEvent.keyState = KEY_STATE_RELEASED;
+        mechy->runPlugin(&keyEvent);
         mechy->updateModifiers(mods);
         unsetEventActive(event);
     }

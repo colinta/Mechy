@@ -29,11 +29,9 @@ struct LayerStackPtr {
 
 struct EventPtr {
     Layout* layout;
-    KBD* kbd;
     uint8_t row;
     uint8_t col;
-    bool isPressed;
-    unsigned long started;
+    Event* event;
     EventPtr* next;
 
     bool matches(Layout* layout, uint8_t row, uint8_t col);
@@ -50,7 +48,7 @@ public:
     void tick();
 
     void processKeyEvent(Layout* layout, uint8_t row, uint8_t col, bool isPressed);
-    void runPlugin(uint8_t keyState, KBD* kbd, uint16_t duration);
+    void runPlugin(Event* event);
 
     bool isCapsOn();
 

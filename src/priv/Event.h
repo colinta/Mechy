@@ -9,10 +9,12 @@ struct KBD {
 };
 
 struct Event {
+    uint8_t name;
     uint16_t key;
     uint8_t keyState;
-    unsigned long duration;
+    unsigned long started;
 
+    unsigned long duration();
     bool isPressed();
     bool isReleased();
     bool isDown();

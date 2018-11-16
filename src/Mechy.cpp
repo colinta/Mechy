@@ -103,75 +103,74 @@ void Mechy::processKeyEvent(Layout* layout, uint8_t row, uint8_t col, bool isPre
 
     // find the prev key event data, if present, and trim away any key events
     // that are finished (!isPressed) and old (finished > 10ms ago).
-    EventPtr* findPtr = firstEventPtr;
-    EventPtr* kbdData = NULL;
-    while (findPtr) {
-        if (findPtr->matches(layout, row, col)) {
-            kbdData = findPtr;
+    EventPtr* findEventPtr = firstEventPtr;
+    EventPtr* cachedEventPtr = NULL;
+    while (findEventPtr) {
+        if (findEventPtr->matches(layout, row, col)) {
+            cachedEventPtr = findEventPtr;
         }
 
         // remove "stale" keyboard events
-        if (!findPtr->isPressed && now - findPtr->started > 10) {
+        if (findEventPtr->event->isReleased() && now - findEventPtr->event->started > 10) {
             // remove the ptr and return the next one or NULL
-            findPtr = removeKBDPtr(findPtr);
+            findEventPtr = removeKBDPtr(findEventPtr);
         }
         else {
-            findPtr = findPtr->next;
+            findEventPtr = findEventPtr->next;
         }
     }
 
-    bool currentKeyIsPressed = kbdData ? kbdData->isPressed : false;
-    uint16_t currentKeyDuration = kbdData ? now - kbdData->started : 0;
+    bool currentKeyIsPressed = cachedEventPtr ? cachedEventPtr->event->isDown() : false;
+    uint16_t currentKeyDuration = cachedEventPtr ? now - cachedEventPtr->event->started : 0;
 
     // ignore all debouncing signals, HIGH or LOW
-    if (kbdData && currentKeyDuration < 10) {
+    if (cachedEventPtr && currentKeyDuration < 10) {
         return;
     }
 
     if (!currentKeyIsPressed && isPressed) {
-        // kbdData may or may not be NULL, if it exists reuse it, otherwise
+        // cachedEventPtr may or may not be NULL, if it exists reuse it, otherwise
         // create it and append it.
         EventPtr* ptr = NULL;
         KBD* kbd = layout->getKey(row, col);
 
-        if (kbd && kbdData) {
-            ptr = kbdData;
+        if (kbd && cachedEventPtr) {
+            ptr = cachedEventPtr;
         }
         else if (kbd) {
             ptr = (EventPtr*)malloc(sizeof(EventPtr));
             ptr->layout = layout;
             ptr->row = row;
             ptr->col = col;
+            ptr->event = (Event*)malloc(sizeof(Event));
             pushKBDPtr(ptr);
         }
 
         if (ptr) {
-            ptr->kbd = kbd;
-            ptr->isPressed = true;
-            ptr->started = now;
-            runPlugin(KEY_STATE_PRESSED, kbd, currentKeyDuration);
+            ptr->event->name = kbd->name;
+            ptr->event->key = kbd->key;
+            ptr->event->keyState = KEY_STATE_PRESSED;
+            ptr->event->started = now;
+            runPlugin(ptr->event);
         }
     }
     else if (currentKeyIsPressed) {
         if (!isPressed) {
-            kbdData->isPressed = false;
-            runPlugin(KEY_STATE_RELEASED, kbdData->kbd, currentKeyDuration);
-            kbdData->started = now;  // reset timer for debouncing
+            cachedEventPtr->event->keyState = KEY_STATE_RELEASED;
+            runPlugin(cachedEventPtr->event);
+            cachedEventPtr->event->started = now;  // reset timer for debouncing
         }
         else {
-            runPlugin(KEY_STATE_HELD, kbdData->kbd, currentKeyDuration);
+            cachedEventPtr->event->keyState = KEY_STATE_HELD;
+            runPlugin(cachedEventPtr->event);
         }
     }
 }
 
-void Mechy::runPlugin(uint8_t keyState, KBD* kbd, uint16_t duration) {
-    uint8_t keyHandlerName = kbd->name;
-
-    Event event = {
-        .key = kbd->key,
-        .keyState = keyState,
-        .duration = duration
-    };
+// the Event passed in here is not guaranteed to be in the EventPtr stack, so don't
+// go freeing it up or anything.  Modifying it is OK.
+void Mechy::runPlugin(Event* event) {
+    uint8_t keyHandlerName = event->name;
 
     PluginPtr* ptr = firstPluginPtr;
     Plugin* plugin = NULL;
@@ -187,16 +186,13 @@ void Mechy::runPlugin(uint8_t keyState, KBD* kbd, uint16_t duration) {
     bool processing = KBD_CONTINUE;
     ptr = firstPluginPtr;
     while (ptr) {
-        processing = ptr->plugin->override(keyHandlerName, &event, plugin) && processing;
+        processing = ptr->plugin->override(keyHandlerName, event, plugin) && processing;
         ptr = ptr->next;
     }
 
     if (processing == KBD_CONTINUE) {
-        plugin->run(&event);
+        plugin->run(event);
     }
-
-    // changes to event.key need to be treated as "data storage"
-    kbd->key = event.key;
 }
 
 bool Mechy::isCapsOn() {
@@ -485,6 +481,7 @@ inline void Mechy::pushKBDPtr(EventPtr* ptr) {
 inline EventPtr* Mechy::removeKBDPtr(EventPtr* ptr) {
     if (!firstEventPtr || firstEventPtr == ptr) {
         firstEventPtr = ptr->next;
+        free(ptr->event);
         free(ptr);
         return firstEventPtr;
     }
@@ -493,11 +490,13 @@ inline EventPtr* Mechy::removeKBDPtr(EventPtr* ptr) {
     while (kbdPtr->next) {
         if (kbdPtr->next == ptr) {
             kbdPtr->next = ptr->next;
+            free(ptr->event);
             free(ptr);
             return kbdPtr->next;
         }
         kbdPtr = kbdPtr->next;
     }
+    free(ptr->event);
     free(ptr);
     return NULL;
 }

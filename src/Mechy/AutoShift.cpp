@@ -29,7 +29,7 @@ bool eventIsTap(Event* event) {
 }
 
 bool eventIsHold(Event* event) {
-    return isEventActive(event) && event->duration > AUTOSHIFT_DELAY;
+    return isEventActive(event) && event->duration() > AUTOSHIFT_DELAY;
 }
 
 bool AutoShift::is(uint8_t event_type, Event* event) {
@@ -52,9 +52,9 @@ bool AutoShift::override(uint8_t UNUSED(name), Event* event, Plugin* plugin) {
         // and send the lower case key
         EventPtr* eventPtr = mechy->events();
         while (eventPtr) {
-            if (eventPtr->kbd->name == FN_AUTO_SHIFT && isEventActive(eventPtr->kbd)) {
-                sendLower(mechy, eventPtr->kbd->key);
-                unsetEventActive(eventPtr->kbd);
+            if (eventPtr->event->name == FN_AUTO_SHIFT && isEventActive(eventPtr->event)) {
+                sendLower(mechy, eventPtr->event->key);
+                unsetEventActive(eventPtr->event);
             }
             eventPtr = eventPtr->next;
         }

@@ -63,7 +63,7 @@ void Sticky::run(Event* event) {
 
         mods_down_state |= modkey_mask;
     }
-    else if (event->isHeld() && event->duration > STICKY_AUTO_OFF) {
+    else if (event->isHeld() && event->duration() > STICKY_AUTO_OFF) {
         sticky_state &= ~modkey_mask;
     }
     else if (event->isReleased()) {
