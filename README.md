@@ -80,6 +80,26 @@ KBD mainKeys[] = { MD_PLAY, MD_VOLU, MD_FFD };
 
 See [Media.h](https://github.com/colinta/Mechy/blob/master/src/Mechy/Media.h#L15) for defined keys.
 
+###### MouseKeys
+
+A simple implementation of mouse keys.  Hold shift to move the mouse faster.
+
+```c++
+#include <Mechy/MouseKey.h>
+
+KBD mainKeys[] = { MK_LEFT, MK_LCLK, MK_RGHT };
+```
+
+###### AutoShift
+
+A port of QMK's auto shift feature.  Tap a letter for lower case, hold it for the shifted key.  Also works for numbers and symbol keys.
+
+This is an interesting plugin because it is very careful about when it reports that it is a keypress.  The mechanism for this is the function `bool Plugin::is(event_type, Event*)`.  This plugin function returns `true` when it is considered a match for the `event_type` (`EVENT_KEYPRESS, EVENT_MOUSE, EVENT_MODIFIER, EVENT_META` are possible values).
+
+The AutoShift key only matches at two times: after being held for 1/4 second, or at release when it is below that time.  At all other times this key is not doing anything; it shouldn't be considered a key down or anything like that.
+
+This is only tricky when used in conjunction with Sticky keys.
+
 ###### GotoLayer
 
 Obviously it changes layers!  This is only the key listener part, to define multiple layers you'll need to study the `Layout` class.
