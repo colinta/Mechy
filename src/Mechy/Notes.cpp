@@ -20,7 +20,7 @@ void Notes::run(Event* event) {
     else if (event->isReleased()) {
         EventPtr* eventPtr = mechy->events();
         while (eventPtr) {
-            if (eventPtr->event->name == FN_USER(1) && eventPtr->event->isDown()) {
+            if (eventPtr->event->name == event->name && eventPtr->event->isDown()) {
                 Tone::play(pin, eventPtr->event->key);
                 break;
             }
