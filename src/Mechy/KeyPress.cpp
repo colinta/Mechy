@@ -27,7 +27,7 @@ bool KeyPress::is(uint8_t event_type, Event* event) {
     }
 
     // lastly if there is anything in the key mask, match EVENT_KEYPRESS
-    return (event->key & EVENT_KEY_MASK) && event_type == EVENT_KEYPRESS;
+    return eventKey(event) && event_type == EVENT_KEYPRESS;
 }
 
 void KeyPress::run(Event* event) {

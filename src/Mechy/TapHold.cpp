@@ -45,7 +45,7 @@ void TapHold::begin() {
 }
 
 void TapHold::run(Event* event) {
-    TapHoldEvent* keyPtr = eventArray + (event->key & EVENT_KEY_MASK);
+    TapHoldEvent* keyPtr = eventArray + eventKey(event);
 
     if (event->isPressed()) {
         setEventActive(event);

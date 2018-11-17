@@ -7,7 +7,7 @@ enum {
 };
 
 enum {
-    GO_MOMENTARY = 0b0010000,
+    GO_MOMENTARY = 0,
 };
 
 class GotoLayer : public Plugin {

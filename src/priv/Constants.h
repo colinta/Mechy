@@ -75,6 +75,9 @@
 // in general, events have 8bits of "data" and 8bits of "key space"
 #define EVENT_KEY_MASK  0b0000000011111111
 #define EVENT_DATA_MASK 0b1111111100000000
+#define EVENT_DATA_SHFT 8
+#define eventKey(event)   ((uint8_t)(event->key))
+#define eventData(event)  ((uint8_t)((uint16_t)event->key >> EVENT_DATA_SHFT))
 
 // to encourage "best practices" here are some bit masks:
 #define EVENT_IS_ACTIVE 0b0010000000000000
