@@ -39,6 +39,21 @@ void Transmitter::begin() {
         Wiring::pinMode(rowPin, OUTPUT);
         Wiring::digitalWrite(rowPin, HIGH);
     }
+
+    // keyboards are tricky things - if any key is pressed at startup we stay in this loop until
+    // all the keys are released.  That way if there's a bug it's usually easy to re-flash.
+    bool anyPressed = false;
+    do {
+        for (uint8_t row = 0; row < ROWS; row++) {
+            Wiring::digitalWrite(pinRows[row], LOW);
+            for (uint8_t col = 0; col < COLS; col++) {
+                anyPressed = !Wiring::digitalRead(pinCols[col]);
+                if (anyPressed)  break;
+            }
+            Wiring::digitalWrite(pinRows[row], HIGH);
+            if (anyPressed)  break;
+        }
+    } while (anyPressed);
 }
 
 void Transmitter::scan() {
