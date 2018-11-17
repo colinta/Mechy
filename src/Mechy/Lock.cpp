@@ -1,7 +1,7 @@
 #include "Lock.h"
 
 
-Lock::Lock(uint8_t _need = 2) {
+Lock::Lock(uint8_t _need) {
     need = _need;
     lock_count = 0;
     is_locked = false;
