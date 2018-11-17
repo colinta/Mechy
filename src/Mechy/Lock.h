@@ -2,22 +2,18 @@
 
 #include "Mechy.h"
 
-enum {
-    LOCK_1,
-    LOCK_2,
-};
-
 class Lock: public Plugin {
 public:
-    Lock();
+    Lock(uint8_t need = 2);
     uint8_t defaultName();
+    bool is(uint8_t event_type, Event* event);
     bool override(uint8_t name, Event* event, Plugin* plugin);
     void run(Event* event);
 
 protected:
     bool is_locked;
+    uint8_t need;
     uint8_t lock_count;
 };
 
-#define LK_1 { .name = FN_LOCK, .key = LOCK_1 }
-#define LK_2 { .name = FN_LOCK, .key = LOCK_2 }
+#define LK { .name = FN_LOCK, .key = 0 }

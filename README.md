@@ -121,15 +121,16 @@ See [GotoLayer.h](https://github.com/colinta/Mechy/blob/master/src/Mechy/GotoLay
 
 ###### Lock
 
-A super simple Plugin, I wrote it as an early exercise.  This plugin listens for two key presses (`LK_1` and `LK_2`), and after both are pressed it locks all keys except `LK_1` and `LK_2`.  You can prevent a small child from using your keyboard - which is the actual reason I wrote this, because I have a precosious daughter who loves to play with my keyboard.
+A super simple Plugin, I wrote it as an early exercise.  This plugin listens for two `LK` key presses (or more - the `Lock()` constructor accepts the number of keys needed), and after both are pressed it locks all keys except internal "meta" keys like `GOTO_x` and `LK`.  You can prevent a small child from using your keyboard - which is the actual reason I wrote this, because I have a precosious daughter who loves to play with my keyboard.
 
 ```c++
 #include <Mechy/Lock.h>
 
-KBD mainKeys[] = { LK_1, LK_2 };
+KBD mainKeys[] = { LK, LK };
+mechy.add(new Lock());
+// to require 3 lock keys:
+mechy.add(new Lock(3));
 ```
-
-See [Lock.h](https://github.com/colinta/Mechy/blob/master/src/Mechy/Lock.h#L15) for defined keys (it's only those two, so don't get excited).
 
 ###### Macro
 

@@ -14,6 +14,7 @@ class GotoLayer : public Plugin {
 public:
     GotoLayer();
     uint8_t defaultName();
+    bool is(uint8_t event_type, Event* event);
     void run(Event* event);
 };
 
