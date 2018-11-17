@@ -128,6 +128,9 @@ void Tone::song(uint8_t _pin, unsigned int len, const unsigned int* notes, const
 
 void Tone::stop(uint8_t _pin)
 {
+    songNotes = NULL;
+    songDurations = NULL;
+    songLen = 0;
     disableTimer();
     digitalWrite(_pin, 0);
 }

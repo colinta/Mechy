@@ -23,3 +23,8 @@ struct Event {
 
 #define ____ {.name = FN_NONE, .key = MCHY_NONE }
 #define vvvv { .name = FN_NONE, .key = MCHY_TRANS }
+
+/* user defined key macros */
+#define FN_USER(n)  (FN_USER_0 + n)
+#define USER_KEY(m) m
+#define USER(n, m) { .name = FN_USER(n), .key = USER_KEY(m) }
