@@ -73,10 +73,18 @@ void Mechy::pushLayer(uint8_t layer) {
     updateLayer(layer);
 }
 
-void Mechy::popLayer() {
-    if (layerStackPtr) {
-        free(layerStackPtr);
-        layerStackPtr = layerStackPtr->prev;
+void Mechy::removeLayer(uint8_t layer) {
+    LayerStackPtr** layerPtrPtr = &layerStackPtr;
+    LayerStackPtr* layerPtr = layerStackPtr;
+    while (layerPtr) {
+        if (layerPtr->value == layer) {
+            LayerStackPtr* prev = layerPtr->prev;
+            free(layerPtr);
+            *layerPtrPtr = prev;
+            break;
+        }
+        layerPtrPtr = &(layerPtr->prev);
+        layerPtr = layerPtr->prev;
     }
 
     updateLayer(layerStackPtr ? layerStackPtr->value : 0);

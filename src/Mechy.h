@@ -62,7 +62,7 @@ public:
     void clearModifiers();
 
     void pushLayer(uint8_t layer);
-    void popLayer();
+    void removeLayer(uint8_t layer);
     uint8_t currentLayer();
 
     EventPtr* events();

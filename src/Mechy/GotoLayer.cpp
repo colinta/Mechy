@@ -21,6 +21,6 @@ void GotoLayer::run(Event* event) {
         mechy->pushLayer(layer);
     }
     else if (event->isReleased()) {
-        mechy->popLayer();
+        mechy->removeLayer(layer);
     }
 }
