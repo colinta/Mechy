@@ -107,21 +107,17 @@ inline void Receiver::pushEventPtr(ReceiverEventPtr* ptr) {
 }
 
 inline void Receiver::removeEventPtr(ReceiverEventPtr* ptr) {
-    if (!firstEventPtr || firstEventPtr == ptr) {
-        firstEventPtr = ptr->next;
-        free(ptr);
-        return;
-    }
-
-    ReceiverEventPtr* kbdPtr = firstEventPtr;
-    while (kbdPtr->next) {
-        if (kbdPtr->next == ptr) {
-            kbdPtr->next = ptr->next;
-            break;
+    ReceiverEventPtr** eventPtrPtr = &firstEventPtr;
+    ReceiverEventPtr* eventPtr = firstEventPtr;
+    while (eventPtr) {
+        if (eventPtr == ptr) {
+            *eventPtrPtr = ptr->next;
+            free(ptr);
+            return;
         }
-        kbdPtr = kbdPtr->next;
+        eventPtrPtr = &(eventPtr->next);
+        eventPtr = eventPtr->next;
     }
-    free(ptr);
 }
 
 void Receiver::debounce() { delayMicroseconds(10); }

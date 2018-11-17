@@ -479,25 +479,18 @@ inline void Mechy::pushKBDPtr(EventPtr* ptr) {
 }
 
 inline EventPtr* Mechy::removeKBDPtr(EventPtr* ptr) {
-    if (!firstEventPtr || firstEventPtr == ptr) {
-        firstEventPtr = ptr->next;
-        free(ptr->event);
-        free(ptr);
-        return firstEventPtr;
-    }
-
-    EventPtr* kbdPtr = firstEventPtr;
-    while (kbdPtr->next) {
-        if (kbdPtr->next == ptr) {
-            kbdPtr->next = ptr->next;
+    EventPtr** eventPtrPtr = &firstEventPtr;
+    EventPtr* eventPtr = firstEventPtr;
+    while (eventPtr) {
+        if (eventPtr == ptr) {
+            *eventPtrPtr = ptr->next;
             free(ptr->event);
             free(ptr);
-            return kbdPtr->next;
+            return *eventPtrPtr;
         }
-        kbdPtr = kbdPtr->next;
+        eventPtrPtr = &(eventPtr->next);
+        eventPtr = eventPtr->next;
     }
-    free(ptr->event);
-    free(ptr);
     return NULL;
 }
 
