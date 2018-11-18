@@ -13,7 +13,7 @@ uint8_t Macro::defaultName() {
 }
 
 void Macro::run(Event* event) {
-    int16_t macro_index = event->key - MCR_ZERO;
+    int16_t macro_index = event->key;
 
     if (macro_index < 0 || macro_index >= count) {
         prev_macro = count;

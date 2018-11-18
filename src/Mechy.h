@@ -81,6 +81,6 @@ protected:
 private:
     inline void pushPluginPtr(PluginPtr* ptr);
     inline void pushResponderPtr(ResponderPtr* ptr);
-    inline void pushKBDPtr(EventPtr* ptr);
+    inline void pushEventPtr(EventPtr* ptr);
     inline EventPtr* removeKBDPtr(EventPtr* ptr);
 };

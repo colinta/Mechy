@@ -3,10 +3,6 @@
 #include "Mechy.h"
 
 enum {
-    GO_ZERO
-};
-
-enum {
     GO_MOMENTARY = 0,
 };
 
@@ -18,7 +14,7 @@ public:
     void run(Event* event);
 };
 
-#define GOTO(n) { .name = FN_GOTO_LAYER, .key = (GO_ZERO + n) | (GO_MOMENTARY) }
+#define GOTO(n) { .name = FN_GOTO_LAYER, .key = (n) | (GO_MOMENTARY) }
 #define GOTO_0 GOTO(0)
 #define GOTO_1 GOTO(1)
 #define GOTO_2 GOTO(2)

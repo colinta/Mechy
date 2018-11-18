@@ -151,7 +151,7 @@ void Mechy::processKeyEvent(Layout* layout, uint8_t row, uint8_t col, bool isPre
             ptr->row = row;
             ptr->col = col;
             ptr->event = (Event*)malloc(sizeof(Event));
-            pushKBDPtr(ptr);
+            pushEventPtr(ptr);
         }
 
         if (ptr) {
@@ -481,7 +481,7 @@ inline void Mechy::pushResponderPtr(ResponderPtr* ptr) {
     firstResponderPtr = ptr;
 }
 
-inline void Mechy::pushKBDPtr(EventPtr* ptr) {
+inline void Mechy::pushEventPtr(EventPtr* ptr) {
     ptr->next = firstEventPtr;
     firstEventPtr = ptr;
 }

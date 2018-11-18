@@ -2,10 +2,6 @@
 
 #include "Mechy.h"
 
-enum {
-    MCR_ZERO
-};
-
 class Macro: public Plugin {
 public:
     Macro(uint8_t count, const char **macros);
@@ -18,7 +14,7 @@ protected:
     char **macros;
 };
 
-#define MM(n) { .name = FN_MACRO, .key = (MCR_ZERO + n) }
+#define MM(n) { .name = FN_MACRO, .key = (n) }
 #define MM_0 MM(0)
 #define MM_1 MM(1)
 #define MM_2 MM(2)
