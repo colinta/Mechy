@@ -3,6 +3,7 @@
 #include <Keyboard.h>
 
 Mechy::Mechy() {
+    defaultLayer = 0;
     modifiers = 0;
     capsIsOn = false;
     layerStackPtr = NULL;
@@ -64,6 +65,11 @@ void Mechy::add(uint8_t name, Plugin* plugin) {
     pushPluginPtr(ptr);
 }
 
+void Mechy::setDefaultLayer(uint8_t layer) {
+    defaultLayer = layer;
+    updateLayer(layerStackPtr ? layerStackPtr->value : defaultLayer);
+}
+
 void Mechy::pushLayer(uint8_t layer) {
     LayerStackPtr* layerPtr = (LayerStackPtr*)malloc(sizeof(LayerStackPtr));
     layerPtr->value = layer;
@@ -87,11 +93,11 @@ void Mechy::removeLayer(uint8_t layer) {
         layerPtr = layerPtr->prev;
     }
 
-    updateLayer(layerStackPtr ? layerStackPtr->value : 0);
+    updateLayer(layerStackPtr ? layerStackPtr->value : defaultLayer);
 }
 
 uint8_t Mechy::currentLayer() {
-    return (layerStackPtr ? layerStackPtr->value : 0);
+    return (layerStackPtr ? layerStackPtr->value : defaultLayer);
 }
 
 void Mechy::updateLayer(uint8_t layer) {

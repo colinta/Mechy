@@ -61,6 +61,7 @@ public:
     void updateModifiers(uint16_t mchyModifiers);
     void clearModifiers();
 
+    void setDefaultLayer(uint8_t layer);
     void pushLayer(uint8_t layer);
     void removeLayer(uint8_t layer);
     uint8_t currentLayer();
@@ -68,6 +69,7 @@ public:
     EventPtr* events();
 
 protected:
+    uint8_t defaultLayer;
     LayerStackPtr* layerStackPtr;
     ResponderPtr* firstResponderPtr;
     PluginPtr* firstPluginPtr;

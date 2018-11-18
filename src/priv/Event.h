@@ -9,8 +9,8 @@
 #define EVENT_DATA_SHIFT 8
 
 // to encourage "best practices" here are some bit masks:
-#define EVENT_DATA_USER (0b00011111 << EVENT_DATA_SHIFT)
-#define EVENT_IS_ACTIVE_BIT 6
+#define EVENT_DATA_USER 0b00011111
+#define EVENT_IS_ACTIVE_BIT 5
 
 struct KBD {
     uint8_t name;
