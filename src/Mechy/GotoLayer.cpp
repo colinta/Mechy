@@ -14,8 +14,8 @@ bool GotoLayer::is(uint8_t event_type, Event* UNUSED(event)) {
 void GotoLayer::run(Event* event) {
     if (event->isHeld())  return;
 
-    uint8_t layer = eventKey(event);
-    // uint8_t behavior = eventData(event);
+    uint8_t layer = event->key();
+    // uint8_t behavior = event->data();
 
     if (event->isPressed()) {
         mechy->pushLayer(layer);

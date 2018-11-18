@@ -10,7 +10,7 @@ inline void sendKeyEvent(Mechy* mechy, uint16_t modifierSnapshot, KBD* kbd) {
     mechy->updateModifiers(modifierSnapshot);
     Event event = {
         .name = kbd->name,
-        .key  = kbd->key,
+        .keyAndData = kbd->key,
         .keyState = KEY_STATE_PRESSED,
         .started = millis(),
     };
@@ -45,10 +45,10 @@ void TapHold::begin() {
 }
 
 void TapHold::run(Event* event) {
-    TapHoldEvent* keyPtr = eventArray + eventKey(event);
+    TapHoldEvent* keyPtr = eventArray + event->key();
 
     if (event->isPressed()) {
-        setEventActive(event);
+        event->setIsActive(true);
     }
 
     switch (keyPtr->behavior) {
@@ -57,7 +57,7 @@ void TapHold::run(Event* event) {
     case TH_MODIFIER:
         goto runModifier;
     default:
-        unsetEventActive(event);
+        event->setIsActive(false);
     }
 
     return;
@@ -66,33 +66,33 @@ runPress:
     if (event->isPressed()) {
         keyPtr->modifierSnapshot = mechy->currentModifiers();
     }
-    else if (isEventActive(event)) {
+    else if (event->isActive()) {
         if (event->isHeld() && event->duration() > TAPHOLD_DELAY) {
             sendKeyEvent(mechy, keyPtr->modifierSnapshot, &keyPtr->holdKey);
-            unsetEventActive(event);
+            event->setIsActive(false);
         }
         else if (event->isReleased()) {
             sendKeyEvent(mechy, keyPtr->modifierSnapshot, &keyPtr->tapKey);
-            unsetEventActive(event);
+            event->setIsActive(false);
         }
     }
     return;
 
 runModifier:
-    if (isEventActive(event) && event->isHeld() && event->duration() > TAPHOLD_DELAY) {
+    if (event->isActive() && event->isHeld() && event->duration() > TAPHOLD_DELAY) {
         Event keyEvent = {
             .name = keyPtr->holdKey.name,
-            .key  = keyPtr->holdKey.key,
+            .keyAndData = keyPtr->holdKey.key,
             .keyState = KEY_STATE_PRESSED,
             .started = event->started,
         };
         mechy->runPlugin(&keyEvent);
-        unsetEventActive(event);
+        event->setIsActive(false);
     }
     else if (event->isHeld() && event->duration() > TAPHOLD_DELAY) {
         Event keyEvent = {
             .name = keyPtr->holdKey.name,
-            .key  = keyPtr->holdKey.key,
+            .keyAndData = keyPtr->holdKey.key,
             .keyState = KEY_STATE_HELD,
             .started = event->started,
         };
@@ -101,7 +101,7 @@ runModifier:
     else if (event->isReleased() && event->duration() > TAPHOLD_DELAY) {
         Event keyEvent = {
             .name = keyPtr->holdKey.name,
-            .key  = keyPtr->holdKey.key,
+            .keyAndData = keyPtr->holdKey.key,
             .keyState = KEY_STATE_RELEASED,
             .started = event->started,
         };
@@ -112,7 +112,7 @@ runModifier:
         mechy->updateModifiers(keyPtr->modifierSnapshot);
         Event keyEvent = {
             .name = keyPtr->tapKey.name,
-            .key  = keyPtr->tapKey.key,
+            .keyAndData = keyPtr->tapKey.key,
             .keyState = KEY_STATE_PRESSED,
             .started = millis(),
         };
@@ -120,7 +120,7 @@ runModifier:
         keyEvent.keyState = KEY_STATE_RELEASED;
         mechy->runPlugin(&keyEvent);
         mechy->updateModifiers(mods);
-        unsetEventActive(event);
+        event->setIsActive(false);
     }
     return;
 }

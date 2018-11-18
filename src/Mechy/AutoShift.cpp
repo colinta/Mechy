@@ -25,11 +25,11 @@ uint8_t AutoShift::defaultName() {
 }
 
 bool eventIsTap(Event* event) {
-    return isEventActive(event) && event->isReleased();
+    return event->isActive() && event->isReleased();
 }
 
 bool eventIsHold(Event* event) {
-    return isEventActive(event) && event->duration() > AUTOSHIFT_DELAY;
+    return event->isActive() && event->duration() > AUTOSHIFT_DELAY;
 }
 
 bool AutoShift::is(uint8_t event_type, Event* event) {
@@ -52,9 +52,9 @@ bool AutoShift::override(uint8_t UNUSED(name), Event* event, Plugin* plugin) {
         // and send the lower case key
         EventPtr* eventPtr = mechy->events();
         while (eventPtr) {
-            if (eventPtr->event->name == FN_AUTO_SHIFT && isEventActive(eventPtr->event)) {
-                sendLower(mechy, eventPtr->event->key);
-                unsetEventActive(eventPtr->event);
+            if (eventPtr->event->name == FN_AUTO_SHIFT && eventPtr->event->isActive()) {
+                sendLower(mechy, eventPtr->event->key());
+                eventPtr->event->setIsActive(false);
             }
             eventPtr = eventPtr->next;
         }
@@ -64,20 +64,20 @@ bool AutoShift::override(uint8_t UNUSED(name), Event* event, Plugin* plugin) {
 
 void AutoShift::run(Event* event) {
     if (event->isPressed()) {
-        setEventActive(event);
+        event->setIsActive(true);
     }
     else if (eventIsHold(event)) {
-        sendUpper(mechy, event->key);
-        unsetEventActive(event);
+        sendUpper(mechy, event->key());
+        event->setIsActive(false);
     }
     else if (eventIsTap(event)) {
-        sendLower(mechy, event->key);
+        sendLower(mechy, event->key());
     }
 
     if (event->isReleased()) {
         uint16_t mods = mechy->currentModifiers();
         mechy->clearModifiers();
         mechy->updateModifiers(mods);
-        unsetEventActive(event);
+        event->setIsActive(false);
     }
 }

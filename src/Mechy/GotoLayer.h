@@ -14,10 +14,10 @@ public:
     void run(Event* event);
 };
 
-#define GOTO(n) { .name = FN_GOTO_LAYER, .key = (n) | (GO_MOMENTARY) }
-#define GOTO_0 GOTO(0)
-#define GOTO_1 GOTO(1)
-#define GOTO_2 GOTO(2)
-#define GOTO_3 GOTO(3)
-#define LOWER GOTO(1)
-#define RAISE GOTO(2)
+#define MO(n) { .name = FN_GOTO_LAYER, .key = (n) | (GO_MOMENTARY << EVENT_DATA_SHFT) }
+#define MO_0 MO(0)
+#define MO_1 MO(1)
+#define MO_2 MO(2)
+#define MO_3 MO(3)
+#define LOWER MO(1)
+#define RAISE MO(2)

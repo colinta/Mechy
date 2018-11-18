@@ -40,7 +40,7 @@ bool Sticky::override(uint8_t UNUSED(name), Event* event, Plugin* plugin) {
 }
 
 void Sticky::run(Event* event) {
-    uint8_t modkey_mask = modBit(event->key);
+    uint8_t modkey_mask = modBit(event->key());
     if (!modkey_mask)  return;
 
     if (event->isPressed()) {
@@ -81,15 +81,15 @@ void Sticky::run(Event* event) {
 }
 
 
-uint8_t Sticky::modBit(uint16_t key) {
+uint8_t Sticky::modBit(uint8_t key) {
     switch (key) {
-        case STK_SFT: case KEY_LEFT_SHIFT:  return KEY_BIT_LSFT;
-        case STK_CTL: case KEY_LEFT_CTRL:   return KEY_BIT_LCTL;
-        case STK_ALT: case KEY_LEFT_ALT:    return KEY_BIT_LALT;
-        case STK_GUI: case KEY_LEFT_GUI:    return KEY_BIT_LGUI;
-        case STK_HYP:    return KEY_BIT_LSFT | KEY_BIT_LGUI | KEY_BIT_LCTL | KEY_BIT_LALT;
-        case STK_MEH:    return KEY_BIT_LSFT | KEY_BIT_LCTL | KEY_BIT_LALT;
-        case STK_NAV:    return KEY_BIT_LGUI | KEY_BIT_LCTL | KEY_BIT_LALT;
+    case STK_SFT: case KEY_LEFT_SHIFT:  return KEY_BIT_LSFT;
+    case STK_CTL: case KEY_LEFT_CTRL:   return KEY_BIT_LCTL;
+    case STK_ALT: case KEY_LEFT_ALT:    return KEY_BIT_LALT;
+    case STK_GUI: case KEY_LEFT_GUI:    return KEY_BIT_LGUI;
+    case STK_HYP:    return KEY_BIT_LSFT | KEY_BIT_LGUI | KEY_BIT_LCTL | KEY_BIT_LALT;
+    case STK_MEH:    return KEY_BIT_LSFT | KEY_BIT_LCTL | KEY_BIT_LALT;
+    case STK_NAV:    return KEY_BIT_LGUI | KEY_BIT_LCTL | KEY_BIT_LALT;
     }
     return 0;
 }

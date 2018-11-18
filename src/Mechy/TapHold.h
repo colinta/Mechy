@@ -38,5 +38,4 @@ protected:
 };
 
 #define TH(tap, hold) { .name = FN_TAP_HOLD, .key = TapHold::add(tap, hold, TH_PRESS) }
-#define LT(hold, tap) { .name = FN_TAP_HOLD, .key = TapHold::add(tap, hold, TH_MODIFIER) }
 #define MT(hold, tap) { .name = FN_TAP_HOLD, .key = TapHold::add(tap, hold, TH_MODIFIER) }

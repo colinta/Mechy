@@ -14,7 +14,7 @@ void MouseKey::begin() {
 }
 
 bool MouseKey::is(uint8_t event_type, Event* UNUSED(event)) {
-    switch (event->key) {
+    switch (event->key()) {
     case MOUSEKEY_LCLK:
     case MOUSEKEY_RCLK:
     case MOUSEKEY_MCLK:
@@ -29,7 +29,7 @@ void MouseKey::run(Event* event) {
     char dx = 0, dy = 0;
     char button;
 
-    switch (event->key) {
+    switch (event->key()) {
     case MOUSEKEY_UP:
         dy = -1;
         goto mouseMove;

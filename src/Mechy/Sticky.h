@@ -39,7 +39,7 @@ protected:
     unsigned long sticky_lock_timer;
     unsigned long sticky_auto_off_timer;
 
-    uint8_t modBit(uint16_t key);
+    uint8_t modBit(uint8_t key);
     uint8_t currentMods();
     void updateMods();
     void clearStickyMods();

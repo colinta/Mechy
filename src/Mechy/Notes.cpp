@@ -9,19 +9,20 @@ Notes::Notes(uint8_t _pin) {
 }
 
 uint8_t Notes::defaultName() { return FN_NOTES; }
+
 void Notes::run(Event* event) {
-    if (event->key & DATA_SONG) {
+    if (event->rawData() & DATA_SONG) {
         goto runSong;
     }
 
     if (event->isPressed()) {
-        Tone::play(pin, event->key);
+        Tone::play(pin, event->rawKey());
     }
     else if (event->isReleased()) {
         EventPtr* eventPtr = mechy->events();
         while (eventPtr) {
             if (eventPtr->event->name == event->name && eventPtr->event->isDown()) {
-                Tone::play(pin, eventPtr->event->key);
+                Tone::play(pin, eventPtr->event->rawKey());
                 break;
             }
             eventPtr = eventPtr->next;
