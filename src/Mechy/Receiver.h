@@ -3,6 +3,7 @@
 #include "Mechy.h"
 #include "Responder.h"
 #include "Layout.h"
+#include "priv/RxTx.h"
 
 struct ReceiverEventPtr {
     Layout* layout;
@@ -29,17 +30,14 @@ protected:
 
     void listen();
     void holdCheck();
-    void awaitAck();
-    bool getOneTransmitterBit();
-    void debounce();
-    void delayForTransmitter();
-    bool transmitterDidAck();
-    bool transmitterHasData();
-    void sendReadyState();
-    void sendReadingState();
-
     inline void pushEventPtr(ReceiverEventPtr* ptr);
     inline void removeEventPtr(ReceiverEventPtr* ptr);
+
+    inline bool getOneTransmitterBit();
+    inline void delayForTransmitter();
+    inline bool transmitterHasData();
+    inline void sendReadyState();
+    inline void sendReadingState();
 
 private:
     void construct(Layout* layout, uint8_t dataPin, uint8_t clockPin);

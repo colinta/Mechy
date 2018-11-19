@@ -1,13 +1,26 @@
-#include <Arduino.h>
-
 #include "Wiring.h"
 #include "Transmitter.h"
+/*#
+  #  Worker sending to Supervisor
+  #
+Supervisor | scanning &               +--<--<--<--<--<--<--<--+
+---------- | processing               |                       |
+ reading-> |_______..._          ___  v  read     _read_      | __-> scan
+           |        |  \        / | \   /  | \   /      \more?^|
+           |        |   | <40us|  |  |  |  | |   | x 11 |      |
+   ready-> |        |   [______]  |  \__/  | \___/      \______/
+           |        |             | ready  | ready
+Worker     |________+___t0_____t1 |   /....+...\ /....\ /done_____-> scan
+---------- | scan & |   |      \  |  /     |    X      X
+           |queue|wait||wait|   \_+__......+.../ \..../ \more?v
+           |     |for ||for |   send  ^                       |
+           |     |HIGH||LOW |   ACK   +--<--<--<--<--<--<--<--+
+                                if data
+*/
 
-#define NUM_BITS 11
 #define QUEUE_LEN 20
 uint16_t queue[QUEUE_LEN];
-uint8_t queuePtr = 0;
-
+uint8_t queueLength = 0;
 
 Transmitter::Transmitter(uint8_t _dataPin, uint8_t _clockPin, const uint8_t* _pinRows, const uint8_t* _pinCols, uint8_t _ROWS, uint8_t _COLS) {
     dataPin = _dataPin;
@@ -85,7 +98,7 @@ bool Transmitter::detectKeyChange(bool isPressed, uint8_t row, uint8_t col) {
 }
 
 void Transmitter::pushEvent(uint8_t row, uint8_t col, bool isPressed) {
-    if (queuePtr == QUEUE_LEN)  return;
+    if (queueLength == QUEUE_LEN)  return;
 
     // 11 10 9 8 7 6   5 4 3 2 1
     // _   _________   _________
@@ -96,22 +109,37 @@ void Transmitter::pushEvent(uint8_t row, uint8_t col, bool isPressed) {
     bits |= ((uint16_t)col) << 5;
     bits |= (uint16_t)row;
 
-    queue[queuePtr] = bits;
-    queuePtr++;
-
-    sendHasData();
+    queue[queueLength] = bits;
+    queueLength++;
 }
 
 void Transmitter::flushQueue() {
-    if (!supervisorIsReady()) { return; }
+    waitForReading();  // if the signal is low, wait for high
+    waitForReady();    // wait for signal to go low
+    unsigned long t0 = micros();
+    waitForReading();
+    unsigned long dt = micros() - t0;
 
-    if (queuePtr == 0) {
-        return;
+    if (dt > TRANSMIT_DETECT) {
+        // receiveTransmission();
     }
+    else if (queueLength > 0) {
+        sendTransmission();
+    }
+}
 
-    sendAckAndWait();
+void Transmitter::receiveTransmission() {
+    // sendHasData();
+    // 16x
+    // waitForReady()
+    // readValue() on clockPin
+    // waitForReading()
+}
 
-    for (uint8_t queueIndex = 0; queueIndex < queuePtr; queueIndex++) {
+void Transmitter::sendTransmission() {
+    sendHasData();  // transmitter goes low, indicating "data present"
+
+    for (uint8_t queueIndex = 0; queueIndex < queueLength; queueIndex++) {
         uint16_t bits = queue[queueIndex];
         // transmitted as:
         // [row]         [col]        [isPressed]
@@ -120,39 +148,30 @@ void Transmitter::flushQueue() {
             sendOneBit((bits >> bitIndex) & 1);
         }
 
-        waitForReady();
-        if (queueIndex == queuePtr - 1) {
-            sendNoData();
-        }
-        else {
-            sendHasData();
-        }
-        waitForReading();
+        bool noMoreData = (queueIndex == queueLength - 1);
+        sendOneBit(noMoreData);
     }
 
-    queuePtr = 0;
+    queueLength = 0;
 }
 
-void Transmitter::sendOneBit(bool bit) {
+inline bool Transmitter::supervisorIsReading()  { return Wiring::digitalRead(clockPin); }
+inline bool Transmitter::supervisorIsReady()  { return !Wiring::digitalRead(clockPin); }
+inline void Transmitter::waitForReady() {
+    while (!supervisorIsReady());
+}
+inline void Transmitter::waitForReading() {
+    while (supervisorIsReady());
+}
+inline void Transmitter::sendHasData() { Wiring::digitalWrite(dataPin, LOW); }
+inline void Transmitter::sendOneBit(bool bit) {
     waitForReady();
     Wiring::digitalWrite(dataPin, bit);
     waitForReading();
 }
-
-void Transmitter::debounce()  { delayMicroseconds(100); }
-bool Transmitter::supervisorIsReady()  { return !Wiring::digitalRead(clockPin); }
-void Transmitter::waitForReady() {
-    if (!supervisorIsReady())  while (!supervisorIsReady()) {};
-    debounce();
-}
-void Transmitter::waitForReading() {
-    if (supervisorIsReady())  while (supervisorIsReady()) {};
-    debounce();
-}
-void Transmitter::sendHasData() { Wiring::digitalWrite(dataPin, LOW); }
-void Transmitter::sendNoData() { Wiring::digitalWrite(dataPin, HIGH); }
-void Transmitter::sendAckAndWait() {
-    delayMicroseconds(1000);
-    Wiring::digitalWrite(dataPin, HIGH);
+inline bool Transmitter::receiveOneBit() {
+    waitForReady();
+    bool bit = Wiring::digitalRead(clockPin);
     waitForReading();
+    return bit;
 }
