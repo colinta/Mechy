@@ -4,17 +4,6 @@
 #include "pins_arduino.h"
 #include "Tone.h"
 
-#if defined(__AVR_ATmega8__) || defined(__AVR_ATmega128__)
-#define TCCR2A TCCR2
-#define TCCR2B TCCR2
-#define COM2A1 COM21
-#define COM2A0 COM20
-#define OCR2A OCR2
-#define TIMSK2 TIMSK
-#define OCIE2A OCIE2
-#define TIMSK1 TIMSK
-#endif
-
 // timerx_toggle_count:
 //  > 0 - duration specified
 //  = 0 - stopped
