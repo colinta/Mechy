@@ -6,4 +6,5 @@
 #define TX_LISTEN_TIME 400
 #define NUM_BITS 11
 
-inline void debounce() { delayMicroseconds(20); }
+static inline void debounce() { delayMicroseconds(20); }
+static inline void delayForTransmit() { delayMicroseconds(TX_LISTEN_TIME); }

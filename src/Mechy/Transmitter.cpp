@@ -1,5 +1,6 @@
 #include "Wiring.h"
 #include "Transmitter.h"
+#include "../priv/Constants.h"
 /*#
   #  Worker sending to Supervisor
   #
@@ -8,23 +9,40 @@ Supervisor | scanning &               +--<--<--<--<--<--<--<--+
  reading-> |_______..._          ___  v  read     _read_      | __-> scan
            |        |  \        / | \   /  | \   /      \more?^|
            |        |   | <40us|  |  |  |  | |   | x 11 |      |
-   ready-> |        |   [______]  |  \__/  | \___/      \______/
-           |        |             | ready  | ready
-Worker     |________+___t0_____t1 |   /....+...\ /....\ /done_____-> scan
----------- | scan & |   |      \  |  /     |    X      X
-           |queue|wait||wait|   \_+__......+.../ \..../ \more?v
-           |     |for ||for |   send  ^                       |
-           |     |HIGH||LOW |   ACK   +--<--<--<--<--<--<--<--+
+        -> |        |   [______]  |  \__/  | \___/      \______/
+   ready-  |        |             | ready  | ready
+        -> |________+___t0_____t1 |   /....+...\ /....\ /done_____-> scan
+           | scan & |   |      \  |  /     |    X      X
+ reading-> |queue|wait||wait|   \_+__......+.../ \..../ \more?v
+---------- |     |for ||for |   send  ^                       |
+Worker     |     |HIGH||LOW |   ACK   +--<--<--<--<--<--<--<--+
                                 if data
+*/
+/*#
+  #  Supervisor sending to Worker
+  #
+Supervisor | scanning &               +--<--<--<--<--<--<--<--+
+---------- | processing               |                       |
+ reading-> |_______..._          ___  v                       |
+           |        |  \        / | \......+...\ /....\ /done_|____-> scan
+           |        |   | >40us|  |  \     |    X      X      |
+        -> |        |   [______]  |   \....+.../ \..../ \more?^
+   ready-  |        |             | ready  | ready
+        -> |________+___t0_____t1 |   __   |  ___        _______-> scan
+           | scan & |   |      \  |  |  |  | |   | x 8  |
+ reading-> |queue|wait||wait|   \_+_/   \__|_/   \______/more?v
+---------- |     |for ||for |   send  ^  read      read       |
+Worker     |     |HIGH||LOW |   ACK   +--<--<--<--<--<--<--<--+
+                                to init
 */
 
 #define QUEUE_LEN 20
 uint16_t queue[QUEUE_LEN];
 uint8_t queueLength = 0;
 
-Transmitter::Transmitter(uint8_t _dataPin, uint8_t _clockPin, const uint8_t* _pinRows, const uint8_t* _pinCols, uint8_t _ROWS, uint8_t _COLS) {
-    dataPin = _dataPin;
-    clockPin = _clockPin;
+Transmitter::Transmitter(uint8_t dataPin, uint8_t clockPin, const uint8_t* _pinRows, const uint8_t* _pinCols, uint8_t _ROWS, uint8_t _COLS) {
+    outputPin = dataPin;
+    inputPin = clockPin;
     pinRows = _pinRows;
     pinCols = _pinCols;
     ROWS = _ROWS;
@@ -38,9 +56,9 @@ Transmitter::Transmitter(uint8_t _dataPin, uint8_t _clockPin, const uint8_t* _pi
 }
 
 void Transmitter::begin() {
-    Wiring::pinMode(dataPin, OUTPUT);
-    Wiring::pinMode(clockPin, INPUT);
-    Wiring::digitalWrite(dataPin, HIGH);
+    Wiring::pinMode(outputPin, OUTPUT);
+    Wiring::pinMode(inputPin, INPUT);
+    Wiring::digitalWrite(outputPin, HIGH);
 
     for (uint8_t i = 0; i < COLS; i++) {
         uint8_t colPin = pinCols[i];
@@ -69,6 +87,7 @@ void Transmitter::begin() {
     } while (anyPressed);
 }
 
+bool debug = false;
 void Transmitter::scan() {
     bool anyChange = false;
     for (uint8_t row = 0; row < ROWS; row++) {
@@ -81,8 +100,8 @@ void Transmitter::scan() {
     }
 
     flushQueue();
-    // ug terrible debouncing
     if (anyChange) {
+        debug = true;
         delay(10);
     }
 }
@@ -121,19 +140,26 @@ void Transmitter::flushQueue() {
     unsigned long dt = micros() - t0;
 
     if (dt > TRANSMIT_DETECT) {
-        // receiveTransmission();
+        receiveTransmission();
     }
     else if (queueLength > 0) {
         sendTransmission();
     }
+    else {
+        return;
+    }
+
+    sendReadyState();
 }
 
 void Transmitter::receiveTransmission() {
-    // sendHasData();
-    // 16x
-    // waitForReady()
-    // readValue() on clockPin
-    // waitForReading()
+    sendReadingState();
+    delayForTransmit();
+    data = 0;
+    for (uint8_t bitIndex = 0; bitIndex < 8; bitIndex++) {
+        if (!receiveOneBit())  continue;
+        bit_on(data, bit(bitIndex));
+    }
 }
 
 void Transmitter::sendTransmission() {
@@ -155,23 +181,26 @@ void Transmitter::sendTransmission() {
     queueLength = 0;
 }
 
-inline bool Transmitter::supervisorIsReading()  { return Wiring::digitalRead(clockPin); }
-inline bool Transmitter::supervisorIsReady()  { return !Wiring::digitalRead(clockPin); }
-inline void Transmitter::waitForReady() {
-    while (!supervisorIsReady());
-}
-inline void Transmitter::waitForReading() {
-    while (supervisorIsReady());
-}
-inline void Transmitter::sendHasData() { Wiring::digitalWrite(dataPin, LOW); }
+inline void Transmitter::sendHasData() { Wiring::digitalWrite(outputPin, LOW); }
+
+// supervisor: ready = LOW, reading = HIGH
+inline bool Transmitter::supervisorIsReading()  { return Wiring::digitalRead(inputPin); }
+inline bool Transmitter::supervisorIsReady()  { return !Wiring::digitalRead(inputPin); }
+inline void Transmitter::waitForReady() { while (supervisorIsReading()); }
+inline void Transmitter::waitForReading() { while (supervisorIsReady()); }
+// worker: ready = HIGH, reading = LOW
+inline void Transmitter::sendReadyState() { Wiring::digitalWrite(outputPin, HIGH); }
+inline void Transmitter::sendReadingState() { Wiring::digitalWrite(outputPin, LOW); }
+
 inline void Transmitter::sendOneBit(bool bit) {
     waitForReady();
-    Wiring::digitalWrite(dataPin, bit);
+    Wiring::digitalWrite(outputPin, bit);
     waitForReading();
 }
 inline bool Transmitter::receiveOneBit() {
-    waitForReady();
-    bool bit = Wiring::digitalRead(clockPin);
-    waitForReading();
-    return bit;
+    sendReadyState();
+    delayForTransmit();
+    sendReadingState();
+    delayForTransmit();
+    return Wiring::digitalRead(inputPin);
 }

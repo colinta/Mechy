@@ -20,11 +20,13 @@ public:
     Receiver(KBD* keys, uint8_t ROWS, uint8_t COLS, uint8_t dataPin, uint8_t clockPin);
     void begin();
     void scan();
+    void send(uint8_t byte);
     void gotoLayer(uint8_t layer);
 
 protected:
-    uint8_t dataPin;
-    uint8_t clockPin;
+    uint8_t inputPin;
+    uint8_t outputPin;
+    uint8_t data;
     Layout* layout;
     ReceiverEventPtr* firstEventPtr;
 
@@ -33,11 +35,16 @@ protected:
     inline void pushEventPtr(ReceiverEventPtr* ptr);
     inline void removeEventPtr(ReceiverEventPtr* ptr);
 
-    inline bool getOneTransmitterBit();
-    inline void delayForTransmitter();
     inline bool transmitterHasData();
+    inline void sendHasData();
+    inline bool workerIsReading();
+    inline bool workerIsReady();
     inline void sendReadyState();
     inline void sendReadingState();
+    inline void waitForReady();
+    inline void waitForReading();
+    inline void sendOneBit(bool);
+    inline bool receiveOneBit();
 
 private:
     void construct(Layout* layout, uint8_t dataPin, uint8_t clockPin);

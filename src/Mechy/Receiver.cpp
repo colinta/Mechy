@@ -1,11 +1,13 @@
 #include "Wiring.h"
 #include "Receiver.h"
+#include "../priv/Constants.h"
 
-void Receiver::construct(Layout* _layout, uint8_t _dataPin, uint8_t _clockPin) {
+void Receiver::construct(Layout* _layout, uint8_t dataPin, uint8_t clockPin) {
     layout = _layout;
-    dataPin = _dataPin;
-    clockPin = _clockPin;
+    inputPin = dataPin;
+    outputPin = clockPin;
     firstEventPtr = NULL;
+    data = 0;
 }
 
 Receiver::Receiver(Layout* layout, uint8_t dataPin, uint8_t clockPin) : Responder() {
@@ -18,14 +20,18 @@ Receiver::Receiver(KBD* keys, uint8_t ROWS, uint8_t COLS, uint8_t dataPin, uint8
 }
 
 void Receiver::begin() {
-    Wiring::pinMode(dataPin, INPUT);
-    Wiring::pinMode(clockPin, OUTPUT);
-    Wiring::digitalWrite(clockPin, HIGH);
+    Wiring::pinMode(inputPin, INPUT);
+    Wiring::pinMode(outputPin, OUTPUT);
+    Wiring::digitalWrite(outputPin, HIGH);
 }
 
 void Receiver::scan() {
     listen();
     holdCheck();
+}
+
+void Receiver::send(uint8_t _data) {
+    data = _data;
 }
 
 void Receiver::gotoLayer(uint8_t layer) {
@@ -67,18 +73,30 @@ void Receiver::listen() {
     while (transmitterHasData());
     // send "ready to listen" or "ready to transmit" signal
     sendReadyState();
-    // if (hasDataToSend) { delayMicroseconds(TRANSMIT_TIME); }
-    // else
-    delayMicroseconds(LISTEN_TIME);
-    sendReadingState();
-    delayForTransmitter();
-    bool workerDidAck = transmitterHasData();
-    if (!workerDidAck)  return;
+    if (data) {
+        delayMicroseconds(TRANSMIT_TIME);
+        sendReadingState();
+        waitForReading();
+        for (uint8_t bitIndex = 0; bitIndex < 8; bitIndex++) {
+            sendOneBit(bit_get(data, bit(bitIndex)));
+        }
+        waitForReading();
+        data = 0;
+        return;
+    }
+    else {
+        delayMicroseconds(LISTEN_TIME);
+        sendReadingState();
+        delayForTransmit();
+        bool workerDidAck = transmitterHasData();
+        if (!workerDidAck)  return;
+        goto listenBody;
+    }
 
 listenBody:
     uint16_t input = 0;
     for (uint8_t i = 0; i < NUM_BITS; i++) {
-        bool oneBit = getOneTransmitterBit();
+        bool oneBit = receiveOneBit();
         if (oneBit) {
             input |= 1 << i;
         }
@@ -107,21 +125,33 @@ listenBody:
         }
     }
 
-    bool hasMoreData = !getOneTransmitterBit();
+    bool hasMoreData = !receiveOneBit();
     if (hasMoreData) {
         goto listenBody;
     }
 }
 
-inline void Receiver::delayForTransmitter() { delayMicroseconds(TX_LISTEN_TIME); }
-inline bool Receiver::transmitterHasData() { return !Wiring::digitalRead(dataPin); }
-inline void Receiver::sendReadyState() { Wiring::digitalWrite(clockPin, LOW); }
-inline void Receiver::sendReadingState() { Wiring::digitalWrite(clockPin, HIGH); }
+inline bool Receiver::transmitterHasData() { return !Wiring::digitalRead(inputPin); }
+inline void Receiver::sendHasData() { Wiring::digitalWrite(outputPin, LOW); }
 
-inline bool Receiver::getOneTransmitterBit() {
+// worker: ready = HIGH, reading = LOW
+inline bool Receiver::workerIsReading()  { return !Wiring::digitalRead(inputPin); }
+inline bool Receiver::workerIsReady()  { return Wiring::digitalRead(inputPin); }
+inline void Receiver::waitForReady() { while (workerIsReading()); }
+inline void Receiver::waitForReading() { while (workerIsReady()); }
+// supervisor: ready = LOW, reading = HIGH
+inline void Receiver::sendReadyState() { Wiring::digitalWrite(outputPin, LOW); }
+inline void Receiver::sendReadingState() { Wiring::digitalWrite(outputPin, HIGH); }
+
+inline void Receiver::sendOneBit(bool bit) {
+    waitForReady();
+    Wiring::digitalWrite(outputPin, bit);
+    waitForReading();
+}
+inline bool Receiver::receiveOneBit() {
     sendReadyState();
-    delayForTransmitter();
+    delayForTransmit();
     sendReadingState();
-    delayForTransmitter();
-    return Wiring::digitalRead(dataPin);
+    delayForTransmit();
+    return Wiring::digitalRead(inputPin);
 }
