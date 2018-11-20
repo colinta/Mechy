@@ -77,13 +77,13 @@ KBDPROG Layout::getKey(uint8_t row, uint8_t col) {
     }
     if (!layerPtr)  return NULL;
 
-    KBDPROG key = this->getInLayer(layerPtr->keys, row, col);
-    if (!key)  return NULL;
+    KBDPROG kbd = this->getInLayer(layerPtr->keys, row, col);
+    if (!kbd)  return NULL;
 
-    if (key->getName() == FN_NONE && key->getKey() == MCHY_TRANS) {
+    if (kbd->getName() == FN_NONE && kbd->getKey() == MCHY_TRANS) {
         return this->getInLayer(firstLayerPtr->keys, row, col);
     }
-    return key;
+    return kbd;
 }
 
 KBDPROG Layout::getInLayer(KBDPROG keys, uint8_t row, uint8_t col) {
