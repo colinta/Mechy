@@ -22,48 +22,57 @@ See the examples first to see if this library appeals to you:
 Usage
 =====
 
-Include the main library (`Mechy.h`), include your plugins (`Mechy/KeyPress.h`, `Mechy/MediaKey.h`), define the pins for your keyboard (see examples).  Then define your layout, create a few objects, and add `mechy.begin()` and `mechy.tick()` to `setup()` and `loop()`.  Easy! (I think.)
+Include the main library (`Mechy.h`), include your plugins (`Mechy/KeyPress.h`, `Mechy/MediaKey.h`), define the pins for your keyboard (better yet use a `Hardware` header to do this).  Then define your layout (you should use `PROGMEM`), create a few objects, and add `mechy.begin()` and `mechy.tick()` to `setup()` and `loop()`.  Easy! (I think.)
 
 If a keyboard is available (in [`Keyboards.h`](https://github.com/colinta/Mechy/blob/master/src/Mechy/Keyboards)) the process is even slightly easier: the pins will be defined for you, and you can create a `Hardware` instance.  This will make it easy to use keyboard features like LEDs and sound.  The `Hardware` author needs to write this class to support what that keyboard is capable of, or you can use it as a starting point and do your own thing!
 
-The keyboard header will also define handy `LAYOUT` macros and a keyboard template that you can use.  The macro is nice because it can take into account staggering and keys that span multiple columns.
+The keyboard header will also define handy `LAYOUT` macros and a keyboard template that you can use.  The macro is nice because it can take into account staggering and keys that span multiple rows & columns.
 
 API
 ===
 
-###### Mechy
+### Mechy
 
 The heart of it all!  Create a Mechy instance, `add()` your plugins, `attach()` your responders, and that should do it!
 
-```c++
+```cpp
 Mechy mechy = Mechy();
-// Create a scanner with your keys array or Layout.  This class will generate events and send them to Mechy.
+
+// Layout and Mechy expect your keys to be in PROGMEM, use this macro to have
+// your keys array defined correctly.
+KEYS(keys) = LAYOUT(KC_A, KC_B, ..., KC_RSFT);
+
+// Create a scanner with your keys array (or Layout).  This class will generate events and send them to Mechy.
 Scanner scanner = Scanner(keys, pinRows, pinCols, ROWS, COLS);
 
 void setup() {
-  // add all your plugins
-  mechy.add(new KeyPress());
+    // add all your plugins
+    mechy.add(new KeyPress());
 
-  mechy.attach(scanner);  // and attach(receiver) if you have a split keyboard
+    mechy.attach(scanner);  // and attach(receiver) if you have a split keyboard
 
-  mechy.begin();
+    mechy.begin();
 }
 
 void loop() {
-  mechy.tick();
+    mechy.tick();
 }
 ```
+
+### Plugins
+
+In QMK you might be used to activating features in your `rules.mk` and `config.h` files.  In Mechy a lot of these same features are accomplished instead by using the appropriate plugin.  For instance, "AutoShift" is a plugin, not a feature you activate.  Once you include it you need to use *its* key commands, e.g. `AS_A` instead of `KC_A`.
 
 ###### KeyPress
 
 The most basic plugin, sends any printable key press and modifiers, also supports HYPER (⌘⌥⌃⇧), MEH (⌥⌃⇧), and CAG (⌘⌥⌃) keys, and keyboard chords.
 
-```c++
+```cpp
 #include <Mechy/KeyPress.h>
 
 // define a custom "cmd+tab" key:
 #define CMD_TAB KC(LGUI(KEY_TAB))
-KBD mainKeys[] = { KC_ESC, KC_A, CMD_TAB };
+KEYS(mainKeys) = { KC_ESC, KC_A, CMD_TAB };
 ```
 
 See [KeyPress.h](https://github.com/colinta/Mechy/blob/master/src/Mechy/KeyPress.h#L17) for defined keys.
@@ -74,23 +83,25 @@ Send play, pause, volume, track change keys.  I've only tested on macOS.
 
 Btw this plugin uses the "ArduinoMedia" Library at https://github.com/colinta/ArduinoMedia. I maintain this library but it's just a copy of code I found in https://github.com/Nicohood/HID
 
-```c++
+```cpp
 #include <Mechy/MediaKey.h>
 
-KBD mainKeys[] = { MD_PLAY, MD_VOLU, MD_FFD };
+KEYS(mainKeys) = { MD_PLAY, MD_VOLU, MD_FFD };
 ```
 
-See [Media.h](https://github.com/colinta/Mechy/blob/master/src/Mechy/Media.h#L15) for defined keys.
+See [MediaKey.h](https://github.com/colinta/Mechy/blob/master/src/Mechy/MediaKey.h#L15) for defined keys.
 
-###### MouseKeys
+###### MouseKey
 
 A simple implementation of mouse keys.  Hold shift to move the mouse faster.
 
-```c++
+```cpp
 #include <Mechy/MouseKey.h>
 
-KBD mainKeys[] = { MK_LEFT, MK_LCLK, MK_RGHT };
+KEYS(mainKeys) = { MK_LEFT, MK_LCLK, MK_RGHT };
 ```
+
+See [MouseKey.h](https://github.com/colinta/Mechy/blob/master/src/Mechy/MouseKey.h#L27) for defined keys.
 
 ###### AutoShift
 
@@ -98,48 +109,101 @@ A port of QMK's auto shift feature.  Tap a letter for lower case, hold it for th
 
 This is an interesting plugin because it is very careful about when it reports that it is a keypress.  The mechanism for this is the function `bool Plugin::is(event_type, Event*)`.  This plugin function returns `true` when it is considered a match for the `event_type` (`EVENT_KEYPRESS, EVENT_MOUSE, EVENT_MODIFIER, EVENT_META` are possible values).
 
-The AutoShift key only matches at two times: after being held for 1/4 second, or at release when it is below that time.  At all other times this key is not doing anything; it shouldn't be considered a key down or anything like that.
+The AutoShift key only matches at two times: after being held for 1/4 second, or at release when it is below that time.  At all other times this key is not doing anything; it doesn't send key repeat events.
 
-This is only tricky when used in conjunction with Sticky keys.
+See [AutoShift.h](https://github.com/colinta/Mechy/blob/master/src/Mechy/AutoShift.h#L15) for defined keys.
+
+###### TapHold
+
+Tap a key for one key, press and hold for another.  Much like `AutoShift` but works with any key commands.  Getting it setup is just a little more work, but it's great for limited-size keyboards to have keys like PageUp double as the Home key!
+
+The default behavior is to send a "key tap", i.e. a down event followed immediately by an up event.  If you want to use the "hold" feature to activate modifiers or switch layers, you'll probably want to use the `TH_HOLD` behavior (though not necessarily - the GotoLayer `PUSH` and `LSET` behaviors work just fine with the "tap" behavior).
+
+```cpp
+#include <Mechy/TapHold.h>
+
+// define human readable shortcuts for the layout
+#define TH_PGUP TH_0
+#define TH_PGDN TH_1
+#define TH_SPC  TH(2)  // TH_0...TH_9 are defined, if you need more use TH(n)
+KEYS(mainKeys) = { TH_PGUP, TH_PGDN, TH_SPC };
+
+void setup() {
+    // we need to tell TapHold what keys should be associated with these events.
+    // Order matters here - the first call to `add` will be associated with
+    // TH_0, and so on.
+    TapHold::add(KC_PGUP, KC_HOME);
+    TapHold::add(KC_PGDN, KC_END);
+    // check this out, you can use this command to switch layers. tap for space,
+    // or hold to activate layer 1.  Uses the `TH_HOLD` behavior to keep the
+    // layer active as long as the key is held
+    TapHold::add(KC_SPC, GOTO_1, TH_HOLD);
+    // these must be called before mechy.begin()!  They get copied over as an
+    // array in TapHold::begin()
+
+    mechy.begin();
+}
+
+```
 
 ###### GotoLayer
 
 Obviously it changes layers!  This is only the key listener part, to define multiple layers you'll need to study the `Layout` class.
 
-I've only just finished this one, right now it only supports "hold for another layer", i.e. while the key is pressed it will activate another layer, when you release the key you'll bounce back to the previous layer.
+There are a few layer changing "modes".  The simplest is `GOTO`, which momentarily activates another layer while the key is held.  When you release the key you'll bounce back to the previous layer.
 
-Also I don't have much support for "transparent" keys.  If you use the `vvvv` macro you can cascade up to the main/first layer, but that's all.  In the future I'd like to change this to support lots of layer pushing/popping features.
+Another option is `LSET` or layer set.  This is used to activate another layer and keep it active.  A good use case for this is to activate Colemak or Dvorak or Qwerty layouts.  The "set layout" key could be on your function layer, and using `LSET` there you would in effect swap out the layer *below* the function layer.  See below for this trick.  Btw this does not exactly "push" the layer on, it activates the layer while the key is held and assigns it as the default, when no other layers are active.
 
-```c++
+My favorite, though, is `PUSH`, which takes the best of both these behaviors.  It activates another layer while the key is held, and then you have an option: release the `PUSH` key and that layer will remain the active layer (which makes it similar to `LSET`).  Or if you keep it held and press some keys, when you release the `PUSH` key you'll return to the previous layer (which makes it similar to `GOTO`).  This is called "one shot layer" in QMK speak, though I don't know whether QMK's `OSL()` macro works the same way or not.  If you use this macro be sure to include the `BACK` key (or other layer changing keys) because otherwise you won't be able to return to the base layer.
+
+Lastly there is the `BACK` behavior, this just pops the top-most layer off the stack of activated layers.  Don't expect miracles if you have a dozen layers defined and want this feature to "just work".
+
+There is limited support for "transparent" keys.  This is deliberate, it keeps the "what keys are active?" logic simple.  If you use the `vvvv` macro you can cascade up *to the zero'th layer*, but that's all.  If you use `LSET` to activate another layer, it will still cascade up to the zero'th layer, not the "previous" layer.  In the future this might change to support cascading to multiple layers, but that will probably be an option and not the default behavior.
+
+```cpp
 #include <Mechy/GotoLayer.h>
 
-KBD mainKeys[] = { GOTO_1, GOTO_2, GOTO_3 };
-//    a.k.a.     { LOWER , RAISE , GOTO_3 };
+KEYS(mainKeys) = { GOTO_1, PUSH_2, LSET_3 };
+KEYS(fnKeys) = { LOWER , RAISE , BACK };  // LOWER and RAISE use the PUSH behavior, btw.
+
+// here's an example of supporting colemak/qwerty/dvorak layers
+#define LSET_QW LSET_0
+#define LSET_CM LSET_1
+#define LSET_DK LSET_2
+#define GOTO_FN GOTO_3
+// remember that this first layer is always used for cascading, regardless of which layer is active.
+KEYS(mainKeys)    = { KC_LCTL,  KC_Q  ,  KC_W  ,  KC_E  ,  KC_R  ,  KC_T  ,  KC_Y  , GOTO_FN };
+KEYS(colemakKeys) = {  vvvv  ,  KC_Q  ,  KC_W  ,  KC_F  ,  KC_P  ,  KC_G  ,  KC_J  ,  vvvv   };
+KEYS(dvorakKeys)  = {  vvvv  , KC_QUOT, KC_COMM, KC_DOT ,  KC_P  ,  KC_Y  ,  KC_F  ,  vvvv   };
+KEYS(fnKeys)      = { KC_LCTL, LSET_QW, LSET_CM, LSET_DK,  ____  ,  ____  ,  ____  , GOTO_FN };
+Layout(ROWS, COLS, mainKeys, colemakKeys, dvorakKeys, fnKeys);
 ```
 
-See [GotoLayer.h](https://github.com/colinta/Mechy/blob/master/src/Mechy/GotoLayer.h#16) for defined keys.
+See [GotoLayer.h](https://github.com/colinta/Mechy/blob/master/src/Mechy/GotoLayer.h#L23) for defined keys.
 
 ###### Lock
 
-A super simple Plugin, I wrote it as an early exercise.  This plugin listens for two `LK` key presses (or more - the `Lock()` constructor accepts the number of keys needed), and after both are pressed it locks all keys except internal "meta" keys like `GOTO_x` and `LK`.  You can prevent a small child from using your keyboard - which is the actual reason I wrote this, because I have a precosious daughter who loves to play with my keyboard.
+A super simple Plugin, I wrote it as an early exercise.  This plugin listens for two `LK` key presses (or more - the `Lock()` constructor accepts the number of keys needed), and after both are pressed it locks all keys except internal "meta" keys like `GOTO_x` and `LK`.  You can prevent a small child from using your keyboard - which is the actual reason I wrote this, because I have a precosious daughter who loves to play with my keyboard.  Actually now that I added the `Notes` I let her play with that feature.
 
-```c++
+```cpp
 #include <Mechy/Lock.h>
 
-KBD mainKeys[] = { LK, LK };
+KEYS(mainKeys) = { LK, LK };
 mechy.add(new Lock());
 // to require 3 lock keys:
 mechy.add(new Lock(3));
 ```
 
+Only the `LK` key is defined.
+
 ###### Macro
 
-This is only for password macros at the moment. To do keyboard macros like `CMD+SHIFT+4` you can use KeyPress.
+This is only for password macros at the moment. For keyboard chords like `CMD+SHIFT+4` you can use KeyPress (`LGUI(LSFT('4'))`).
 
-```c++
+```cpp
 #include <Mechy/Macro.h>
 
-KBD mainKeys[] = { MM_0, MM_1, MM_2 };
+KEYS(mainKeys) = { MM_0, MM_1, MM_2 };
 
 // If this is a "private" keyboard you can hardcode them, otherwise look at
 // Layers.ino for how I put them in a secrets file.  They'll still be visible to
@@ -150,25 +214,47 @@ Mechy mechy = Mechy();
 mechy.add(new Macro(7, macros));
 ```
 
-See [Macro.h](https://github.com/colinta/Mechy/blob/master/src/Mechy/Macro.h#L21) for defined keys.
+See [Macro.h](https://github.com/colinta/Mechy/blob/master/src/Mechy/Macro.h#L17) for defined keys.
 
 ###### Sticky
 
-Good luck with this one, it's my own very opinionated version of how "sticky modifier keys" should work.  But basically the same spirit as "One shot" keys in QMK.
+This is my own very opinionated version of how "sticky modifier keys" should work.  The same spirit as "One shot" keys in QMK and "Sticky keys" on Windows and macOS.  The difference is that my version of sticky keys deactivates the "sticky" key if you hold the modifier key.
 
-1. Press the modifier key once to activate it, then press any key to send "mod+key" and the modifier will be deactivated afterwards.
-2. Press and hold the modifier and it will just work like a normal modifier.  This makes it easy to Command+click or to decide "nevermind I *don't* want to activate the modifier".
+1. Press the modifier key once to activate it, then press any key to send "mod+key".  The modifier will be deactivated afterwards.
+2. Press and hold the modifier (for 1/4 sec or more) and it will behave like a normal modifier.  This makes it easy to Command+click or to decide "nevermind I *don't* want to activate the modifier".
 3. Double tap the modifier to lock it, press it again to unlock it.
 
-Also supports HYPER, MEH, and CAG keys.
+Also supports HYPER (⌘⌥⌃⇧), MEH (⌥⌃⇧), and CAG (⌘⌥⌃) keys.
+
+```cpp
+#include <Mechy/Sticky.h>
+
+KEYS(mainKeys) = { ST_CTL, ST_ALT, ST_SFT, ST_GUI, ST_HYP, ST_MEH, ST_CAG };
+```
+
+The example above shows all the defined keys.
+
+###### Notes
+
+For funsies!  If you have a piezo speaker attached to a pin you can use this plugin to play music.
+
+```cpp
+#include <Mechy/Notes.h>
+
+KEYS(mainKeys) = { NT_C3, NT_D3, NT_E3, NT_F3, NT_G3, NT_A3, NT_B3, NT_C4 }
+```
+
+The header file is big - it includes keys for every note and an easter egg song key. [Notes.h](https://github.com/colinta/Mechy/blob/master/src/Mechy/Notes.h#L121)
+
+### Support classes
 
 ###### Layout
 
 This is the class you need to use if you want layers.  It's easy:
 
-```c++
-KBD mainKeys[] = { KC_A, GOTO_1 };
-KBD fnKeys[] = { KC_B , ____ };
+```cpp
+KEYS(mainKeys) = { KC_A, GOTO_1 };
+KEYS(fnKeys) = { KC_B , ____ };
 
 Layout layout = Layout(ROWS, COLS, mainKeys, fnKeys);
 ```
@@ -182,14 +268,14 @@ This class handles the hardware reading/writing, and sends updates to `Mechy`, w
 
 Implementation detail: `Scanner` is a `Responder`, which means it responds to key presses and emits `KBD*` events to `Mechy`, which stores the events and translates them to `Event*` objects, which are consumed by `Plugin` instances.
 
-```c++
-KBD keys[] = { ... };
+```cpp
+KEYS(keys) = { ... };
 Scanner scanner = Scanner(keys, pinRows, pinCols, ROWS, COLS);
 mechy.attach(scanner);
 
 // multiple layers
-KBD mainKeys[] = { ... };
-KBD fnKeys[] = { ... };
+KEYS(mainKeys) = { ... };
+KEYS(fnKeys) = { ... };
 Layout layout = Layout(ROWS, COLS, mainKeys, fnKeys);
 Scanner scanner = Scanner(&layout, pinRows, pinCols, ROWS, COLS);
 
@@ -198,12 +284,11 @@ mechy.attach(scanner);
 
 ###### Receiver
 
-`Receiver` is similar in usage to `Scanner` (it is also a "Responder" subclass, and so can emit key events).  It accepts a `Layout` object and emits events.
-
-Fun history fact, this split keyboard code is the original reason I wrote Mechy.  I couldn't get the split keyboard code to work using QMK, the resulting keyboard was buggy and unresponsive.
+`Receiver` is similar in usage to `Scanner` (it is also a "Responder" subclass, and so can emit key events).  It accepts a `Layout` object and emits events that it receives from the "right half" of a split keyboard.
 
 This class listens uses a custom-written 2-wire serial protocol (I tried to use I2C but it didn't work?), with support for up to 32 rows and 32 columns.  The other half uses `Transmitter` and a very basic `.ino` program.
 
+Fun history fact, this split keyboard code is the original reason I wrote Mechy.  I couldn't get the split keyboard code to perform well using QMK, the resulting keyboard was buggy and unresponsive.
 
 ###### Transmitter
 
@@ -246,17 +331,21 @@ This is a re-implementation of Arduino's `wiring.c` code, but with support for a
 #define _F7 18
 ```
 
-(the numbers refer to the pin location on the Atmega32u4 chip, but the values don't matter as long as they're unique).
-
 ###### Hardware
 
 This class is defined per-keyboard, but in general it will have:
 
+- `LAYOUT` macro and maybe alternates like `LAYOUT_standard` and `LAYOUT_60`.
 - `begin()` to initialize LED or other pins
 - `tick()` to check `Mechy` for Caps lock status and update that LED automatically (if you assign to `capsLedWrite()` your setting will override the default).
+- Definitions for ROWS, COLS, pinRows and pinCols.
 - LED controlling methods like `capsLedWrite()` and `capsLedRead()` and defines like `CAPS_LED_PIN`
 - RGB and backlight support, if available.
 
-###### FYI
+# FAQ
 
-Mechy: pronounced "*Mech Key*" (or I suppose it sounds like "Meh-key", too), if that wasn't obvious.
+Mechy is pronounced "*Mech Key*" (or I suppose it sounds like "Meh-key", too).
+
+I would've called the `Hardware` class `Keyboard`, but that name was taken.
+
+Technical documentation: yeah probably some day, but only if someone asks for it and wants to contribute.
