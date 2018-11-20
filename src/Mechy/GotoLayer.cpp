@@ -13,12 +13,12 @@ bool GotoLayer::is(uint8_t event_type, Event* UNUSED(event)) {
 
 bool GotoLayer::override(uint8_t UNUSED(name), Event* event, Plugin* plugin) {
     if (!plugin->is(EVENT_META, event) && event->isPressed()) {
-        // another key was pressed; find all the AutoShift events in the current stack
-        // and send the lower case key
+        // another key was pressed; find all the GotoLayer events in the current
+        // stack and deactivate them.
         EventPtr* eventPtr = mechy->events();
         while (eventPtr) {
             if (eventPtr->event->name == FN_GOTO_LAYER
-                && (eventPtr->event->data() & GO_STICKY)
+                && (eventPtr->event->data() & GO_PUSH)
                 && eventPtr->event->isActive())
             {
                 eventPtr->event->setIsActive(false);
@@ -35,13 +35,15 @@ void GotoLayer::run(Event* event) {
     uint8_t layer = event->key();
     uint8_t behavior = event->data();
 
-    switch (behavior & EVENT_DATA_USER) {
+    switch (behavior) {
     case GO_MOMENTARY:
         goto momentary;
-    case GO_STICKY:
+    case GO_PUSH:
         goto sticky;
     case GO_NOW:
         goto now;
+    case GO_BACK:
+        goto back;
     }
     return;
 
@@ -61,6 +63,8 @@ sticky:
     }
     else if (event->isReleased()) {
         mechy->removeLayer(layer);
+        // if the event is still active then no other key was pressed - make
+        // this layer the new default.
         if (event->isActive()) {
             mechy->setDefaultLayer(layer);
             event->setIsActive(false);
@@ -77,4 +81,10 @@ now:
         mechy->removeLayer(layer);
     }
     return;
+
+back:
+    if (event->isPressed()) {
+        mechy->popLayer();
+    }
+    goto now;
 }

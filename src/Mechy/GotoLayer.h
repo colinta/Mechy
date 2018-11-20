@@ -4,8 +4,9 @@
 
 enum {
     GO_MOMENTARY,
-    GO_STICKY,
+    GO_PUSH,
     GO_NOW,
+    GO_BACK,
 };
 
 class GotoLayer : public Plugin {
@@ -17,22 +18,24 @@ public:
     void run(Event* event);
 };
 
-#define MO(n) { .name = FN_GOTO_LAYER, .key = (n) | (GO_MOMENTARY << EVENT_DATA_SHIFT) }
-#define MS(n) { .name = FN_GOTO_LAYER, .key = (n) | (GO_STICKY << EVENT_DATA_SHIFT) }
-#define TO(n) { .name = FN_GOTO_LAYER, .key = (n) | (GO_NOW << EVENT_DATA_SHIFT) }
-#define MO_0 MO(0)
-#define MO_1 MO(1)
-#define MO_2 MO(2)
-#define MO_3 MO(3)
-#define MS_0 MS(0)
-#define MS_1 MS(1)
-#define MS_2 MS(2)
-#define MS_3 MS(3)
-#define TO_0 TO(0)
-#define TO_1 TO(1)
-#define TO_2 TO(2)
-#define TO_3 TO(3)
+#define GOTO(n) { .name = FN_GOTO_LAYER, .key = (n) | (GO_MOMENTARY << EVENT_DATA_SHIFT) }
+#define GOTO_0 GOTO(0)
+#define GOTO_1 GOTO(1)
+#define GOTO_2 GOTO(2)
+#define GOTO_3 GOTO(3)
 
-#define LOWER MS(1)
-#define RAISE MS(2)
-#define DEFLT TO(0)
+#define PUSH(n) { .name = FN_GOTO_LAYER, .key = (n) | (GO_PUSH << EVENT_DATA_SHIFT) }
+#define PUSH_0 PUSH(0)
+#define PUSH_1 PUSH(1)
+#define PUSH_2 PUSH(2)
+#define PUSH_3 PUSH(3)
+
+#define LSET(n) { .name = FN_GOTO_LAYER, .key = (n) | (GO_NOW << EVENT_DATA_SHIFT) }
+#define LSET_0 LSET(0)
+#define LSET_1 LSET(1)
+#define LSET_2 LSET(2)
+#define LSET_3 LSET(3)
+
+#define LOWER PUSH(1)
+#define RAISE PUSH(2)
+#define BACK { .name = FN_GOTO_LAYER, .key = (GO_BACK << EVENT_DATA_SHIFT) }

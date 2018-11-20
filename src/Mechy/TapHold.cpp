@@ -55,9 +55,9 @@ void TapHold::run(Event* event) {
     }
 
     switch (keyPtr->behavior) {
-    case TH_PRESS:
+    case TH_TAP:
         goto runPress;
-    case TH_MODIFIER:
+    case TH_HOLD:
         goto runModifier;
     default:
         event->setIsActive(false);
@@ -128,8 +128,8 @@ runModifier:
     return;
 }
 
-uint16_t TapHold::add(KBD tapKey, KBD holdKey, THBehavior behavior) {
-    uint8_t keyIndex = tapHoldKeys;
+void TapHold::add(KBD tapKey, KBD holdKey, THBehavior behavior) {
+    uint8_t keyIndex = tapHoldKeys++;
     TapHoldKeyList* ptr = (TapHoldKeyList*)malloc(sizeof(TapHoldKeyList));
     ptr->keyIndex = keyIndex;
     ptr->tapKey = tapKey;
@@ -137,6 +137,4 @@ uint16_t TapHold::add(KBD tapKey, KBD holdKey, THBehavior behavior) {
     ptr->behavior = behavior;
     ptr->next = tapHoldKeyStack;
     tapHoldKeyStack = ptr;
-    ++tapHoldKeys;
-    return keyIndex;
 }
