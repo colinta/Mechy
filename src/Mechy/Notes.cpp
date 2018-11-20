@@ -11,7 +11,7 @@ Notes::Notes(uint8_t _pin) {
 uint8_t Notes::defaultName() { return FN_NOTES; }
 
 void Notes::run(Event* event) {
-    if (event->rawData() & DATA_SONG) {
+    if (event->data() & DATA_SONG) {
         goto runSong;
     }
 

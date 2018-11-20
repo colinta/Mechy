@@ -118,9 +118,9 @@ private:
 #define LEN_15_16 1125
 #define LEN_4_4   1200
 
-#define DATA_SONG 0b1000000000000000
+#define DATA_SONG 0b10000000
 #define NT(n)  { .name = FN_NOTES, .key = n }
-#define SNG(n) { .name = FN_NOTES, .key = (n | DATA_SONG) }
+#define SNG(n) { .name = FN_NOTES, .key = ((n) | (uint16_t)(DATA_SONG << EVENT_DATA_SHIFT)) }
 #define MARIO  SNG(0)
 #define NT_B0  NT(NOTE_B0)
 #define NT_C1  NT(NOTE_C1)
