@@ -3,7 +3,6 @@
 #include "Mechy.h"
 #include "Responder.h"
 #include "Layout.h"
-#include "priv/RxTx.h"
 
 struct ReceiverEventPtr {
     Layout* layout;

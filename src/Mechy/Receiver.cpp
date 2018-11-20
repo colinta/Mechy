@@ -1,5 +1,6 @@
 #include "Wiring.h"
 #include "Receiver.h"
+#include "priv/RxTx.h"
 #include "../priv/Constants.h"
 
 void Receiver::construct(Layout* _layout, uint8_t dataPin, uint8_t clockPin) {
@@ -76,7 +77,10 @@ void Receiver::listen() {
     if (data) {
         delayMicroseconds(TRANSMIT_TIME);
         sendReadingState();
-        waitForReading();
+        delayForTransmit();
+        uint16_t timeout = 0xFFFF;
+        while (workerIsReady()) { if (--timeout == 0) { return; }}
+
         for (uint8_t bitIndex = 0; bitIndex < 8; bitIndex++) {
             sendOneBit(bit_get(data, bit(bitIndex)));
         }
