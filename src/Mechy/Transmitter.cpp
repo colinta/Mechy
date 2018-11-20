@@ -1,5 +1,6 @@
 #include "Wiring.h"
 #include "Transmitter.h"
+#include "../priv/RxTx.h"
 #include "../priv/Constants.h"
 /*#
   #  Worker sending to Supervisor
@@ -87,7 +88,6 @@ void Transmitter::begin() {
     } while (anyPressed);
 }
 
-bool debug = false;
 void Transmitter::scan() {
     bool anyChange = false;
     for (uint8_t row = 0; row < ROWS; row++) {
@@ -100,10 +100,6 @@ void Transmitter::scan() {
     }
 
     flushQueue();
-    if (anyChange) {
-        debug = true;
-        delay(10);
-    }
 }
 
 // return true if wasPressed != isPressed, ie. change event

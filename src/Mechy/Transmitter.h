@@ -1,7 +1,5 @@
 #pragma once
 
-#include "../priv/RxTx.h"
-
 class Transmitter {
 public:
     Transmitter(uint8_t dataPin, uint8_t clockPin, const uint8_t* pinRows, const uint8_t* pinCols, uint8_t ROWS, uint8_t COLS);
