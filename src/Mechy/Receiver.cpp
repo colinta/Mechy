@@ -84,7 +84,7 @@ void Receiver::listen() {
         uint16_t timeout = 0xFFFF;
         while (workerIsReady()) { if (--timeout == 0) { return; }}
 
-        for (uint8_t bitIndex = 0; bitIndex < 8; bitIndex++) {
+        for (uint8_t bitIndex = 0; bitIndex < NUM_TRANSMIT_BITS; bitIndex++) {
             sendOneBit(bit_get(data, bit(bitIndex)));
         }
         waitForReading();
@@ -107,7 +107,7 @@ void Receiver::listen() {
 
 listenBody:
     uint16_t input = 0;
-    for (uint8_t i = 0; i < NUM_BITS; i++) {
+    for (uint8_t i = 0; i < NUM_LISTEN_BITS; i++) {
         bool oneBit = receiveOneBit();
         if (oneBit) {
             input |= 1 << i;

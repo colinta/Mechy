@@ -158,7 +158,7 @@ void Transmitter::receiveTransmission() {
     sendReadingState();
     delayForTransmit();
     data = 0;
-    for (uint8_t bitIndex = 0; bitIndex < 8; bitIndex++) {
+    for (uint8_t bitIndex = 0; bitIndex < NUM_TRANSMIT_BITS; bitIndex++) {
         if (!receiveOneBit())  continue;
         bit_on(data, bit(bitIndex));
     }
@@ -172,7 +172,7 @@ void Transmitter::sendTransmission() {
         // transmitted as:
         // [row]         [col]        [isPressed]
         // 0 1 2 3 4 5   6 7 8 9 10   11
-        for (uint8_t bitIndex = 0; bitIndex < NUM_BITS; bitIndex++) {
+        for (uint8_t bitIndex = 0; bitIndex < NUM_LISTEN_BITS; bitIndex++) {
             sendOneBit((bits >> bitIndex) & 1);
         }
 
