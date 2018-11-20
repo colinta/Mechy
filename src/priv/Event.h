@@ -15,7 +15,17 @@
 struct KBD {
     uint8_t name;
     uint16_t key;
+
+    inline uint8_t getName() const {
+        return pgm_read_byte(&name);
+    }
+    inline uint16_t getKey() const {
+        return pgm_read_word(&key);
+    }
 };
+
+typedef const KBD* KBDPROG;
+#define KEYS(varName) const KBD varName[] PROGMEM
 
 struct Event {
     uint8_t name;
@@ -67,7 +77,7 @@ struct Event {
     }
 };
 
-#define ____ {.name = FN_NONE, .key = MCHY_NONE }
+#define ____ { .name = FN_NONE, .key = MCHY_NONE }
 #define vvvv { .name = FN_NONE, .key = MCHY_TRANS }
 
 /* user defined key macros */

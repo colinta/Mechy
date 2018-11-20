@@ -146,7 +146,7 @@ void Mechy::processKeyEvent(Layout* layout, uint8_t row, uint8_t col, bool isPre
         // cachedEventPtr may or may not be NULL, if it exists reuse it, otherwise
         // create it and append it.
         EventPtr* ptr = NULL;
-        KBD* kbd = layout->getKey(row, col);
+        KBDPROG kbd = layout->getKey(row, col);
 
         if (kbd && cachedEventPtr) {
             ptr = cachedEventPtr;
@@ -161,8 +161,8 @@ void Mechy::processKeyEvent(Layout* layout, uint8_t row, uint8_t col, bool isPre
         }
 
         if (ptr) {
-            ptr->event->name = kbd->name;
-            ptr->event->keyAndData = kbd->key;
+            ptr->event->name = kbd->getName();
+            ptr->event->keyAndData = kbd->getKey();
             ptr->event->keyState = KEY_STATE_PRESSED;
             ptr->event->started = now;
             runPlugin(ptr->event);

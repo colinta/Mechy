@@ -1,6 +1,6 @@
 /* templates:
 
-KBD keys[] = LAYOUT(
+KEYS(keys) = LAYOUT(
     _k00_  , _k01_  , _k02_  , _k03_  , _k04_  , _k05_  , _k06_  , _k07_  , _k08_  , _k09_  , _k0a_  , _k0b_  , _k0c_  , _k0d_  , _k0e_  ,
      _k10_   ,  _k12_ , _k13_  , _k14_  , _k15_  , _k16_  , _k17_  , _k18_  , _k19_  , _k1a_  , _k1b_  , _k1c_  , _k1d_  ,     _k1e_     ,
       _k20_    ,  _k22_  , _k23_ , _k24_  , _k25_  , _k26_  , _k27_  , _k28_  , _k29_  , _k2a_  , _k2b_  , _k2c_  ,        _k2d_         ,
@@ -8,7 +8,7 @@ KBD keys[] = LAYOUT(
      _k40_   ,   _k41_   ,   _k43_   ,   _k44_   ,           _k46_          ,    _k48_      , _k4a_  , _k4b_  , _k4c_  ,  _k4d_ , _k4e_
 );
 
-KBD keys[] = LAYOUT_standard(
+KEYS(keys) = LAYOUT_standard(
     _k00_  , _k01_  , _k02_  , _k03_  , _k04_  , _k05_  , _k06_  , _k07_  , _k08_  , _k09_  , _k0a_  , _k0b_  , _k0c_  , _k0d_  , _k0e_  ,
      _k10_   ,  _k12_ , _k13_  , _k14_  , _k15_  , _k16_  , _k17_  , _k18_  , _k19_  , _k1a_  , _k1b_  , _k1c_  , _k1d_  ,     _k1e_     ,
       _k20_    ,  _k22_  , _k23_ , _k24_  , _k25_  , _k26_  , _k27_  , _k28_  , _k29_  , _k2a_  , _k2b_  , _k2c_  ,        _k2d_         ,
@@ -16,7 +16,7 @@ KBD keys[] = LAYOUT_standard(
      _k40_   ,   _k41_   ,   _k43_   ,   _k44_   ,           _k46_          ,    _k48_      , _k4a_  , _k4b_  , _k4c_  ,  _k4d_ , _k4e_
 );
 
-KBD keys[] = LAYOUT_60(
+KEYS(keys) = LAYOUT_60(
     _k00_  , _k01_  , _k02_  , _k03_  , _k04_  , _k05_  , _k06_  , _k07_  , _k08_  , _k09_  , _k0a_  , _k0b_  , _k0c_  ,      _k0e_      ,
      _k10_   ,  _k12_ , _k13_  , _k14_  , _k15_  , _k16_  , _k17_  , _k18_  , _k19_  , _k1a_  , _k1b_  , _k1c_  , _k1d_  ,     _k1e_     ,
       _k20_    ,  _k22_  , _k23_ , _k24_  , _k25_  , _k26_  , _k27_  , _k28_  , _k29_  , _k2a_  , _k2b_  , _k2c_  ,        _k2d_         ,

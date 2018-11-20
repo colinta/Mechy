@@ -11,25 +11,25 @@ Layout::Layout(uint8_t ROWS, uint8_t COLS) {
     construct(ROWS, COLS);
 }
 
-Layout::Layout(uint8_t ROWS, uint8_t COLS, KBD* layer1) {
+Layout::Layout(uint8_t ROWS, uint8_t COLS, KBDPROG layer1) {
     construct(ROWS, COLS);
     addLayer(layer1);
 }
 
-Layout::Layout(uint8_t ROWS, uint8_t COLS, KBD* layer1, KBD* layer2) {
+Layout::Layout(uint8_t ROWS, uint8_t COLS, KBDPROG layer1, KBDPROG layer2) {
     construct(ROWS, COLS);
     addLayer(layer1);
     addLayer(layer2);
 }
 
-Layout::Layout(uint8_t ROWS, uint8_t COLS, KBD* layer1, KBD* layer2, KBD* layer3) {
+Layout::Layout(uint8_t ROWS, uint8_t COLS, KBDPROG layer1, KBDPROG layer2, KBDPROG layer3) {
     construct(ROWS, COLS);
     addLayer(layer1);
     addLayer(layer2);
     addLayer(layer3);
 }
 
-Layout::Layout(uint8_t ROWS, uint8_t COLS, KBD* layer1, KBD* layer2, KBD* layer3, KBD* layer4) {
+Layout::Layout(uint8_t ROWS, uint8_t COLS, KBDPROG layer1, KBDPROG layer2, KBDPROG layer3, KBDPROG layer4) {
     construct(ROWS, COLS);
     addLayer(layer1);
     addLayer(layer2);
@@ -37,7 +37,7 @@ Layout::Layout(uint8_t ROWS, uint8_t COLS, KBD* layer1, KBD* layer2, KBD* layer3
     addLayer(layer4);
 }
 
-void Layout::addLayer(KBD* keys) {
+void Layout::addLayer(KBDPROG keys) {
     LayerList* ptr = (LayerList*)malloc(sizeof(LayerList));
     ptr->keys = keys;
     ptr->next = NULL;
@@ -62,7 +62,7 @@ uint8_t Layout::layer() {
     return currentLayerIndex;
 }
 
-KBD* Layout::getKey(uint8_t row, uint8_t col) {
+KBDPROG Layout::getKey(uint8_t row, uint8_t col) {
     if (!firstLayerPtr)  return NULL;
 
     if (currentLayerIndex == 0) {
@@ -77,16 +77,16 @@ KBD* Layout::getKey(uint8_t row, uint8_t col) {
     }
     if (!layerPtr)  return NULL;
 
-    KBD* key = this->getInLayer(layerPtr->keys, row, col);
+    KBDPROG key = this->getInLayer(layerPtr->keys, row, col);
     if (!key)  return NULL;
 
-    if (key->name == FN_NONE && key->key == MCHY_TRANS) {
+    if (key->getName() == FN_NONE && key->getKey() == MCHY_TRANS) {
         return this->getInLayer(firstLayerPtr->keys, row, col);
     }
     return key;
 }
 
-KBD* Layout::getInLayer(KBD* keys, uint8_t row, uint8_t col) {
+KBDPROG Layout::getInLayer(KBDPROG keys, uint8_t row, uint8_t col) {
     if (row >= ROWS || col >= COLS)  return NULL;
     return keys + (COLS * row) + col;
 }
