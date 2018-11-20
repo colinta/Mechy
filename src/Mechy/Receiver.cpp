@@ -3,6 +3,9 @@
 #include "priv/RxTx.h"
 #include "../priv/Constants.h"
 
+static uint16_t timeout = 0;
+static bool didTimeout = false;
+
 void Receiver::construct(Layout* _layout, uint8_t dataPin, uint8_t clockPin) {
     layout = _layout;
     inputPin = dataPin;
@@ -85,7 +88,12 @@ void Receiver::listen() {
             sendOneBit(bit_get(data, bit(bitIndex)));
         }
         waitForReading();
-        data = 0;
+        if (didTimeout) {
+            didTimeout = false;
+        }
+        else {
+            data = 0;
+        }
         return;
     }
     else {
@@ -141,8 +149,26 @@ inline void Receiver::sendHasData() { Wiring::digitalWrite(outputPin, LOW); }
 // worker: ready = HIGH, reading = LOW
 inline bool Receiver::workerIsReading()  { return !Wiring::digitalRead(inputPin); }
 inline bool Receiver::workerIsReady()  { return Wiring::digitalRead(inputPin); }
-inline void Receiver::waitForReady() { while (workerIsReading()); }
-inline void Receiver::waitForReading() { while (workerIsReady()); }
+inline void Receiver::waitForReady() {
+    if (didTimeout)  return;
+    timeout = 0;
+    while (workerIsReading()) {
+        if (timeout++ == 0xFFFF) {
+            didTimeout = true;
+            return;
+        }
+    }
+}
+inline void Receiver::waitForReading() {
+    if (didTimeout)  return;
+    timeout = 0;
+    while (workerIsReady()) {
+        if (timeout++ == 0xFFFF) {
+            didTimeout = true;
+            return;
+        }
+    }
+}
 // supervisor: ready = LOW, reading = HIGH
 inline void Receiver::sendReadyState() { Wiring::digitalWrite(outputPin, LOW); }
 inline void Receiver::sendReadingState() { Wiring::digitalWrite(outputPin, HIGH); }

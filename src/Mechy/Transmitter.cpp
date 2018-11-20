@@ -1,9 +1,4 @@
-#include "Wiring.h"
-#include "Transmitter.h"
-#include "../priv/RxTx.h"
-#include "../priv/Constants.h"
-/*#
-  #  Worker sending to Supervisor
+/*#  Worker sending to Supervisor
   #
 Supervisor | scanning &               +--<--<--<--<--<--<--<--+
 ---------- | processing               |                       |
@@ -18,8 +13,7 @@ Supervisor | scanning &               +--<--<--<--<--<--<--<--+
 ---------- |     |for ||for |   send  ^                       |
 Worker     |     |HIGH||LOW |   ACK   +--<--<--<--<--<--<--<--+
                                 if data
-*/
-/*#
+
   #  Supervisor sending to Worker
   #
 Supervisor | scanning &               +--<--<--<--<--<--<--<--+
@@ -37,9 +31,16 @@ Worker     |     |HIGH||LOW |   ACK   +--<--<--<--<--<--<--<--+
                                 to init
 */
 
+#include "Wiring.h"
+#include "Transmitter.h"
+#include "../priv/RxTx.h"
+#include "../priv/Constants.h"
+
 #define QUEUE_LEN 20
 static uint16_t queue[QUEUE_LEN];
 static uint8_t queueLength = 0;
+static uint16_t timeout = 0;
+static bool didTimeout = false;
 
 Transmitter::Transmitter(uint8_t dataPin, uint8_t clockPin, const uint8_t* _pinRows, const uint8_t* _pinCols, uint8_t _ROWS, uint8_t _COLS) {
     outputPin = dataPin;
@@ -135,6 +136,11 @@ void Transmitter::flushQueue() {
     waitForReading();
     unsigned long dt = micros() - t0;
 
+    if (didTimeout) {
+        didTimeout = false;
+        return;
+    }
+
     if (dt > TRANSMIT_DETECT) {
         receiveTransmission();
     }
@@ -182,8 +188,26 @@ inline void Transmitter::sendHasData() { Wiring::digitalWrite(outputPin, LOW); }
 // supervisor: ready = LOW, reading = HIGH
 inline bool Transmitter::supervisorIsReading()  { return Wiring::digitalRead(inputPin); }
 inline bool Transmitter::supervisorIsReady()  { return !Wiring::digitalRead(inputPin); }
-inline void Transmitter::waitForReady() { while (supervisorIsReading()); }
-inline void Transmitter::waitForReading() { while (supervisorIsReady()); }
+inline void Transmitter::waitForReady() {
+    if (didTimeout)  return;
+    timeout = 0;
+    while (supervisorIsReading()) {
+        if (timeout++ == 0xFFFF) {
+            didTimeout = true;
+            return;
+        }
+    }
+}
+inline void Transmitter::waitForReading() {
+    if (didTimeout)  return;
+    timeout = 0;
+    while (supervisorIsReady()) {
+        if (timeout++ == 0xFFFF) {
+            didTimeout = true;
+            return;
+        }
+    }
+}
 // worker: ready = HIGH, reading = LOW
 inline void Transmitter::sendReadyState() { Wiring::digitalWrite(outputPin, HIGH); }
 inline void Transmitter::sendReadingState() { Wiring::digitalWrite(outputPin, LOW); }
