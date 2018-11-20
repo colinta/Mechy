@@ -3,7 +3,7 @@
 #include <Keyboard.h>
 
 Mechy::Mechy() {
-    defaultLayer = 0;
+    _defaultLayer = 0;
     modifiers = 0;
     capsIsOn = false;
     layerStackPtr = NULL;
@@ -65,9 +65,13 @@ void Mechy::add(uint8_t name, Plugin* plugin) {
     pushPluginPtr(ptr);
 }
 
+uint8_t Mechy::defaultLayer() {
+    return _defaultLayer;
+}
+
 void Mechy::setDefaultLayer(uint8_t layer) {
-    defaultLayer = layer;
-    updateLayer(layerStackPtr ? layerStackPtr->value : defaultLayer);
+    _defaultLayer = layer;
+    updateLayer(layerStackPtr ? layerStackPtr->value : _defaultLayer);
 }
 
 void Mechy::pushLayer(uint8_t layer) {
@@ -77,6 +81,14 @@ void Mechy::pushLayer(uint8_t layer) {
     layerStackPtr = layerPtr;
 
     updateLayer(layer);
+}
+
+void Mechy::popLayer() {
+    if (layerStackPtr) {
+        uint8_t layer = layerStackPtr->value;
+        removeLayer(layerStackPtr->value);
+        updateLayer(layer);
+    }
 }
 
 void Mechy::removeLayer(uint8_t layer) {
@@ -93,11 +105,11 @@ void Mechy::removeLayer(uint8_t layer) {
         layerPtr = layerPtr->prev;
     }
 
-    updateLayer(layerStackPtr ? layerStackPtr->value : defaultLayer);
+    updateLayer(layerStackPtr ? layerStackPtr->value : _defaultLayer);
 }
 
 uint8_t Mechy::currentLayer() {
-    return (layerStackPtr ? layerStackPtr->value : defaultLayer);
+    return (layerStackPtr ? layerStackPtr->value : _defaultLayer);
 }
 
 void Mechy::updateLayer(uint8_t layer) {
