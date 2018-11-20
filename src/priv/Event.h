@@ -37,7 +37,7 @@ struct Event {
         return keyAndData & EVENT_KEY_MASK;
     }
 
-    inline uint8_t rawData() {
+    inline uint16_t rawData() {
         return keyAndData & EVENT_DATA_MASK;
     }
 
