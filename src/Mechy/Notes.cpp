@@ -1,8 +1,8 @@
 #include "Notes.h"
 #include "Tone/Tone.h"
 
-const unsigned int  notes[]     PROGMEM = { NOTE_E7 , NOTE_E7 , 0       , NOTE_E7 , 0       , NOTE_C7 , NOTE_E7 , 0       , NOTE_G7 , 0       , NOTE_G6 , };
-const unsigned long durations[] PROGMEM = { LEN_1_16, LEN_1_16, LEN_1_16, LEN_1_16, LEN_1_16, LEN_1_16, LEN_1_16, LEN_1_16, LEN_1_16, LEN_3_16, LEN_1_16, };
+static const unsigned int  notes[]     PROGMEM = { NOTE_E7 , NOTE_E7 , 0       , NOTE_E7 , 0       , NOTE_C7 , NOTE_E7 , 0       , NOTE_G7 , 0       , NOTE_G6 , };
+static const unsigned long durations[] PROGMEM = { LEN_1_16, LEN_1_16, LEN_1_16, LEN_1_16, LEN_1_16, LEN_1_16, LEN_1_16, LEN_1_16, LEN_1_16, LEN_3_16, LEN_1_16, };
 
 Notes::Notes(uint8_t _pin) {
     pin = _pin;

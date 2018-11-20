@@ -32,9 +32,7 @@ public:
 
     static uint16_t add(KBD, KBD, THBehavior);
 protected:
-    static uint8_t keys;
     TapHoldEvent* eventArray;
-    static TapHoldKeyList* keyPtrStack;
 };
 
 #define TH(tap, hold) { .name = FN_TAP_HOLD, .key = TapHold::add(tap, hold, TH_PRESS) }

@@ -37,8 +37,8 @@ Worker     |     |HIGH||LOW |   ACK   +--<--<--<--<--<--<--<--+
 */
 
 #define QUEUE_LEN 20
-uint16_t queue[QUEUE_LEN];
-uint8_t queueLength = 0;
+static uint16_t queue[QUEUE_LEN];
+static uint8_t queueLength = 0;
 
 Transmitter::Transmitter(uint8_t dataPin, uint8_t clockPin, const uint8_t* _pinRows, const uint8_t* _pinCols, uint8_t _ROWS, uint8_t _COLS) {
     outputPin = dataPin;

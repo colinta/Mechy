@@ -13,9 +13,9 @@
 #define TIMER_OPT_SONG    0b00000010
 #define TIMER_DID_PAUSE   0b00000100
 
-unsigned int* songNotes = NULL;
-unsigned long* songDurations = NULL;
-unsigned int songLen = 0;
+static unsigned int* songNotes = NULL;
+static unsigned long* songDurations = NULL;
+static unsigned int songLen = 0;
 
 volatile long timer_toggle_count;
 volatile uint8_t timer_pin;
