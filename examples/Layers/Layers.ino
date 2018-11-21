@@ -26,7 +26,7 @@ const uint8_t pinCols[] = { _F0, _F1, _E6, _C7, _C6, _B6, _D4, _B1, _B7, _B5, _B
 #define TH_PLAY TH(MD_PLAY, MD_MUTE)
 
 
-KBD mainKeys[] = {
+KEYS(mainKeys) = {
      KC_ESC , KC_GRV ,  TH_1  ,  TH_2  ,  TH_3  ,  TH_4  ,  TH_5  , TH_DEL ,  TH_6  ,  TH_7  ,  TH_8  ,  TH_9  , TH_0   , KC_MINS, KC_EQL ,
       ____  , KC_TAB ,  KC_Q  ,  KC_W  ,  KC_F  ,  KC_P  ,  KC_G  , KC_BSPC,  KC_J  ,  KC_L  ,  KC_U  ,  KC_Y  , KC_SCLN, KC_LBRC, KC_RBRC,
       ____  , KC_LSFT,  KC_A  ,  KC_R  ,  KC_S  ,  KC_T  ,  KC_D  , KC_ENT ,  KC_H  ,  KC_N  ,  KC_E  ,  KC_I  , KC_O   , KC_QUOT, KC_BSLS,
@@ -34,7 +34,7 @@ KBD mainKeys[] = {
       ____  , TH_PLAY,  ____  , KC_LALT,  ____  , KC_LGUI,  ____  ,  ____  , KC_SPC ,  ____  , TH_PGUP, TH_PGDN, KC_LEFT, KC_DOWN, KC_RGHT
 };
 
-KBD fnKeys[] = {
+KEYS(fnKeys) = {
       ____  ,  ____  , KC_F1  , KC_F2  , KC_F3  , KC_F4  ,  KC_F5 ,  ____  , KC_F6  , KC_F7  , KC_F8  , KC_F9  , KC_F10 , KC_F11 , KC_F12 ,
       ____  ,  ____  ,  ____  ,  ____  ,  ____  ,  ____  ,  ____  ,  ____  ,  ____  ,  ____  ,  ____  ,  ____  ,  ____  ,  ____  ,  ____  ,
       ____  ,  vvvv  ,  ____  ,  MM_0  ,  MM_1  ,  MM_2  ,  ____  ,  ____  ,  ____  ,  MM_3  ,  MM_4  ,  MM_5  ,  ____  ,  ____  ,  ____  ,

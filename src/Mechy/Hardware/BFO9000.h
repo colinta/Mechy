@@ -1,5 +1,5 @@
 /* template:
-KBD keys[] = LAYOUT_standard(
+KEYS(keys) = LAYOUT_standard(
     _k00_  , _k01_  , _k02_  , _k03_  , _k04_  , _k05_  , _k06_  , _k07_  , _k08_  ,
     _k10_  , _k11_  , _k12_  , _k13_  , _k14_  , _k15_  , _k16_  , _k17_  , _k18_  ,
     _k20_  , _k21_  , _k22_  , _k23_  , _k24_  , _k25_  , _k26_  , _k27_  , _k28_  ,
