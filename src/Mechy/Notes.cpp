@@ -10,19 +10,26 @@ Notes::Notes(uint8_t _pin) {
 
 uint8_t Notes::defaultName() { return FN_NOTES; }
 
-void Notes::run(Event* event) {
-    if (event->data() & DATA_SONG) {
+bool Notes::is(uint8_t event_type, Event* UNUSED(event)) {
+    return event_type == EVENT_NOTES;
+}
+
+void Notes::run(Event* noteEvent) {
+    if (noteEvent->data() & DATA_SONG) {
         goto runSong;
     }
 
-    if (event->isPressed()) {
-        Tone::play(pin, event->rawKey());
+    if (noteEvent->isPressed()) {
+        Tone::play(pin, noteEvent->rawKey());
     }
-    else if (event->isReleased()) {
+    else if (noteEvent->isReleased()) {
         EventPtr* eventPtr = mechy->events();
+        Event* otherEvent;
         while (eventPtr) {
-            if (eventPtr->event->name == event->name && eventPtr->event->isDown()) {
-                Tone::play(pin, eventPtr->event->rawKey());
+            otherEvent = eventPtr->event;
+            Plugin* plugin = mechy->pluginFor(otherEvent->name);
+            if (plugin && plugin->is(EVENT_NOTES, otherEvent) && otherEvent->isDown()) {
+                Tone::play(pin, otherEvent->rawKey());
                 break;
             }
             eventPtr = eventPtr->next;
@@ -35,10 +42,10 @@ void Notes::run(Event* event) {
     return;
 
 runSong:
-    if (event->isPressed()) {
+    if (noteEvent->isPressed()) {
         Tone::song(pin, 11, notes, durations);
     }
-    else if (event->isReleased()) {
+    else if (noteEvent->isReleased()) {
         Tone::stop(pin);
     }
 }

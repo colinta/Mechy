@@ -6,6 +6,7 @@ class Notes : public Plugin {
 public:
     Notes(uint8_t pin);
     uint8_t defaultName();
+    bool is(uint8_t event_type, Event* event);
     void run(Event* event);
 private:
     uint8_t pin;
