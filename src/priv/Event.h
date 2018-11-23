@@ -6,20 +6,30 @@
 // in general, events have 8bits of "data" and 8bits of "key space"
 #define EVENT_KEY_MASK  0b0000000011111111
 #define EVENT_DATA_MASK 0b1111111100000000
+#define EVENT_USER_MASK 0b00011111
 #define EVENT_DATA_SHIFT 8
 
 // to encourage "best practices" here are some bit masks:
-#define EVENT_DATA_USER 0b00011111
 #define EVENT_IS_ACTIVE_BIT 5
+
+/* EVENT TYPES */
+// typical keys (F1, A, ESC, DELETE), but not modifiers
+#define EVENT_KEYPRESS 1
+// Shift, Control, Alt, Gui
+#define EVENT_MODIFIER 2
+#define EVENT_MOUSE 3
+#define EVENT_NOTES 4
+// Mechy internals: Lock, etc
+#define EVENT_META 8
 
 struct KBD {
     uint8_t name;
     uint16_t key;
 
-    inline uint8_t getName() const {
+    inline uint8_t getProgmemName() const {
         return pgm_read_byte(&name);
     }
-    inline uint16_t getKey() const {
+    inline uint16_t getProgmemKey() const {
         return pgm_read_word(&key);
     }
 };
@@ -84,12 +94,3 @@ struct Event {
 #define FN_USER(n)  (FN_USER_0 + n)
 #define USER_KEY(m) m
 #define USER(n, m) { .name = FN_USER(n), .key = USER_KEY(m) }
-
-/* EVENT TYPES */
-// typical keys (F1, A, ESC, DELETE), but not modifiers
-#define EVENT_KEYPRESS 1
-// Shift, Control, Alt, Gui
-#define EVENT_MODIFIER 2
-#define EVENT_MOUSE 3
-// Mechy internals: Lock, etc
-#define EVENT_META 8

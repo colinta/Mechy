@@ -80,7 +80,7 @@ KBDPROG Layout::getKey(uint8_t row, uint8_t col) {
     KBDPROG kbd = this->getInLayer(layerPtr->keys, row, col);
     if (!kbd)  return NULL;
 
-    if (kbd->getName() == FN_NONE && kbd->getKey() == MCHY_TRANS) {
+    if (kbd->getProgmemName() == FN_NONE && kbd->getProgmemKey() == MCHY_TRANS) {
         return this->getInLayer(firstLayerPtr->keys, row, col);
     }
     return kbd;

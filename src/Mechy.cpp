@@ -173,8 +173,8 @@ void Mechy::processKeyEvent(Layout* layout, uint8_t row, uint8_t col, bool isPre
         }
 
         if (ptr) {
-            ptr->event->name = kbd->getName();
-            ptr->event->keyAndData = kbd->getKey();
+            ptr->event->name = kbd->getProgmemName();
+            ptr->event->keyAndData = kbd->getProgmemKey();
             ptr->event->keyState = KEY_STATE_PRESSED;
             ptr->event->started = now;
             runPlugin(ptr->event);

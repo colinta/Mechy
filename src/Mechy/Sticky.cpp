@@ -28,14 +28,9 @@ void Sticky::tick() {
 }
 
 bool Sticky::override(uint8_t UNUSED(name), Event* event, Plugin* plugin) {
-    // uint16_t mods = mechy->currentModifiers();
-    // mechy->clearModifiers();
-    // Keyboard.println("in Sticky::override");
     if ((plugin->is(EVENT_KEYPRESS, event) || plugin->is(EVENT_MOUSE, event)) && (sticky_state)) {
         should_clear = true;
     }
-    // Keyboard.println("done Sticky::override");
-    // mechy->updateModifiers(mods);
     return KBD_CONTINUE;
 }
 
