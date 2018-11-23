@@ -65,6 +65,10 @@ struct Event {
         return ((uint8_t)((uint16_t)keyAndData >> EVENT_DATA_SHIFT));
     }
 
+    inline uint8_t userData() {
+        return data() & EVENT_USER_MASK;
+    }
+
     inline bool dataBit(uint8_t bit) {
         if (bit >= 16)  return false;
         return bit_get(keyAndData, bit(EVENT_DATA_SHIFT + bit));

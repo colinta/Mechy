@@ -33,7 +33,7 @@ void GotoLayer::run(Event* event) {
     if (event->isHeld())  return;
 
     uint8_t layer = event->key();
-    uint8_t behavior = event->data();
+    uint8_t behavior = event->userData();
 
     switch (behavior) {
     case GO_MOMENTARY:
