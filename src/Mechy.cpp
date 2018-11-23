@@ -193,24 +193,27 @@ void Mechy::processKeyEvent(Layout* layout, uint8_t row, uint8_t col, bool isPre
     }
 }
 
+Plugin* Mechy::pluginFor(uint8_t name) {
+    PluginPtr* ptr = firstPluginPtr;
+    while (ptr) {
+        if (ptr->name == name) {
+            return ptr->plugin;
+        }
+        ptr = ptr->next;
+    }
+    return NULL;
+}
+
 // the Event passed in here is not guaranteed to be in the EventPtr stack, so don't
 // go freeing it up or anything.  Modifying it is OK.
 void Mechy::runPlugin(Event* event) {
     uint8_t keyHandlerName = event->name;
 
-    PluginPtr* ptr = firstPluginPtr;
-    Plugin* plugin = NULL;
-    while (ptr) {
-        if (ptr->name == keyHandlerName) {
-            plugin = ptr->plugin;
-            break;
-        }
-        ptr = ptr->next;
-    }
+    Plugin* plugin = pluginFor(event->name);
     if (!plugin)  return;
 
     bool processing = KBD_CONTINUE;
-    ptr = firstPluginPtr;
+    PluginPtr* ptr = firstPluginPtr;
     while (ptr) {
         processing = ptr->plugin->override(keyHandlerName, event, plugin) && processing;
         ptr = ptr->next;
