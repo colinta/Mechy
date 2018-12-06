@@ -181,21 +181,6 @@ Layout(ROWS, COLS, mainKeys, colemakKeys, dvorakKeys, fnKeys);
 
 See [GotoLayer.h](https://github.com/colinta/Mechy/blob/master/src/Mechy/GotoLayer.h#L23) for defined keys.
 
-###### Lock
-
-A super simple Plugin, I wrote it as an early exercise.  This plugin listens for two `LK` key presses (or more - the `Lock()` constructor accepts the number of keys needed), and after both are pressed it locks all keys except internal "meta" keys like `GOTO_x` and `LK`.  You can prevent a small child from using your keyboard - which is the actual reason I wrote this, because I have a precosious daughter who loves to play with my keyboard.  Actually now that I added the `Notes` I let her play with that feature.
-
-```cpp
-#include <Mechy/Lock.h>
-
-KEYS(mainKeys) = { LK, LK };
-mechy.add(new Lock());
-// to require 3 lock keys:
-mechy.add(new Lock(3));
-```
-
-Only the `LK` key is defined.
-
 ###### Macro
 
 This is only for password macros at the moment. For keyboard chords like `CMD+SHIFT+4` you can use KeyPress (`LGUI(LSFT('4'))`).
@@ -233,6 +218,42 @@ KEYS(mainKeys) = { ST_CTL, ST_ALT, ST_SFT, ST_GUI, ST_HYP, ST_MEH, ST_CAG };
 ```
 
 The example above shows all the defined keys.
+
+###### ComboKey
+
+This plugin listens for multiple key down events and sends the 'combo' key when they are all pressed.  Currently only supports one combination, in the future this could be refactored to support multiple combinations.
+
+The key events that it listens to are still activated, so these can either perform double duty (like modifier keys), or just assign `____` to have them ignored.
+
+```cpp
+#include <Mechy/ComboKey.h>
+
+#define CK_LCTL CK(0)
+#define CK_LALT CK(1)
+#define CK_BSPC CK(2)
+
+KEYS(mainKeys) = { CK_LALT, CK_LALT, CK_BSPC };
+
+// map 'ctrl+alt+backspace' to 'goto layer 1'
+KBD comboKeys[3] = { KC_LCTL, KC_LALT, KC_BSPC };
+ComboKey comboKey = ComboKey(3, comboKeys, GOTO_1);
+mechy.add(&comboKey);
+```
+
+###### Lock
+
+A super simple Plugin, I wrote it as an early exercise.  This plugin listens for two `LK` key presses (or more - the `Lock()` constructor accepts the number of keys needed), and after both are pressed it locks all keys except internal "meta" keys like `GOTO_x` and `LK`.  You can prevent a small child from using your keyboard - which is the actual reason I wrote this, because I have a precosious daughter who loves to play with my keyboard.  Actually now that I added the `Notes` I let her play with that feature.
+
+```cpp
+#include <Mechy/Lock.h>
+
+KEYS(mainKeys) = { LK, LK };
+mechy.add(new Lock());
+// to require 3 lock keys:
+mechy.add(new Lock(3));
+```
+
+Only the `LK` key is defined.
 
 ###### Notes
 

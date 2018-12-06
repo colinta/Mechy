@@ -57,6 +57,7 @@
 #define FN_MOUSE_KEY  8
 #define FN_AUTO_SHIFT 9
 #define FN_NOTES      10
+#define FN_COMBO_KEY  11
 #define FN_USER_0    128
 
 #define MCHY_NONE     0
