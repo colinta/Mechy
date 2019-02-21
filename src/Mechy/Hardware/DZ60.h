@@ -70,7 +70,7 @@ KEYS(keys) = LAYOUT_60(
 
 #include "../Wiring.h"
 
-#define CAPS_LED_PIN _B2
+#define CAPS_LOCK_LED_PIN _B2
 #define RGB_PIN _E2
 
 #define ROWS 5
@@ -80,25 +80,25 @@ const uint8_t pinCols[] = { _F0, _F1, _E6, _C7, _C6, _B7, _D4, _B1, _B0, _B5, _B
 
 class Hardware {
 public:
-    Hardware(Mechy* _mechy) {
+    Hardware(Mechy* _mechy, Scanner* UNUSED(_scanner)) {
         mechy = _mechy;
         didSetCaps = false;
     }
     void begin() {
-        Wiring::pinMode(CAPS_LED_PIN, OUTPUT);
-        Wiring::digitalWrite(CAPS_LED_PIN, LOW);
+        Wiring::pinMode(CAPS_LOCK_LED_PIN, OUTPUT);
+        Wiring::digitalWrite(CAPS_LOCK_LED_PIN, LOW);
     }
     void tick() {
         if (!didSetCaps) {
-            Wiring::digitalWrite(CAPS_LED_PIN, mechy->isCapsOn());
+            Wiring::digitalWrite(CAPS_LOCK_LED_PIN, mechy->isCapsOn());
         }
     }
-    void capsLedWrite(bool turnOn) {
+    void capsLockLedWrite(bool turnOn) {
         didSetCaps = true;
-        Wiring::digitalWrite(CAPS_LED_PIN, turnOn);
+        Wiring::digitalWrite(CAPS_LOCK_LED_PIN, turnOn);
     }
-    bool capsLedRead() {
-        return Wiring::digitalRead(CAPS_LED_PIN);
+    bool capsLockLedRead() {
+        return Wiring::digitalRead(CAPS_LOCK_LED_PIN);
     }
 
 private:

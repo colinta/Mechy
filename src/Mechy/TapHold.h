@@ -30,8 +30,10 @@ public:
     void begin();
     void run(Event* event);
 
-    static void add(KBD, KBD, THBehavior behavior = TH_TAP);
+    void add(KBD, KBD, THBehavior behavior = TH_TAP);
 protected:
+    uint8_t tapHoldKeys;
+    TapHoldKeyList* tapHoldKeyStack;
     TapHoldEvent* eventArray;
 };
 

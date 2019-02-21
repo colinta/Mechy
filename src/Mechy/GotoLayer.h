@@ -5,7 +5,7 @@
 enum {
     GO_MOMENTARY,
     GO_PUSH,
-    GO_NOW,
+    GO_LSET,
     GO_BACK,
 };
 
@@ -30,7 +30,7 @@ public:
 #define PUSH_2 PUSH(2)
 #define PUSH_3 PUSH(3)
 
-#define LSET(n) { .name = FN_GOTO_LAYER, .key = (n) | (GO_NOW << EVENT_DATA_SHIFT) }
+#define LSET(n) { .name = FN_GOTO_LAYER, .key = (n) | (GO_LSET << EVENT_DATA_SHIFT) }
 #define LSET_0 LSET(0)
 #define LSET_1 LSET(1)
 #define LSET_2 LSET(2)

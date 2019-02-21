@@ -85,9 +85,7 @@ void Mechy::pushLayer(uint8_t layer) {
 
 void Mechy::popLayer() {
     if (layerStackPtr) {
-        uint8_t layer = layerStackPtr->value;
         removeLayer(layerStackPtr->value);
-        updateLayer(layer);
     }
 }
 

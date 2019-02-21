@@ -1,3 +1,12 @@
+#undef  TXLED0
+#define TXLED0
+#undef  TXLED1
+#define TXLED1
+#undef  RXLED0
+#define RXLED0
+#undef  RXLED1
+#define RXLED1
+
 /* template:
 KEYS(keys) = LAYOUT(
     _k00_  , _k01_  , _k02_  , _k03_  , _k04_  , _k05_  , _k06_  , _k07_  , _k08_  , _k09_  , _k0a_  , _k0b_  , _k0c_  , _k0d_  , _k0e_  ,
@@ -35,15 +44,16 @@ const uint8_t pinCols[] = { _F0, _F1, _E6, _C7, _C6, _B6, _D4, _B1, _B7, _B5, _B
 
 class Hardware {
 public:
-    Hardware(Mechy* _mechy) {
+    Hardware(Mechy* _mechy, Scanner* scanner) {
         mechy = _mechy;
+        scanner->usePullup(true);
         didSetCaps = false;
     }
     void begin() {
         Wiring::pinMode(CAPSLOCK_LED_PIN, OUTPUT);
-        Wiring::digitalWrite(CAPSLOCK_LED_PIN, LOW);
+        Wiring::digitalWrite(CAPSLOCK_LED_PIN, HIGH);
         Wiring::pinMode(GP100_LED_PIN, OUTPUT);
-        Wiring::digitalWrite(GP100_LED_PIN, LOW);
+        Wiring::digitalWrite(GP100_LED_PIN, HIGH);
         Wiring::pinMode(GP103_LED_PIN, OUTPUT);
         Wiring::digitalWrite(GP103_LED_PIN, LOW);
         Wiring::pinMode(KEYCAPS_LED_PIN, OUTPUT);
@@ -51,18 +61,18 @@ public:
     }
     void tick() {
         if (!didSetCaps) {
-            Wiring::digitalWrite(CAPSLOCK_LED_PIN, mechy->isCapsOn());
+            Wiring::digitalWrite(CAPSLOCK_LED_PIN, !mechy->isCapsOn());
         }
     }
-    void capsLedWrite(bool turnOn) {
+    void capsLockLedWrite(bool turnOn) {
         didSetCaps = true;
-        Wiring::digitalWrite(CAPSLOCK_LED_PIN, turnOn);
+        Wiring::digitalWrite(CAPSLOCK_LED_PIN, !turnOn);
     }
-    bool capsLedRead() {
+    bool capsLockLedRead() {
         return Wiring::digitalRead(CAPSLOCK_LED_PIN);
     }
     void gp100LedWrite(bool turnOn) {
-        Wiring::digitalWrite(GP100_LED_PIN, turnOn);
+        Wiring::digitalWrite(GP100_LED_PIN, !turnOn);
     }
     bool gp100LedRead() {
         return Wiring::digitalRead(GP100_LED_PIN);
@@ -74,7 +84,7 @@ public:
         return Wiring::digitalRead(GP103_LED_PIN);
     }
     void keycapsLedsWrite(bool turnOn) {
-        Wiring::digitalWrite(KEYCAPS_LED_PIN, turnOn);
+        Wiring::digitalWrite(KEYCAPS_LED_PIN, !turnOn);
     }
     bool keycapsLedsRead() {
         return Wiring::digitalRead(KEYCAPS_LED_PIN);

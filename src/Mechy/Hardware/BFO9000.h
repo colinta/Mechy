@@ -36,7 +36,7 @@ const uint8_t pinCols[] = { _B5, _B6, _B2, _B3, _B1, _F7, _F6, _F5, _F4};
 
 class Hardware {
 public:
-    Hardware(Mechy* UNUSED(_mechy)) {
+    Hardware(Mechy* UNUSED(_mechy), Scanner* UNUSED(_scanner)) {
     }
     void begin() {
     }

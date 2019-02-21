@@ -11,8 +11,8 @@ bool GotoLayer::is(uint8_t event_type, Event* UNUSED(event)) {
     return event_type == EVENT_META;
 }
 
-bool GotoLayer::override(uint8_t UNUSED(name), Event* event, Plugin* plugin) {
-    if (!plugin->is(EVENT_META, event) && event->isPressed()) {
+bool GotoLayer::override(uint8_t UNUSED(name), Event* event, Plugin* UNUSED(plugin)) {
+    if (event->isPressed()) {
         // another key was pressed; find all the GotoLayer events in the current
         // stack and deactivate them.
         EventPtr* eventPtr = mechy->events();
@@ -39,9 +39,9 @@ void GotoLayer::run(Event* event) {
     case GO_MOMENTARY:
         goto momentary;
     case GO_PUSH:
-        goto sticky;
-    case GO_NOW:
-        goto now;
+        goto push;
+    case GO_LSET:
+        goto lset;
     case GO_BACK:
         goto back;
     }
@@ -56,7 +56,7 @@ momentary:
     }
     return;
 
-sticky:
+push:
     if (event->isPressed()) {
         mechy->pushLayer(layer);
         event->setIsActive(true);
@@ -72,7 +72,7 @@ sticky:
     }
     return;
 
-now:
+lset:
     if (event->isPressed()) {
         mechy->pushLayer(layer);
         mechy->setDefaultLayer(layer);
@@ -86,5 +86,5 @@ back:
     if (event->isPressed()) {
         mechy->popLayer();
     }
-    goto now;
+    goto lset;
 }

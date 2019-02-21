@@ -5,9 +5,6 @@
 #define TAPHOLD_DELAY 250
 #endif
 
-static uint8_t tapHoldKeys = 0;
-static TapHoldKeyList* tapHoldKeyStack = NULL;
-
 inline void sendKeyEvent(Mechy* mechy, uint16_t modifierSnapshot, KBD* kbd) {
     uint16_t mods = mechy->currentModifiers();
     mechy->updateModifiers(modifierSnapshot);
@@ -24,6 +21,8 @@ inline void sendKeyEvent(Mechy* mechy, uint16_t modifierSnapshot, KBD* kbd) {
 }
 
 TapHold::TapHold() {
+    tapHoldKeys = 0;
+    tapHoldKeyStack = NULL;
     eventArray = NULL;
 }
 
@@ -32,6 +31,8 @@ uint8_t TapHold::defaultName() {
 }
 
 void TapHold::begin() {
+    if (!tapHoldKeys)  return;
+
     TapHoldEvent* array = (TapHoldEvent*)malloc(sizeof(TapHoldEvent) * tapHoldKeys);
     TapHoldKeyList* ptr = tapHoldKeyStack;
     TapHoldKeyList* next = NULL;
@@ -45,9 +46,12 @@ void TapHold::begin() {
         ptr = next;
     }
     eventArray = array;
+    tapHoldKeyStack = NULL;
 }
 
 void TapHold::run(Event* event) {
+    if (!eventArray)  return;
+
     TapHoldEvent* keyPtr = eventArray + event->key();
 
     if (event->isPressed()) {

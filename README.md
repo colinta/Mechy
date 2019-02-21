@@ -129,18 +129,20 @@ The default behavior is to send a "key tap", i.e. a down event followed immediat
 KEYS(mainKeys) = { TH_PGUP, TH_PGDN, TH_SPC };
 
 void setup() {
+    TapHold* tapHold = new TapHold();
     // we need to tell TapHold what keys should be associated with these events.
     // Order matters here - the first call to `add` will be associated with
     // TH_0, and so on.
-    TapHold::add(KC_PGUP, KC_HOME);
-    TapHold::add(KC_PGDN, KC_END);
+    tapHold->add(KC_PGUP, KC_HOME);
+    tapHold->add(KC_PGDN, KC_END);
     // check this out, you can use this command to switch layers. tap for space,
     // or hold to activate layer 1.  Uses the `TH_HOLD` behavior to keep the
     // layer active as long as the key is held
-    TapHold::add(KC_SPC, GOTO_1, TH_HOLD);
+    tapHold->add(KC_SPC, GOTO_1, TH_HOLD);
     // these must be called before mechy.begin()!  They get copied over as an
     // array in TapHold::begin()
 
+    mechy.add(tapHold);
     mechy.begin();
 }
 
@@ -358,9 +360,9 @@ This class is defined per-keyboard, but in general it will have:
 
 - `LAYOUT` macro and maybe alternates like `LAYOUT_standard` and `LAYOUT_60`.
 - `begin()` to initialize LED or other pins
-- `tick()` to check `Mechy` for Caps lock status and update that LED automatically (if you assign to `capsLedWrite()` your setting will override the default).
+- `tick()` to check `Mechy` for Caps lock status and update that LED automatically (if you assign to `capsLockLedWrite()` your setting will override the default).
 - Definitions for ROWS, COLS, pinRows and pinCols.
-- LED controlling methods like `capsLedWrite()` and `capsLedRead()` and defines like `CAPS_LED_PIN`
+- LED controlling methods like `capsLockLedWrite()` and `capsLockLedRead()` and defines like `CAPS_LOCK_LED_PIN`
 - RGB and backlight support, if available.
 
 # FAQ
