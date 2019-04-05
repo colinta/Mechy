@@ -46,6 +46,7 @@ public:
     void attach(Responder* responder);
     void begin();
     void tick();
+    void setListenFunc(void (*fnPtr)(Event*));
 
     void processKeyEvent(Layout* layout, uint8_t row, uint8_t col, bool isPressed);
     Plugin* pluginFor(uint8_t name);
@@ -78,6 +79,7 @@ protected:
     PluginPtr* firstPluginPtr;
     EventPtr* firstEventPtr;
     uint16_t modifiers;
+    void (*listenFnPtr)(Event*);
 
     bool capsIsOn;
 

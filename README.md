@@ -52,10 +52,15 @@ void setup() {
     mechy.attach(scanner);  // and attach(receiver) if you have a split keyboard
 
     mechy.begin();
+    mechy.setUpdateFunc(update)
 }
 
 void loop() {
     mechy.tick();
+}
+
+void update(Event* event) {
+    // listen for all events here - press, hold, and release
 }
 ```
 

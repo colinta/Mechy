@@ -10,6 +10,7 @@ Mechy::Mechy() {
     firstResponderPtr = NULL;
     firstPluginPtr = NULL;
     firstEventPtr = NULL;
+    listenFnPtr = NULL;
 }
 
 void Mechy::begin() {
@@ -63,6 +64,10 @@ void Mechy::add(uint8_t name, Plugin* plugin) {
     plugin->mechy = this;
 
     pushPluginPtr(ptr);
+}
+
+void Mechy::setListenFunc(void (*fnPtr)(Event*)) {
+    listenFnPtr = fnPtr;
 }
 
 uint8_t Mechy::defaultLayer() {
@@ -205,20 +210,22 @@ Plugin* Mechy::pluginFor(uint8_t name) {
 // the Event passed in here is not guaranteed to be in the EventPtr stack, so don't
 // go freeing it up or anything.  Modifying it is OK.
 void Mechy::runPlugin(Event* event) {
-    uint8_t keyHandlerName = event->name;
-
     Plugin* plugin = pluginFor(event->name);
-    if (!plugin)  return;
+    if (plugin) {
+        bool processing = KBD_CONTINUE;
+        PluginPtr* ptr = firstPluginPtr;
+        while (ptr) {
+            processing = ptr->plugin->override(event->name, event, plugin) && processing;
+            ptr = ptr->next;
+        }
 
-    bool processing = KBD_CONTINUE;
-    PluginPtr* ptr = firstPluginPtr;
-    while (ptr) {
-        processing = ptr->plugin->override(keyHandlerName, event, plugin) && processing;
-        ptr = ptr->next;
+        if (processing == KBD_CONTINUE) {
+            plugin->run(event);
+        }
     }
 
-    if (processing == KBD_CONTINUE) {
-        plugin->run(event);
+    if (listenFnPtr) {
+        (*listenFnPtr)(event);
     }
 }
 
