@@ -103,31 +103,31 @@ uint8_t* _directionRegisterPtr(uint8_t pin) {
 
 uint8_t _pinMask(uint8_t pin) {
     switch (pin) {
-        case _B0: return bit(0);
-        case _B1: return bit(1);
-        case _B2: return bit(2);
-        case _B3: return bit(3);
-        case _B4: return bit(4);
-        case _B5: return bit(5);
-        case _B6: return bit(6);
-        case _B7: return bit(7);
-        case _C6: return bit(6);
-        case _C7: return bit(7);
-        case _D0: return bit(0);
-        case _D1: return bit(1);
-        case _D2: return bit(2);
-        case _D3: return bit(3);
-        case _D4: return bit(4);
-        case _D5: return bit(5);
-        case _D6: return bit(6);
-        case _D7: return bit(7);
-        case _E2: return bit(2);
-        case _E6: return bit(6);
+        case _B0:
+        case _D0:
         case _F0: return bit(0);
+        case _B1:
+        case _D1:
         case _F1: return bit(1);
+        case _B2:
+        case _D2:
+        case _E2: return bit(2);
+        case _B3:
+        case _D3: return bit(3);
+        case _B4:
+        case _D4:
         case _F4: return bit(4);
+        case _B5:
+        case _D5:
         case _F5: return bit(5);
+        case _B6:
+        case _C6:
+        case _D6:
+        case _E6:
         case _F6: return bit(6);
+        case _B7:
+        case _C7:
+        case _D7:
         case _F7: return bit(7);
     }
     return 0;

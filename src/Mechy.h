@@ -7,6 +7,8 @@
 #include "Mechy/Layout.h"
 #include "Mechy/Scanner.h"
 
+#define DEBOUNCE 10
+
 
 struct PluginPtr {
     uint8_t name;
@@ -48,9 +50,10 @@ public:
     void tick();
     void setListenFunc(void (*fnPtr)(Event*));
 
-    void processKeyEvent(Layout* layout, uint8_t row, uint8_t col, bool isPressed);
+    bool processKeyEvent(Layout* layout, uint8_t row, uint8_t col, bool isPressed);
     Plugin* pluginFor(uint8_t name);
     void runPlugin(Event* event);
+    void finishEvent(Event* event);
 
     bool isCapsOn();
 
@@ -89,5 +92,5 @@ private:
     inline void pushPluginPtr(PluginPtr* ptr);
     inline void pushResponderPtr(ResponderPtr* ptr);
     inline void pushEventPtr(EventPtr* ptr);
-    inline EventPtr* removeKBDPtr(EventPtr* ptr);
+    inline EventPtr* removeEventPtr(EventPtr* ptr);
 };

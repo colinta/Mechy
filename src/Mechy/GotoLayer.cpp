@@ -8,13 +8,13 @@ uint8_t GotoLayer::defaultName() {
 }
 
 bool GotoLayer::is(uint8_t event_type, Event* UNUSED(event)) {
-    return event_type == EVENT_META;
+    return event_type == EVENT_LAYER;
 }
 
 bool GotoLayer::override(uint8_t UNUSED(name), Event* event, Plugin* UNUSED(plugin)) {
     if (event->isPressed()) {
-        // another key was pressed; find all the GotoLayer events in the current
-        // stack and deactivate them.
+        // if another layer key was pressed find all the GotoLayer events in the
+        // current stack and deactivate them.
         EventPtr* eventPtr = mechy->events();
         while (eventPtr) {
             if (eventPtr->event->name == FN_GOTO_LAYER

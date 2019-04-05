@@ -13,9 +13,9 @@ uint8_t Macro::defaultName() {
 }
 
 void Macro::run(Event* event) {
-    int16_t macro_index = event->key();
+    uint8_t macro_index = event->key();
 
-    if (macro_index < 0 || macro_index >= count) {
+    if (macro_index >= count) {
         prev_macro = count;
         return;
     }
@@ -30,6 +30,7 @@ void Macro::run(Event* event) {
             Keyboard.print(macros[macro_index]);
             mechy->updateModifiers(mods);
             prev_macro = count;
+            event->setIsActive(true);
         }
     }
 }

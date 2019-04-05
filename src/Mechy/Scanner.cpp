@@ -53,14 +53,21 @@ void Scanner::begin() {
 }
 
 void Scanner::scan() {
+    bool shouldBreak = false;
     for (uint8_t row = 0; row < ROWS; row++) {
         Wiring::digitalWrite(pinRows[row], shouldUsePullup ? LOW : HIGH);
         for (uint8_t col = 0; col < COLS; col++) {
             bool isPressed = Wiring::digitalRead(pinCols[col]);
             if (shouldUsePullup)  isPressed = !isPressed;
-            mechy->processKeyEvent(layout, row, col, isPressed);
+            if (mechy->processKeyEvent(layout, row, col, isPressed) == KBD_HALT) {
+                shouldBreak = true;
+                break;
+            }
         }
         Wiring::digitalWrite(pinRows[row], shouldUsePullup ? HIGH : LOW);
+        if (shouldBreak) {
+            break;
+        }
     }
     delay(1);
 }

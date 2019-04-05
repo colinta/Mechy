@@ -12,12 +12,12 @@ uint8_t Lock::defaultName() {
 }
 
 bool Lock::is(uint8_t event_type, Event* UNUSED(event)) {
-    return event_type == EVENT_META;
+    return event_type == EVENT_LOCK;
 }
 
 bool Lock::override(uint8_t UNUSED(name), Event* event, Plugin* plugin) {
-    if (!is_locked || (plugin->is(EVENT_META, event)))  return KBD_CONTINUE;
-    return KBD_HALT;
+    if (plugin->is(EVENT_LOCK, event) || plugin->is(EVENT_LAYER, event))  return KBD_CONTINUE;
+    return !is_locked;
 }
 
 void Lock::run(Event* event) {
@@ -31,6 +31,16 @@ void Lock::run(Event* event) {
 
         if (lock_count == need) {
             is_locked = !is_locked;
+
+            EventPtr* eventPtr = mechy->events();
+            EventPtr* nextPtr = NULL;
+            while (eventPtr) {
+                nextPtr = eventPtr->next;
+                if (eventPtr->event->name != FN_LOCK) {
+                    mechy->finishEvent(eventPtr->event);
+                }
+                eventPtr = nextPtr;
+            }
         }
     }
 }

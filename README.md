@@ -112,7 +112,7 @@ See [MouseKey.h](https://github.com/colinta/Mechy/blob/master/src/Mechy/MouseKey
 
 A port of QMK's auto shift feature.  Tap a letter for lower case, hold it for the shifted key.  Also works for numbers and symbol keys.
 
-This is an interesting plugin because it is very careful about when it reports that it is a keypress.  The mechanism for this is the function `bool Plugin::is(event_type, Event*)`.  This plugin function returns `true` when it is considered a match for the `event_type` (`EVENT_KEYPRESS, EVENT_MOUSE, EVENT_MODIFIER, EVENT_META` are possible values).
+This is an interesting plugin because it is very careful about when it reports that it is a keypress.  The mechanism for this is the function `bool Plugin::is(event_type, Event*)`.  This plugin function returns `true` when it is considered a match for the `event_type` (`EVENT_KEYPRESS, EVENT_MOUSE, EVENT_MODIFIER, EVENT_LOCK, EVENT_LAYER` are possible values).
 
 The AutoShift key only matches at two times: after being held for 1/4 second, or at release when it is below that time.  At all other times this key is not doing anything; it doesn't send key repeat events.
 

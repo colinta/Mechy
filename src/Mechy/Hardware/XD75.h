@@ -38,8 +38,8 @@ const uint8_t pinCols[] = { _F0, _F1, _E6, _C7, _C6, _B6, _D4, _B1, _B7, _B5, _B
 
 #define RGB_PIN _F6
 #define CAPSLOCK_LED_PIN _B2
-#define GP100_LED_PIN    _F7
-#define GP103_LED_PIN    _F4
+#define GP100_PIN    _F7
+#define GP103_PIN    _F4
 #define KEYCAPS_LED_PIN  _F5
 
 class Hardware {
@@ -52,12 +52,13 @@ public:
     void begin() {
         Wiring::pinMode(CAPSLOCK_LED_PIN, OUTPUT);
         Wiring::digitalWrite(CAPSLOCK_LED_PIN, HIGH);
-        Wiring::pinMode(GP100_LED_PIN, OUTPUT);
-        Wiring::digitalWrite(GP100_LED_PIN, HIGH);
-        Wiring::pinMode(GP103_LED_PIN, OUTPUT);
-        Wiring::digitalWrite(GP103_LED_PIN, LOW);
+        Wiring::pinMode(GP100_PIN, OUTPUT);
+        Wiring::digitalWrite(GP100_PIN, HIGH);
+        Wiring::pinMode(GP103_PIN, OUTPUT);
+        Wiring::digitalWrite(GP103_PIN, LOW);
         Wiring::pinMode(KEYCAPS_LED_PIN, OUTPUT);
         Wiring::digitalWrite(KEYCAPS_LED_PIN, LOW);
+        PORTF &= ~(1 << 5);
     }
     void tick() {
         if (!didSetCaps) {
@@ -71,17 +72,17 @@ public:
     bool capsLockLedRead() {
         return Wiring::digitalRead(CAPSLOCK_LED_PIN);
     }
-    void gp100LedWrite(bool turnOn) {
-        Wiring::digitalWrite(GP100_LED_PIN, !turnOn);
+    void gp100Write(bool turnOn) {
+        Wiring::digitalWrite(GP100_PIN, !turnOn);
     }
-    bool gp100LedRead() {
-        return Wiring::digitalRead(GP100_LED_PIN);
+    bool gp100Read() {
+        return Wiring::digitalRead(GP100_PIN);
     }
-    void gp103LedWrite(bool turnOn) {
-        Wiring::digitalWrite(GP103_LED_PIN, turnOn);
+    void gp103Write(bool turnOn) {
+        Wiring::digitalWrite(GP103_PIN, turnOn);
     }
-    bool gp103LedRead() {
-        return Wiring::digitalRead(GP103_LED_PIN);
+    bool gp103Read() {
+        return Wiring::digitalRead(GP103_PIN);
     }
     void keycapsLedsWrite(bool turnOn) {
         Wiring::digitalWrite(KEYCAPS_LED_PIN, !turnOn);

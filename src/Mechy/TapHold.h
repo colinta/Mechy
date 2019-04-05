@@ -29,6 +29,7 @@ public:
     uint8_t defaultName();
     void begin();
     void run(Event* event);
+    bool override(uint8_t name, Event* event, Plugin* plugin);
 
     void add(KBD, KBD, THBehavior behavior = TH_TAP);
 protected:

@@ -37,7 +37,7 @@ void ComboKey::run(Event* comboEvent) {
     Event keyEvent = {
         .name = 0,
         .keyAndData = 0,
-        .keyState = comboEvent->keyState,
+        .internalState = comboEvent->internalState,
         .started = comboEvent->started,
     };
 

@@ -8,6 +8,8 @@
 #define EVENT_DATA_MASK 0b1111111100000000
 #define EVENT_USER_MASK 0b00011111
 #define EVENT_DATA_SHIFT 8
+#define EVENT_KEY_STATE_MASK  0b00001111
+#define EVENT_INTERNAL_MASK 0b11110000
 
 // to encourage "best practices" here are some bit masks:
 #define EVENT_IS_ACTIVE_BIT 5
@@ -19,8 +21,8 @@
 #define EVENT_MODIFIER 2
 #define EVENT_MOUSE 3
 #define EVENT_NOTES 4
-// Mechy internals: Lock, etc
-#define EVENT_META 8
+#define EVENT_LOCK 5
+#define EVENT_LAYER 6
 
 struct KBD {
     uint8_t name;
@@ -40,14 +42,14 @@ typedef const KBD* KBDPROG;
 struct Event {
     uint8_t name;
     uint16_t keyAndData;
-    uint8_t keyState;
+    uint8_t internalState;
     unsigned long started;
 
     inline unsigned long duration() { return millis() - started; }
-    inline bool isPressed() { return keyState == KEY_STATE_PRESSED; }
-    inline bool isHeld() { return keyState == KEY_STATE_HELD; }
-    inline bool isDown() { return keyState == KEY_STATE_PRESSED || keyState == KEY_STATE_HELD; }
-    inline bool isReleased() { return keyState == KEY_STATE_RELEASED; }
+    inline bool isPressed() { return (internalState & EVENT_KEY_STATE_MASK) == KEY_STATE_PRESSED; }
+    inline bool isHeld() { return (internalState & EVENT_KEY_STATE_MASK) == KEY_STATE_HELD; }
+    inline bool isDown() { return (internalState & EVENT_KEY_STATE_MASK) == KEY_STATE_PRESSED || (internalState & EVENT_KEY_STATE_MASK) == KEY_STATE_HELD; }
+    inline bool isReleased() { return (internalState & EVENT_KEY_STATE_MASK) == KEY_STATE_RELEASED; }
 
     inline uint16_t rawKey() {
         return keyAndData;
@@ -88,6 +90,22 @@ struct Event {
     }
     inline void setIsActive(bool value) {
         setDataBit(EVENT_IS_ACTIVE_BIT, value);
+    }
+
+    inline void setKeyState(uint8_t keyState) {
+        internalState = (internalState & EVENT_INTERNAL_MASK) | (keyState & EVENT_KEY_STATE_MASK);
+    }
+
+    inline uint8_t keyState() {
+        return internalState & EVENT_KEY_STATE_MASK;
+    }
+
+    inline void setShouldIgnore(bool ignore) {
+        internalState = (internalState & EVENT_KEY_STATE_MASK) | (ignore ? 0b00010000 : 0b00000000);
+    }
+
+    inline bool shouldIgnore() {
+        return internalState & EVENT_INTERNAL_MASK;
     }
 };
 

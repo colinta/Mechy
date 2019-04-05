@@ -11,11 +11,11 @@ inline void sendKeyEvent(Mechy* mechy, uint16_t modifierSnapshot, KBD* kbd) {
     Event event = {
         .name = kbd->name,
         .keyAndData = kbd->key,
-        .keyState = KEY_STATE_PRESSED,
+        .internalState = KEY_STATE_PRESSED,
         .started = millis(),
     };
     mechy->runPlugin(&event);
-    event.keyState = KEY_STATE_RELEASED;
+    event.setKeyState(KEY_STATE_RELEASED);
     mechy->runPlugin(&event);
     mechy->updateModifiers(mods);
 }
@@ -28,6 +28,19 @@ TapHold::TapHold() {
 
 uint8_t TapHold::defaultName() {
     return FN_TAP_HOLD;
+}
+
+bool TapHold::override(uint8_t UNUSED(name), Event* event, Plugin* UNUSED(plugin)) {
+    if (!event->isPressed())  return KBD_CONTINUE;
+
+    EventPtr* eventPtr = mechy->events();
+    while (eventPtr) {
+        if (eventPtr->event->name == FN_TAP_HOLD && eventPtr->event->isActive() && eventPtr->event->isHeld()) {
+            mechy->finishEvent(eventPtr->event);
+        }
+        eventPtr = eventPtr->next;
+    }
+    return KBD_CONTINUE;
 }
 
 void TapHold::begin() {
@@ -56,6 +69,7 @@ void TapHold::run(Event* event) {
 
     if (event->isPressed()) {
         event->setIsActive(true);
+        keyPtr->modifierSnapshot = mechy->currentModifiers();
     }
 
     switch (keyPtr->behavior) {
@@ -70,37 +84,37 @@ void TapHold::run(Event* event) {
     return;
 
 runPress:
-    if (event->isPressed()) {
-        keyPtr->modifierSnapshot = mechy->currentModifiers();
-    }
-    else if (event->isActive()) {
+    if (!event->isPressed() && event->isActive()) {
+        // setIsActive must be called before sendKeyEvent, otherwise override
+        // above will think that the holdKey press event is a random keypress,
+        // and will activate the tapKey event
         if (event->isHeld() && event->duration() > TAPHOLD_DELAY) {
-            sendKeyEvent(mechy, keyPtr->modifierSnapshot, &keyPtr->holdKey);
             event->setIsActive(false);
+            sendKeyEvent(mechy, keyPtr->modifierSnapshot, &keyPtr->holdKey);
         }
         else if (event->isReleased()) {
-            sendKeyEvent(mechy, keyPtr->modifierSnapshot, &keyPtr->tapKey);
             event->setIsActive(false);
+            sendKeyEvent(mechy, keyPtr->modifierSnapshot, &keyPtr->tapKey);
         }
     }
     return;
 
 runModifier:
     if (event->isActive() && event->isHeld() && event->duration() > TAPHOLD_DELAY) {
+        event->setIsActive(false);
         Event keyEvent = {
             .name = keyPtr->holdKey.name,
             .keyAndData = keyPtr->holdKey.key,
-            .keyState = KEY_STATE_PRESSED,
+            .internalState = KEY_STATE_PRESSED,
             .started = event->started,
         };
         mechy->runPlugin(&keyEvent);
-        event->setIsActive(false);
     }
     else if (event->isHeld() && event->duration() > TAPHOLD_DELAY) {
         Event keyEvent = {
             .name = keyPtr->holdKey.name,
             .keyAndData = keyPtr->holdKey.key,
-            .keyState = KEY_STATE_HELD,
+            .internalState = KEY_STATE_HELD,
             .started = event->started,
         };
         mechy->runPlugin(&keyEvent);
@@ -109,25 +123,14 @@ runModifier:
         Event keyEvent = {
             .name = keyPtr->holdKey.name,
             .keyAndData = keyPtr->holdKey.key,
-            .keyState = KEY_STATE_RELEASED,
+            .internalState = KEY_STATE_RELEASED,
             .started = event->started,
         };
         mechy->runPlugin(&keyEvent);
     }
-    else if (event->isReleased()) {
-        uint16_t mods = mechy->currentModifiers();
-        mechy->updateModifiers(keyPtr->modifierSnapshot);
-        Event keyEvent = {
-            .name = keyPtr->tapKey.name,
-            .keyAndData = keyPtr->tapKey.key,
-            .keyState = KEY_STATE_PRESSED,
-            .started = millis(),
-        };
-        mechy->runPlugin(&keyEvent);
-        keyEvent.keyState = KEY_STATE_RELEASED;
-        mechy->runPlugin(&keyEvent);
-        mechy->updateModifiers(mods);
+    else if (event->isReleased() && event->isActive()) {
         event->setIsActive(false);
+        sendKeyEvent(mechy, keyPtr->modifierSnapshot, &keyPtr->tapKey);
     }
     return;
 }

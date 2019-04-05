@@ -123,15 +123,12 @@ void Mechy::updateLayer(uint8_t layer) {
     }
 }
 
-EventPtr* Mechy::events() {
-    return firstEventPtr;
-}
-
-void Mechy::processKeyEvent(Layout* layout, uint8_t row, uint8_t col, bool isPressed) {
+bool Mechy::processKeyEvent(Layout* layout, uint8_t row, uint8_t col, bool isPressed) {
     unsigned long now = millis();
 
     // find the prev key event data, if present, and trim away any key events
-    // that are finished (!isPressed) and old (finished > 10ms ago).
+    // that are finished (!isPressed) and old (finished > 10ms ago).  We keep events
+    // around for 10ms so they can be checked for debouncing.
     EventPtr* findEventPtr = firstEventPtr;
     EventPtr* cachedEventPtr = NULL;
     while (findEventPtr) {
@@ -140,24 +137,24 @@ void Mechy::processKeyEvent(Layout* layout, uint8_t row, uint8_t col, bool isPre
         }
 
         // remove "stale" keyboard events
-        if (findEventPtr->event->isReleased() && now - findEventPtr->event->started > 10) {
+        if (findEventPtr->event->isReleased() && now - findEventPtr->event->started > DEBOUNCE) {
             // remove the ptr and return the next one or NULL
-            findEventPtr = removeKBDPtr(findEventPtr);
+            findEventPtr = removeEventPtr(findEventPtr);
         }
         else {
             findEventPtr = findEventPtr->next;
         }
     }
 
-    bool currentKeyIsPressed = cachedEventPtr ? cachedEventPtr->event->isDown() : false;
-    uint16_t currentKeyDuration = cachedEventPtr ? now - cachedEventPtr->event->started : 0;
+    bool cachedKeyIsPressed = cachedEventPtr ? cachedEventPtr->event->isDown() : false;
+    uint16_t cachedKeyDuration = cachedEventPtr ? now - cachedEventPtr->event->started : 0;
 
-    // ignore all debouncing signals, HIGH or LOW
-    if (cachedEventPtr && currentKeyDuration < 10) {
-        return;
+    // ignore all debouncing signals, HIGH or LOW for 10ms
+    if (cachedEventPtr && cachedKeyDuration < DEBOUNCE) {
+        return KBD_CONTINUE;
     }
 
-    if (!currentKeyIsPressed && isPressed) {
+    if (!cachedKeyIsPressed && isPressed) {
         // cachedEventPtr may or may not be NULL, if it exists reuse it, otherwise
         // create it and append it.
         EventPtr* ptr = NULL;
@@ -178,22 +175,27 @@ void Mechy::processKeyEvent(Layout* layout, uint8_t row, uint8_t col, bool isPre
         if (ptr) {
             ptr->event->name = kbd->getProgmemName();
             ptr->event->keyAndData = kbd->getProgmemKey();
-            ptr->event->keyState = KEY_STATE_PRESSED;
+            ptr->event->internalState = KEY_STATE_PRESSED;
             ptr->event->started = now;
             runPlugin(ptr->event);
+            return KBD_HALT;
         }
     }
-    else if (currentKeyIsPressed) {
+    else if (cachedKeyIsPressed) {
+        // only respond to key up events if a cached event ptr was found
         if (!isPressed) {
-            cachedEventPtr->event->keyState = KEY_STATE_RELEASED;
+            cachedEventPtr->event->setKeyState(KEY_STATE_RELEASED);
             runPlugin(cachedEventPtr->event);
             cachedEventPtr->event->started = now;  // reset timer for debouncing
+            cachedEventPtr->event->setShouldIgnore(true);
+            return KBD_HALT;
         }
         else {
-            cachedEventPtr->event->keyState = KEY_STATE_HELD;
+            cachedEventPtr->event->setKeyState(KEY_STATE_HELD);
             runPlugin(cachedEventPtr->event);
         }
     }
+    return KBD_CONTINUE;
 }
 
 Plugin* Mechy::pluginFor(uint8_t name) {
@@ -210,6 +212,8 @@ Plugin* Mechy::pluginFor(uint8_t name) {
 // the Event passed in here is not guaranteed to be in the EventPtr stack, so don't
 // go freeing it up or anything.  Modifying it is OK.
 void Mechy::runPlugin(Event* event) {
+    if (event->shouldIgnore())  return;
+
     Plugin* plugin = pluginFor(event->name);
     if (plugin) {
         bool processing = KBD_CONTINUE;
@@ -227,6 +231,18 @@ void Mechy::runPlugin(Event* event) {
     if (listenFnPtr) {
         (*listenFnPtr)(event);
     }
+}
+
+void Mechy::finishEvent(Event* event) {
+    if (event->isDown()) {
+        event->setKeyState(KEY_STATE_RELEASED);
+        runPlugin(event);
+        // this looks weird, right?  We make sure the internal handlers are run
+        // in 'processKeyEvent' for as long as the key is physically held, but
+        // runPlugin will ignore events because shouldIgnore is set.
+        event->setKeyState(KEY_STATE_HELD);
+    }
+    event->setShouldIgnore(true);
 }
 
 bool Mechy::isCapsOn() {
@@ -497,6 +513,10 @@ void Mechy::clearModifiers() {
     modifiers = 0;
 }
 
+EventPtr* Mechy::events() {
+    return firstEventPtr;
+}
+
 inline void Mechy::pushPluginPtr(PluginPtr* ptr) {
     ptr->next = firstPluginPtr;
     firstPluginPtr = ptr;
@@ -512,7 +532,7 @@ inline void Mechy::pushEventPtr(EventPtr* ptr) {
     firstEventPtr = ptr;
 }
 
-inline EventPtr* Mechy::removeKBDPtr(EventPtr* ptr) {
+inline EventPtr* Mechy::removeEventPtr(EventPtr* ptr) {
     EventPtr** eventPtrPtr = &firstEventPtr;
     EventPtr* eventPtr = firstEventPtr;
     while (eventPtr) {
