@@ -2,7 +2,7 @@
 #include <Mechy/KeyPress.h>
 #include <Mechy/MediaKey.h>
 #include <Mechy/GotoLayer.h>
-#include <Mechy/Macro.h>
+#include <Mechy/Password.h>
 #include <Mechy/TapHold.h>
 
 #define ROWS 5
@@ -27,7 +27,7 @@ KEYS(mainKeys) = {
 KEYS(fnKeys) = {
       ____  ,  ____  , KC_F1  , KC_F2  , KC_F3  , KC_F4  ,  KC_F5 ,  ____  , KC_F6  , KC_F7  , KC_F8  , KC_F9  , KC_F10 , KC_F11 , KC_F12 ,
       ____  ,  ____  ,  ____  ,  ____  ,  ____  ,  ____  ,  ____  ,  ____  ,  ____  ,  ____  ,  ____  ,  ____  ,  ____  ,  ____  ,  ____  ,
-      ____  ,  vvvv  ,  ____  ,  MM_0  ,  MM_1  ,  MM_2  ,  ____  ,  ____  ,  ____  ,  MM_3  ,  MM_4  ,  MM_5  ,  ____  ,  ____  ,  ____  ,
+      ____  ,  vvvv  ,  ____  ,  PW_0  ,  PW_1  ,  PW_2  ,  ____  ,  ____  ,  ____  ,  PW_3  ,  PW_4  ,  PW_5  ,  ____  ,  ____  ,  ____  ,
       ____  ,  vvvv  ,  ____  ,  ____  ,  ____  ,  ____  , MD_VOLD,  ____  , MD_VOLU,  ____  ,  ____  ,  ____  ,  ____  ,  ____  ,  ____  ,
       ____  ,  ____  ,  ____  ,  vvvv  ,  ____  ,  vvvv  ,  ____  ,  ____  ,  ____  ,  ____  ,  ____  ,  ____  ,  ____  ,  ____  ,  ____
 };
@@ -36,9 +36,11 @@ KEYS(fnKeys) = {
 // make sure to exclude secrets.h from source-control for this trick to work well:
 #if (__has_include("secrets.h"))
 #include "secrets.h"
-const char* macros[7] = {M0, M1, M2, M3, M4, M5, M6};
+#define PASSWORDS 7
+const char* passwords[PASSWORDS] = {M0, M1, M2, M3, M4, M5, M6};
 #else
-const char* macros[7] = {"", "", "", "", "", "", ""};
+#define PASSWORDS 0
+const char* passwords[] = {};
 #endif
 
 Layout layout = Layout(ROWS, COLS, mainKeys, fnKeys);
@@ -65,7 +67,7 @@ void setup() {
     mechy.add(new KeyPress());
     mechy.add(new MediaKey());
     mechy.add(new GotoLayer());
-    mechy.add(new Macro(7, macros));
+    mechy.add(new Password(PASSWORDS, passwords));
     mechy.add(tapHold);
 
     mechy.attach(&scanner);

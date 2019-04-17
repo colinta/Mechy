@@ -121,12 +121,6 @@ protected:
 #define KC_MEH KC(DATA_MOD_LSFT | DATA_MOD_LCTL | DATA_MOD_LALT)
 #define KC_CAG KC(DATA_MOD_LGUI | DATA_MOD_LCTL | DATA_MOD_LALT)
 
-#define DATA_MOD_LSFT (1 << 0)
-#define DATA_MOD_LGUI (1 << 1)
-#define DATA_MOD_LCTL (1 << 2)
-#define DATA_MOD_LALT (1 << 3)
-#define DATA_MOD_ANY  (0b1111)
-
 #define LSFT(k) ((k) | (DATA_MOD_LSFT << EVENT_DATA_SHIFT))
 #define LGUI(k) ((k) | (DATA_MOD_LGUI << EVENT_DATA_SHIFT))
 #define LCTL(k) ((k) | (DATA_MOD_LCTL << EVENT_DATA_SHIFT))

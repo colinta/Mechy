@@ -188,25 +188,46 @@ Layout(ROWS, COLS, mainKeys, colemakKeys, dvorakKeys, fnKeys);
 
 See [GotoLayer.h](https://github.com/colinta/Mechy/blob/master/src/Mechy/GotoLayer.h#L23) for defined keys.
 
-###### Macro
+###### Password
 
-This is only for password macros at the moment. For keyboard chords like `CMD+SHIFT+4` you can use KeyPress (`LGUI(LSFT('4'))`).
+This is only for passwords at the moment, and for that reason it requires *two* presses of the key to activate. For keyboard chords like `CMD+SHIFT+4` you can use KeyPress (`LGUI(LSFT('4'))`), and for macros that don't require this security you can use `SendString`.
 
 ```cpp
-#include <Mechy/Macro.h>
+#include <Mechy/Password.h>
 
-KEYS(mainKeys) = { MM_0, MM_1, MM_2 };
+KEYS(mainKeys) = { PW_0, PW_1, PW_2 };
 
 // If this is a "private" keyboard you can hardcode them, otherwise look at
 // Layers.ino for how I put them in a secrets file.  They'll still be visible to
 // someone who gets your keyboard and knows what to look for.
-const char* macros[7] = {"", "", "", "", "", "", ""};
+#define PASSWORDS 7
+const char* passwords[PASSWORDS] = {"password 1", "password 2", "...", "", "", "", ""};
 
 Mechy mechy = Mechy();
-mechy.add(new Macro(7, macros));
+mechy.add(new Password(PASSWORDS, passwords));
 ```
 
-See [Macro.h](https://github.com/colinta/Mechy/blob/master/src/Mechy/Macro.h#L17) for defined keys.
+See [Password.h](https://github.com/colinta/Mechy/blob/master/src/Mechy/Password.h#L17) for defined keys.
+
+###### SendString
+
+This is similar to Password, but doesn't require two key presses to activate the macro, and has support for modifier keys, and fine-grained control over down and up key presses.
+
+```cpp
+#include <Mechy/SendString.h>
+
+KEYS(mainKeys) = { SS_0, SS_1 };
+
+uint16_t* macros[2] = {
+  send2(downUp('\\'), downUp(LSFT('\''))),                                      // sends -> \"
+  send5(down(LSFT(0)), downUp('a'), downUp('b'), up(LSFT(0)), downUp('c'))      // sends -> ABc
+};
+
+Mechy mechy = Mechy();
+mechy.add(new SendString(2, macros));
+```
+
+See [Password.h](https://github.com/colinta/Mechy/blob/master/src/Mechy/Password.h#L17) for defined keys.
 
 ###### Sticky
 

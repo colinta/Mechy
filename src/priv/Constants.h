@@ -51,14 +51,15 @@
 #define FN_MEDIA      2
 #define FN_STICKY     3
 #define FN_LOCK       4
-#define FN_MACRO      5
-#define FN_GOTO_LAYER 6
-#define FN_TAP_HOLD   7
-#define FN_MOUSE_KEY  8
-#define FN_AUTO_SHIFT 9
-#define FN_NOTES      10
-#define FN_COMBO_KEY  11
-#define FN_DEBUG      12
+#define FN_PASSWORD   5
+#define FN_SENDSTRING 6
+#define FN_GOTO_LAYER 7
+#define FN_TAP_HOLD   8
+#define FN_MOUSE_KEY  9
+#define FN_AUTO_SHIFT 10
+#define FN_NOTES      11
+#define FN_COMBO_KEY  12
+#define FN_DEBUG      13
 #define FN_USER_0    128
 
 #define MCHY_NONE     0
@@ -88,3 +89,9 @@
 #define MOD_RGUI       0b1100000000000000
 #define MOD_BITL_RGUI    14
 #define MOD_GUI        0b1111000000000000
+
+#define DATA_MOD_LSFT (1 << 0)
+#define DATA_MOD_LGUI (1 << 1)
+#define DATA_MOD_LCTL (1 << 2)
+#define DATA_MOD_LALT (1 << 3)
+#define DATA_MOD_ANY  (0b1111)

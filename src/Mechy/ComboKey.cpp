@@ -14,7 +14,7 @@ uint8_t ComboKey::defaultName() {
 }
 
 bool ComboKey::is(uint8_t event_type, Event* event) {
-    Plugin *plugin = NULL;
+    Plugin* plugin = NULL;
     if (count == 0) {
         plugin = mechy->pluginFor(comboKey.name);
         return plugin && plugin->is(event_type, event);

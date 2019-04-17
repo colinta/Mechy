@@ -280,9 +280,9 @@ void Mechy::pressKey(uint8_t key) {
     case KEY_CAPS_LOCK:
         capsIsOn = !capsIsOn;
         break;
+    default:
+        Keyboard.press(key);
     }
-
-    Keyboard.press(key);
 }
 
 void Mechy::releaseKey(uint8_t key) {

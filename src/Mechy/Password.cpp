@@ -1,18 +1,18 @@
 #include <Keyboard.h>
-#include "Macro.h"
+#include "Password.h"
 
 
-Macro::Macro(uint8_t _count, const char **_macros) {
+Password::Password(uint8_t _count, const char** _macros) {
     prev_macro = _count;
     count = _count;
     macros = (char**)_macros;
 }
 
-uint8_t Macro::defaultName() {
-    return FN_MACRO;
+uint8_t Password::defaultName() {
+    return FN_PASSWORD;
 }
 
-void Macro::run(Event* event) {
+void Password::run(Event* event) {
     uint8_t macro_index = event->key();
 
     if (macro_index >= count) {
