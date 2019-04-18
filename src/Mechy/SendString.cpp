@@ -11,6 +11,10 @@ uint8_t SendString::defaultName() {
     return FN_SENDSTRING;
 }
 
+bool SendString::is(uint8_t event_type, Event* event) {
+    return event_type == EVENT_KEYPRESS && event->isReleased();
+}
+
 void SendString::run(Event* event) {
     uint8_t macro_index = event->key();
 
@@ -23,7 +27,12 @@ void SendString::run(Event* event) {
         for (uint8_t i = 0; i < keyCount ; ++i) {
             uint16_t key = macros[macro_index][i + 1];
 
-            Serial.println(key, BIN);
+            uint16_t mods;
+            if (key & SS_IGNOREMODS) {
+                mods = mechy->currentModifiers();
+                mechy->clearModifiers();
+            }
+
             if (key & SS_DOWN) {
                 sendKey(key, true);
             }
@@ -36,13 +45,17 @@ void SendString::run(Event* event) {
                 sendKey(key, false);
             }
 
+            if (key & SS_IGNOREMODS) {
+                mechy->updateModifiers(mods);
+            }
+
             delay(10);
         }
     }
 }
 
 void SendString::sendKey(uint16_t key, bool keyDown) {
-    uint8_t ascii = (uint8_t)key;
+    uint8_t ascii = key & 0b11111111;
     uint8_t mods = ((uint8_t)((uint16_t)key >> 8)) & 0b1111;
 
     if (keyDown) {
@@ -80,15 +93,19 @@ void SendString::sendKey(uint16_t key, bool keyDown) {
 }
 
 uint16_t down(uint16_t key) {
-    return SS_DOWN | (key & 0b111111111111);
+    return SS_DOWN | key;
 }
 
 uint16_t up(uint16_t key) {
-    return SS_UP | (key & 0b111111111111);
+    return SS_UP | key;
 }
 
 uint16_t downUp(uint16_t key) {
-    return SS_DOWN | SS_UP | (key & 0b111111111111);
+    return SS_DOWN | SS_UP | key;
+}
+
+uint16_t ignoreModifiers(uint16_t key) {
+    return SS_IGNOREMODS | key;
 }
 
 uint16_t* send1(uint16_t key0) {
