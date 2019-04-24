@@ -28,6 +28,7 @@ public:
     TapHold();
     uint8_t defaultName();
     void begin();
+    bool is(uint8_t event_type, Event* event);
     void run(Event* event);
     bool override(uint8_t name, Event* event, Plugin* plugin);
 
@@ -36,6 +37,7 @@ protected:
     uint8_t tapHoldKeys;
     TapHoldKeyList* tapHoldKeyStack;
     TapHoldEvent* eventArray;
+    TapHoldEvent* thEvent(uint8_t offset);
 };
 
 #define TH(n) { .name = FN_TAP_HOLD, .key = n }

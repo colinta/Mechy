@@ -26,8 +26,10 @@ public:
     Sticky();
     uint8_t defaultName();
     void tick();
+    bool is(uint8_t event_type, Event* event);
     bool override(uint8_t name, Event* event, Plugin* plugin);
     void run(Event* event);
+    void clearStickyMods();
 
 protected:
     bool should_clear;
@@ -42,7 +44,6 @@ protected:
     uint8_t modBit(uint8_t key);
     uint8_t currentMods();
     void updateMods();
-    void clearStickyMods();
 };
 
 #define ST_SFT { .name = FN_STICKY, .key = STK_SFT }
