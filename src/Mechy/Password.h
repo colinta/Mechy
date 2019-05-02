@@ -6,6 +6,7 @@ class Password: public Plugin {
 public:
     Password(uint8_t count, const char** macros);
     uint8_t defaultName();
+    bool override(uint8_t name, Event* event, Plugin* plugin);
     void run(Event* event);
 
 protected:

@@ -190,7 +190,9 @@ See [GotoLayer.h](https://github.com/colinta/Mechy/blob/master/src/Mechy/GotoLay
 
 ###### Password
 
-This is only for passwords at the moment, and for that reason it requires *two* presses of the key to activate. For keyboard chords like `CMD+SHIFT+4` you can use KeyPress (`LGUI(LSFT('4'))`), and for macros that don't require this security you can use `SendString`.
+This is only for passwords, and for that reason it requires *two* presses of the key to activate, so a password isn't sent by accidental activation. For keyboard chords like `CMD+SHIFT+4` you can use KeyPress (`LGUI(LSFT('4'))`), and for macros that don't require this security you can use `SendString`.
+
+You should not include a newline in these macros/passwords, it will be added automatically unless the Shift key is held.
 
 ```cpp
 #include <Mechy/Password.h>
