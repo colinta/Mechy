@@ -19,10 +19,30 @@ See the examples first to see if this library appeals to you:
 - [LeftSplit.ino](https://github.com/colinta/Mechy/blob/master/examples/LeftSplit/LeftSplit.ino) - left side of a BFO9000 keyboard, uses split feature
 - [RightSplit.ino](https://github.com/colinta/Mechy/blob/master/examples/RightSplit/RightSplit.ino) - right side of a BFO9000 keyboard
 
+Supported Keyboards
+===================
+
+Right now only keyboards that use the Atmega32u4 are supported, but I think it will be easy to add support for other boards that have USB HID support.
+
+I wrote this firmware to support three keyboards that I enjoy: XD75, BFO9000, and the Iris, which all use the 32u4.  These boards were not created with Arduino in mind, in particular they use pins B0 (aka RXLED) and D5 (aka TXLED) as digital I/O pins, whereas most Arduino boards wire these to LEDs to show off serial and USB communication.
+
+To solve this, and make these pins available as digital I/O pins, I created a custom board variant that turns `RXLED` and `TXLED` into no-ops.  You should install this board definition and use it instead of the usual "Leonardo" board.  Open preferences and add this URL to "Additional Board Manager URLs".  If you have URLs there already, make sure to separate this one with a comma.
+
+https://raw.githubusercontent.com/colinta/grayduino/json/package_colinta_grayduino_index.json
+
+Then you'll have a new board "Grayduino Atmega32u4".
+
+Migrating from QMK
+==================
+
+If you've been using QMK and want to start using Mechy you'll need to install the Arduino bootloader onto your keyboard.  It sounds daunting, but it's not too bad.  You'll need either an FTDI progammer or a spare Arduino.  Here are instructions on the Arduino ISP method: https://www.arduino.cc/en/Tutorial/ArduinoISP
+
+The XD75 and other keyboards (e.g. GH60) has the SPI programming headers, but they're vertical instead of in the 2x3 grid.  If you have one of these boards look for the headers in the middle or edge of the board, find the one that is a square instead of a circle, that's "Pin 1".  Solder some headers in, and wire it up like the instructions say (Keyboard Pin 1 goes to Arduino Pin 12, Pin 2 to 5V, Pin 3 to Pin 13, Pin 4 to Pin 11, Pin 5 to Pin 10, Pin 6 to GND).
+
 Usage
 =====
 
-Include the main library (`Mechy.h`), include your plugins (`Mechy/KeyPress.h`, `Mechy/MediaKey.h`), define the pins for your keyboard (better yet use a `Hardware` header to do this).  Then define your layout (you should use `PROGMEM`), create a few objects, and add `mechy.begin()` and `mechy.tick()` to `setup()` and `loop()`.  Easy! (I think.)
+Include the main library (`Mechy.h`), include your plugins (`Mechy/KeyPress.h`, `Mechy/MediaKey.h`), define the pins for your keyboard (better yet use a `Hardware` header to do this).  Then define your layout, create a few plugin objects, and add `mechy.begin()` and `mechy.tick()` to `setup()` and `loop()`.  Easy! (I think.)
 
 If a keyboard is available (in [`Keyboards.h`](https://github.com/colinta/Mechy/blob/master/src/Mechy/Keyboards)) the process is even slightly easier: the pins will be defined for you, and you can create a `Hardware` instance.  This will make it easy to use keyboard features like LEDs and sound.  The `Hardware` author needs to write this class to support what that keyboard is capable of, or you can use it as a starting point and do your own thing!
 
@@ -52,7 +72,7 @@ void setup() {
     mechy.attach(scanner);  // and attach(receiver) if you have a split keyboard
 
     mechy.begin();
-    mechy.setUpdateFunc(update)
+    mechy.setUpdateFunc(update);  // optional
 }
 
 void loop() {
