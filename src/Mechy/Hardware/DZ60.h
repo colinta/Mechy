@@ -80,7 +80,7 @@ const uint8_t pinCols[] = { _F0, _F1, _E6, _C7, _C6, _B7, _D4, _B1, _B0, _B5, _B
 
 class Hardware {
 public:
-    Hardware(Mechy* _mechy, Scanner* UNUSED(_scanner)) {
+    Hardware(Mechy* _mechy) {
         mechy = _mechy;
         didSetCaps = false;
     }
