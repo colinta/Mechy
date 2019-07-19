@@ -55,6 +55,12 @@ Transmitter::Transmitter(uint8_t dataPin, uint8_t clockPin, const uint8_t* _pinR
         *pressedPtr = false;
         ++pressedPtr;
     }
+    dataFnPtr = NULL;
+    hasData = false;
+}
+
+void Transmitter::setDataFunc(void (*fnPtr)(uint8_t)) {
+    dataFnPtr = fnPtr;
 }
 
 void Transmitter::begin() {
@@ -101,6 +107,11 @@ void Transmitter::scan() {
     }
 
     flushQueue();
+
+    if (hasData && dataFnPtr) {
+        (*dataFnPtr)(data);
+        hasData = false;
+    }
 }
 
 // return true if wasPressed != isPressed, ie. change event
@@ -158,6 +169,7 @@ void Transmitter::receiveTransmission() {
     sendReadingState();
     delayForTransmit();
     data = 0;
+    hasData = true;
     for (uint8_t bitIndex = 0; bitIndex < NUM_TRANSMIT_BITS; bitIndex++) {
         if (!receiveOneBit())  continue;
         bit_on(data, bit(bitIndex));
