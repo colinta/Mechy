@@ -15,9 +15,9 @@ inline void sendUpDownEvent(Mechy* mechy, uint16_t modifierSnapshot, KBD* kbd) {
         .internalState = KEY_STATE_PRESSED,
         .started = millis(),
     };
-    mechy->runPlugin(&keyEvent);
+    mechy->runEvent(&keyEvent);
     keyEvent.setKeyState(KEY_STATE_RELEASED);
-    mechy->runPlugin(&keyEvent);
+    mechy->runEvent(&keyEvent);
     mechy->updateModifiers(mods);
 }
 
@@ -219,7 +219,7 @@ runModifier:
             .internalState = KEY_STATE_PRESSED,
             .started = event->started,
         };
-        mechy->runPlugin(&keyEvent);
+        mechy->runEvent(&keyEvent);
     }
     else if (event->isHeld() && event->duration() > TAPHOLD_DELAY) {
         Event keyEvent = {
@@ -228,7 +228,7 @@ runModifier:
             .internalState = KEY_STATE_HELD,
             .started = event->started,
         };
-        mechy->runPlugin(&keyEvent);
+        mechy->runEvent(&keyEvent);
     }
     else if (event->isReleased() && event->duration() > TAPHOLD_DELAY) {
         Event keyEvent = {
@@ -237,7 +237,7 @@ runModifier:
             .internalState = KEY_STATE_RELEASED,
             .started = event->started,
         };
-        mechy->runPlugin(&keyEvent);
+        mechy->runEvent(&keyEvent);
     }
     else if (event->isReleased() && event->isActive()) {
         event->setIsActive(false);

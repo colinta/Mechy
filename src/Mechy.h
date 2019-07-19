@@ -52,7 +52,7 @@ public:
 
     bool processKeyEvent(Layout* layout, uint8_t row, uint8_t col, bool isPressed);
     Plugin* pluginFor(uint8_t name);
-    void runPlugin(Event* event);
+    void runEvent(Event* event);
     void finishEvent(Event* event);
 
     bool isCapsOn();

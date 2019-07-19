@@ -45,39 +45,39 @@ void ComboKey::run(Event* comboEvent) {
         if (--count == 0) {
             keyEvent.name = comboKey.name;
             keyEvent.keyAndData = comboKey.key;
-            mechy->runPlugin(&keyEvent);
+            mechy->runEvent(&keyEvent);
         }
         else {
             KBD kbd = keys[comboEvent->key()];
             keyEvent.name = kbd.name;
             keyEvent.keyAndData = kbd.key;
-            mechy->runPlugin(&keyEvent);
+            mechy->runEvent(&keyEvent);
         }
     }
     else if (comboEvent->isReleased()) {
         if (count++ == 0) {
             keyEvent.name = comboKey.name;
             keyEvent.keyAndData = comboKey.key;
-            mechy->runPlugin(&keyEvent);
+            mechy->runEvent(&keyEvent);
         }
         else {
             KBD kbd = keys[comboEvent->key()];
             keyEvent.name = kbd.name;
             keyEvent.keyAndData = kbd.key;
-            mechy->runPlugin(&keyEvent);
+            mechy->runEvent(&keyEvent);
         }
     }
     else if (comboEvent->isHeld()) {
         if (count == 0) {
             keyEvent.name = comboKey.name;
             keyEvent.keyAndData = comboKey.key;
-            mechy->runPlugin(&keyEvent);
+            mechy->runEvent(&keyEvent);
         }
         else {
             KBD kbd = keys[comboEvent->key()];
             keyEvent.name = kbd.name;
             keyEvent.keyAndData = kbd.key;
-            mechy->runPlugin(&keyEvent);
+            mechy->runEvent(&keyEvent);
         }
     }
 }

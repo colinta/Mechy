@@ -177,7 +177,7 @@ bool Mechy::processKeyEvent(Layout* layout, uint8_t row, uint8_t col, bool isPre
             ptr->event->keyAndData = kbd->getProgmemKey();
             ptr->event->internalState = KEY_STATE_PRESSED;
             ptr->event->started = now;
-            runPlugin(ptr->event);
+            runEvent(ptr->event);
             return KBD_HALT;
         }
     }
@@ -185,14 +185,14 @@ bool Mechy::processKeyEvent(Layout* layout, uint8_t row, uint8_t col, bool isPre
         // only respond to key up events if a cached event ptr was found
         if (!isPressed) {
             cachedEventPtr->event->setKeyState(KEY_STATE_RELEASED);
-            runPlugin(cachedEventPtr->event);
+            runEvent(cachedEventPtr->event);
             cachedEventPtr->event->started = now;  // reset timer for debouncing
             cachedEventPtr->event->setShouldIgnore(true);
             return KBD_HALT;
         }
         else {
             cachedEventPtr->event->setKeyState(KEY_STATE_HELD);
-            runPlugin(cachedEventPtr->event);
+            runEvent(cachedEventPtr->event);
         }
     }
     return KBD_CONTINUE;
@@ -211,7 +211,7 @@ Plugin* Mechy::pluginFor(uint8_t name) {
 
 // the Event passed in here is not guaranteed to be in the EventPtr stack, so don't
 // go freeing it up or anything.  Modifying it is OK.
-void Mechy::runPlugin(Event* event) {
+void Mechy::runEvent(Event* event) {
     if (event->shouldIgnore())  return;
 
     Plugin* plugin = pluginFor(event->name);
@@ -236,10 +236,10 @@ void Mechy::runPlugin(Event* event) {
 void Mechy::finishEvent(Event* event) {
     if (event->isDown()) {
         event->setKeyState(KEY_STATE_RELEASED);
-        runPlugin(event);
+        runEvent(event);
         // this looks weird, right?  We make sure the internal handlers are run
         // in 'processKeyEvent' for as long as the key is physically held, but
-        // runPlugin will ignore events because shouldIgnore is set.
+        // runEvent will ignore events because shouldIgnore is set.
         event->setKeyState(KEY_STATE_HELD);
     }
     event->setShouldIgnore(true);
