@@ -1,11 +1,4 @@
-#undef  TXLED0
-#define TXLED0
-#undef  TXLED1
-#define TXLED1
-#undef  RXLED0
-#define RXLED0
-#undef  RXLED1
-#define RXLED1
+#include <Mechy/Wiring.h>
 
 /* template:
 KEYS(keys) = LAYOUT(
