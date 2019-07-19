@@ -9,7 +9,7 @@ enum {
     STK_GUI,
     STK_HYP,
     STK_MEH,
-    STK_NAV,
+    STK_CAG,
 };
 
 
@@ -53,4 +53,4 @@ protected:
 
 #define ST_HYP { .name = FN_STICKY, .key = STK_HYP }
 #define ST_MEH { .name = FN_STICKY, .key = STK_MEH }
-#define ST_CAG { .name = FN_STICKY, .key = STK_NAV }
+#define ST_CAG { .name = FN_STICKY, .key = STK_CAG }
