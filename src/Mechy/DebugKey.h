@@ -6,6 +6,7 @@
 class DebugKey: public Plugin {
 public:
     DebugKey();
+    void begin();
     uint8_t defaultName();
     bool is(uint8_t event_type, Event* event);
     void run(Event* event);
@@ -100,3 +101,15 @@ protected:
 #define DB_ENT DB('|')
 #define DB_TAB DB(':')
 #define DB_CAPS DB('@')
+
+#define DB_FN1 DB('#')
+#define DB_FN2 DB('$')
+
+// #define DB_FN3 DB('%')
+// #define DB_FN4 DB('^')
+// #define DB_FN5 DB('&')
+// #define DB_FN6 DB('*')
+// #define DB_FN7 DB('(')
+// #define DB_FN8 DB(')')
+#define DB_CAG DB('_')
+#define DB_PLAY DB('+')

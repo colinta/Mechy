@@ -4,6 +4,10 @@
 DebugKey::DebugKey() {
 }
 
+void DebugKey::begin() {
+    Serial.begin(9600);
+}
+
 uint8_t DebugKey::defaultName() {
     return FN_DEBUG;
 }
@@ -14,10 +18,10 @@ bool DebugKey::is(uint8_t event_type, Event* event) {
 
 void DebugKey::run(Event* event) {
     if (event->isPressed()) {
-        Serial.print("\\___ ");
+        Serial.print("\\dn  ");
     }
     else if (event->isReleased()) {
-        Serial.print("/+++ ");
+        Serial.print("/up  ");
     }
     else {
         return;
@@ -152,6 +156,36 @@ void DebugKey::run(Event* event) {
         break;
     case '@':
         Serial.println("Caps Lock");
+        break;
+    case '#':
+        Serial.println("FN 1");
+        break;
+    case '$':
+        Serial.println("FN 2");
+        break;
+    case '%':
+        Serial.println("FN 3");
+        break;
+    case '^':
+        Serial.println("FN 4");
+        break;
+    case '&':
+        Serial.println("FN 5");
+        break;
+    case '*':
+        Serial.println("FN 6");
+        break;
+    case '(':
+        Serial.println("FN 7");
+        break;
+    case ')':
+        Serial.println("FN 8");
+        break;
+    case '_':
+        Serial.println("C-A-G");
+        break;
+    case '+':
+        Serial.println("PLAY");
         break;
     default:
         Serial.println((char)event->key());
