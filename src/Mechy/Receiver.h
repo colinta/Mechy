@@ -16,7 +16,7 @@ struct ReceiverEventPtr {
 class Receiver : public Responder {
 public:
     Receiver(Layout* layout, uint8_t dataPin, uint8_t clockPin);
-    Receiver(KBD* keys, uint8_t ROWS, uint8_t COLS, uint8_t dataPin, uint8_t clockPin);
+    Receiver(KBD* keys, uint8_t rows, uint8_t cols, uint8_t dataPin, uint8_t clockPin);
     void begin();
     void scan();
     void send(uint8_t byte);
@@ -26,6 +26,7 @@ protected:
     uint8_t inputPin;
     uint8_t outputPin;
     uint8_t data;
+    bool hasData;
     Layout* layout;
     ReceiverEventPtr* firstEventPtr;
 

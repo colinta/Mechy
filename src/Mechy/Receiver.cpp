@@ -12,6 +12,7 @@ void Receiver::construct(Layout* _layout, uint8_t dataPin, uint8_t clockPin) {
     outputPin = clockPin;
     firstEventPtr = NULL;
     data = 0;
+    hasData = false;
 }
 
 Receiver::Receiver(Layout* layout, uint8_t dataPin, uint8_t clockPin) : Responder() {
@@ -36,6 +37,7 @@ void Receiver::scan() {
 
 void Receiver::send(uint8_t _data) {
     data = _data;
+    hasData = true;
 }
 
 void Receiver::gotoLayer(uint8_t layer) {
@@ -77,7 +79,7 @@ void Receiver::listen() {
     while (transmitterHasData());
     // send "ready to listen" or "ready to transmit" signal
     sendReadyState();
-    if (data) {
+    if (hasData) {
         delayMicroseconds(TRANSMIT_TIME);
         sendReadingState();
         delayForTransmit();
@@ -92,7 +94,7 @@ void Receiver::listen() {
             didTimeout = false;
         }
         else {
-            data = 0;
+            hasData = false;
         }
         return;
     }
