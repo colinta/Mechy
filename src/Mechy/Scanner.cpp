@@ -62,7 +62,7 @@ void Scanner::scan() {
             break;
         }
     }
-    delay(1);
+    delay(5);
 }
 
 void Scanner::gotoLayer(uint8_t layer) {
