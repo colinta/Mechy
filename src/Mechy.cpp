@@ -149,7 +149,7 @@ bool Mechy::processKeyEvent(Layout* layout, uint8_t row, uint8_t col, bool isPre
     bool cachedKeyIsPressed = cachedEventPtr ? cachedEventPtr->event->isDown() : false;
     uint16_t cachedKeyDuration = cachedEventPtr ? now - cachedEventPtr->event->started : 0;
 
-    // ignore all debouncing signals, HIGH or LOW for 10ms
+    // ignore all debouncing signals, HIGH or LOW for 15ms
     if (cachedEventPtr && cachedKeyDuration < DEBOUNCE) {
         return KBD_CONTINUE;
     }

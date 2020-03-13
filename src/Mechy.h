@@ -7,7 +7,7 @@
 #include "Mechy/Layout.h"
 #include "Mechy/Scanner.h"
 
-#define DEBOUNCE 10
+#define DEBOUNCE 15
 
 
 struct PluginPtr {
