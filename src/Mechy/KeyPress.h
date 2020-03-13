@@ -9,8 +9,6 @@ public:
     uint8_t defaultName();
     bool is(uint8_t event_type, Event* event);
     void run(Event* event);
-
-protected:
 };
 
 #define KC(k) { .name = FN_KEYPRESS, .key = k }
