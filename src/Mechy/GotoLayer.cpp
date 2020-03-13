@@ -18,7 +18,7 @@ bool GotoLayer::override(uint8_t UNUSED(name), Event* event, Plugin* UNUSED(plug
         EventPtr* eventPtr = mechy->events();
         while (eventPtr) {
             if (eventPtr->event->name == FN_GOTO_LAYER
-                && (eventPtr->event->data() & GO_PUSH)
+                && (eventPtr->event->userData() & GO_PUSH)
                 && eventPtr->event->isActive())
             {
                 eventPtr->event->setIsActive(false);
@@ -61,14 +61,15 @@ push:
         mechy->pushLayer(layer);
         event->setIsActive(true);
     }
-    else if (event->isReleased()) {
-        mechy->removeLayer(layer);
+    else if (event->isReleased() && event->isActive()) {
         // if the event is still active then no other key was pressed - make
         // this layer the new default.
-        if (event->isActive()) {
-            mechy->setDefaultLayer(layer);
-            event->setIsActive(false);
-        }
+        // do nothing
+    }
+    else if (event->isReleased()) {
+        // if the event is no longer active then it can be removed from the
+        // stack
+        mechy->removeLayer(layer);
     }
     return;
 
@@ -86,5 +87,5 @@ back:
     if (event->isPressed()) {
         mechy->popLayer();
     }
-    goto lset;
+    return;
 }
