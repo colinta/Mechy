@@ -5,7 +5,6 @@ DebugKey::DebugKey() {
 }
 
 void DebugKey::begin() {
-    Serial.begin(9600);
 }
 
 uint8_t DebugKey::defaultName() {

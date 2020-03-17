@@ -15,6 +15,7 @@ Mechy::Mechy() {
 
 void Mechy::begin() {
     Keyboard.begin();
+    Serial.begin(9600);
 
     ResponderPtr* respPtr = firstResponderPtr;
     while (respPtr) {
