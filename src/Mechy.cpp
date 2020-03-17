@@ -112,6 +112,18 @@ void Mechy::removeLayer(uint8_t layer) {
     updateLayer(layerStackPtr ? layerStackPtr->value : _defaultLayer);
 }
 
+void Mechy::clearLayers() {
+    LayerStackPtr* layerPtr = layerStackPtr;
+    while (layerPtr) {
+        LayerStackPtr* prev = layerPtr->prev;
+        free(layerPtr);
+        layerPtr = prev;
+    }
+    layerStackPtr = NULL;
+
+    updateLayer(_defaultLayer);
+}
+
 uint8_t Mechy::currentLayer() {
     return (layerStackPtr ? layerStackPtr->value : _defaultLayer);
 }

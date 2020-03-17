@@ -62,9 +62,8 @@ push:
         event->setIsActive(true);
     }
     else if (event->isReleased() && event->isActive()) {
-        // if the event is still active then no other key was pressed - make
-        // this layer the new default.
-        // do nothing
+        // if the event is still active then no other key was pressed
+        // do nothing, ie keep this layer on the stack
     }
     else if (event->isReleased()) {
         // if the event is no longer active then it can be removed from the
@@ -75,11 +74,8 @@ push:
 
 lset:
     if (event->isPressed()) {
-        mechy->pushLayer(layer);
+        mechy->clearLayers();
         mechy->setDefaultLayer(layer);
-    }
-    else if (event->isReleased()) {
-        mechy->removeLayer(layer);
     }
     return;
 
