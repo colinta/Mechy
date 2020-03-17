@@ -61,6 +61,7 @@
 #define FN_COMBO_KEY  12
 #define FN_DEBUG      13
 #define FN_USER_0    128
+#define FN_USER(x) (FN_USER_0 + x)
 
 #define MCHY_NONE     0
 #define MCHY_TRANS    1
