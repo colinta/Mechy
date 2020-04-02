@@ -17,7 +17,8 @@ See the examples first to see if this library appeals to you:
 - [Planck.ino](https://github.com/colinta/Mechy/blob/master/examples/Planck/Planck.ino) - A port of the Planck default layout, with layers and `Hardware` object.
 - [DZ60.ino](https://github.com/colinta/Mechy/blob/master/examples/DZ60/DZ60.ino) - A port of the DZ60 default layout, but with unsupported features and macros removed - a good starting point for a new layout.
 - [LeftSplit.ino](https://github.com/colinta/Mechy/blob/master/examples/LeftSplit/LeftSplit.ino) - left side of a BFO9000 keyboard, uses split feature
-- [RightSplit.ino](https://github.com/colinta/Mechy/blob/master/examples/RightSplit/RightSplit.ino) - right side of a BFO9000 keyboard
+- [RightSplit.ino](https://github.com/colinta/Mechy/blob/master/examples/RightSplit/RightSplit.ino) - right side of a BFO9000 keyboard.
+- [My Layout](https://github.com/colinta/xd75) - my own personal Mechy layout.
 
 Supported Keyboards
 ===================
