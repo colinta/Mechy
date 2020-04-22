@@ -3,27 +3,6 @@
 #include <Arduino.h>
 #include "Constants.h"
 
-// in general, events have 8bits of "data" and 8bits of "key space"
-#define EVENT_KEY_MASK  0b0000000011111111
-#define EVENT_DATA_MASK 0b1111111100000000
-#define EVENT_USER_MASK 0b00011111
-#define EVENT_DATA_SHIFT 8
-#define EVENT_KEY_STATE_MASK  0b00001111
-#define EVENT_INTERNAL_MASK 0b11110000
-
-// to encourage "best practices" here are some bit masks:
-#define EVENT_IS_ACTIVE_BIT 5
-
-/* EVENT TYPES */
-// typical keys (F1, A, ESC, DELETE), but not modifiers
-#define EVENT_KEYPRESS 1
-// Shift, Control, Alt, Gui
-#define EVENT_MODIFIER 2
-#define EVENT_MOUSE 3
-#define EVENT_NOTES 4
-#define EVENT_LOCK 5
-#define EVENT_LAYER 6
-
 struct KBD {
     uint8_t name;
     uint16_t key;
@@ -108,11 +87,3 @@ struct Event {
         return internalState & EVENT_INTERNAL_MASK;
     }
 };
-
-#define ____ { .name = FN_NONE, .key = MCHY_NONE }
-#define vvvv { .name = FN_NONE, .key = MCHY_TRANS }
-
-/* user defined key macros */
-#define FN_USER(n)  (FN_USER_0 + n)
-#define USER_KEY(m) m
-#define USER(n, m) { .name = FN_USER(n), .key = USER_KEY(m) }
