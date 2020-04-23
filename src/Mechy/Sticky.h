@@ -32,7 +32,7 @@ public:
     void clearStickyMods();
 
 protected:
-    unsigned long should_clear_timeout;
+    bool should_clear;
     uint8_t mods_down_state;
     uint8_t sticky_state;
     uint8_t sticky_lock;

@@ -7,14 +7,13 @@
 #define KEY_BIT_LALT 4
 #define KEY_BIT_LGUI 8
 
-#define MOD_OFF_DELAY 30
 
 Sticky::Sticky() {
     mods_down_state = 0;
     sticky_state = 0;
     sticky_lock = 0;
     prev_mods = 0;
-    should_clear_timeout = 0;
+    should_clear = false;
 }
 
 uint8_t Sticky::defaultName() {
@@ -22,9 +21,9 @@ uint8_t Sticky::defaultName() {
 }
 
 void Sticky::tick() {
-    if (should_clear_timeout && millis() - should_clear_timeout > MOD_OFF_DELAY) {
+    if (should_clear) {
         clearStickyMods();
-        should_clear_timeout = 0;
+        should_clear = false;
     }
 }
 
@@ -33,15 +32,8 @@ bool Sticky::is(uint8_t event_type, Event* UNUSED(event)) {
 }
 
 bool Sticky::override(uint8_t UNUSED(name), Event* event, Plugin* plugin) {
-    if (!should_clear_timeout
-        && sticky_state
-        && (plugin->is(EVENT_KEYPRESS, event) || plugin->is(EVENT_MOUSE, event))
-        )
-    {
-        // some apps (especially games) require a small delay on the modifier
-        // being released, or the key combo doesn't register as "together".
-        // after MOD_OFF_DELAY, the sticky modifier will be cleared.
-        should_clear_timeout = millis();
+    if ((plugin->is(EVENT_KEYPRESS, event) || plugin->is(EVENT_MOUSE, event)) && sticky_state) {
+        should_clear = true;
     }
     return KBD_CONTINUE;
 }
