@@ -133,7 +133,7 @@ isModifier:
     return false;
 }
 
-bool TapHold::override(uint8_t UNUSED(name), Event* event, Plugin* UNUSED(plugin)) {
+bool TapHold::override(Event* event, Plugin* UNUSED(plugin)) {
     if (!event->isPressed())  return KBD_CONTINUE;
 
     bool didFinishEvent = false;

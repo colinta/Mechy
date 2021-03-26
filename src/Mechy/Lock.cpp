@@ -15,7 +15,7 @@ bool Lock::is(uint8_t event_type, Event* UNUSED(event)) {
     return event_type == EVENT_LOCK;
 }
 
-bool Lock::override(uint8_t UNUSED(name), Event* event, Plugin* plugin) {
+bool Lock::override(Event* event, Plugin* plugin) {
     if (plugin->is(EVENT_LOCK, event) || plugin->is(EVENT_LAYER, event))  return KBD_CONTINUE;
     return !is_locked;
 }

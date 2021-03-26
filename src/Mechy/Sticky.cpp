@@ -31,7 +31,7 @@ bool Sticky::is(uint8_t event_type, Event* UNUSED(event)) {
     return event_type == EVENT_MODIFIER;
 }
 
-bool Sticky::override(uint8_t UNUSED(name), Event* event, Plugin* plugin) {
+bool Sticky::override(Event* event, Plugin* plugin) {
     if ((plugin->is(EVENT_KEYPRESS, event) || plugin->is(EVENT_MOUSE, event)) && sticky_state) {
         should_clear = true;
     }

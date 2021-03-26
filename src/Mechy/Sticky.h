@@ -27,7 +27,7 @@ public:
     uint8_t defaultName();
     void tick();
     bool is(uint8_t event_type, Event* event);
-    bool override(uint8_t name, Event* event, Plugin* plugin);
+    bool override(Event* event, Plugin* plugin);
     void run(Event* event);
     void clearStickyMods();
 

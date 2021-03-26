@@ -30,7 +30,7 @@ public:
     void begin();
     bool is(uint8_t event_type, Event* event);
     void run(Event* event);
-    bool override(uint8_t name, Event* event, Plugin* plugin);
+    bool override(Event* event, Plugin* plugin);
 
     void add(KBD, KBD, THBehavior behavior = TH_TAP);
 protected:

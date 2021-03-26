@@ -12,10 +12,10 @@ uint8_t Password::defaultName() {
     return FN_PASSWORD;
 }
 
-bool Password::override(uint8_t name, Event* event, Plugin* UNUSED(plugin)) {
+bool Password::override(Event* event, Plugin* UNUSED(plugin)) {
     if (event->isHeld()) { return KBD_CONTINUE; }
 
-    if (name != FN_PASSWORD) {
+    if (event->name != FN_PASSWORD) {
         prev_macro = count;
     }
     return KBD_CONTINUE;
