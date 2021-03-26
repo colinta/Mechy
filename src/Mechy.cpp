@@ -219,6 +219,8 @@ Plugin* Mechy::pluginFor(uint8_t name) {
         }
         ptr = ptr->next;
     }
+    Serial.print("No plugin for ");
+    Serial.println(name);
     return NULL;
 }
 
