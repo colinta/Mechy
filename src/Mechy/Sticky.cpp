@@ -2,10 +2,10 @@
 #include "Sticky.h"
 
 
-#define KEY_BIT_LSFT 1
-#define KEY_BIT_LCTL 2
-#define KEY_BIT_LALT 4
-#define KEY_BIT_LGUI 8
+#define STK_BIT_LSFT 1
+#define STK_BIT_LCTL 2
+#define STK_BIT_LALT 4
+#define STK_BIT_LGUI 8
 
 
 Sticky::Sticky() {
@@ -82,13 +82,13 @@ void Sticky::run(Event* event) {
 
 uint8_t Sticky::modBit(uint8_t key) {
     switch (key) {
-    case STK_SFT: case KEY_LEFT_SHIFT:  return KEY_BIT_LSFT;
-    case STK_CTL: case KEY_LEFT_CTRL:   return KEY_BIT_LCTL;
-    case STK_ALT: case KEY_LEFT_ALT:    return KEY_BIT_LALT;
-    case STK_GUI: case KEY_LEFT_GUI:    return KEY_BIT_LGUI;
-    case STK_HYP:    return KEY_BIT_LSFT | KEY_BIT_LGUI | KEY_BIT_LCTL | KEY_BIT_LALT;
-    case STK_MEH:    return KEY_BIT_LSFT | KEY_BIT_LCTL | KEY_BIT_LALT;
-    case STK_CAG:    return KEY_BIT_LGUI | KEY_BIT_LCTL | KEY_BIT_LALT;
+    case STK_SFT: case KEY_LEFT_SHIFT:  return STK_BIT_LSFT;
+    case STK_CTL: case KEY_LEFT_CTRL:   return STK_BIT_LCTL;
+    case STK_ALT: case KEY_LEFT_ALT:    return STK_BIT_LALT;
+    case STK_GUI: case KEY_LEFT_GUI:    return STK_BIT_LGUI;
+    case STK_HYP:    return STK_BIT_LSFT | STK_BIT_LGUI | STK_BIT_LCTL | STK_BIT_LALT;
+    case STK_MEH:    return STK_BIT_LSFT | STK_BIT_LCTL | STK_BIT_LALT;
+    case STK_CAG:    return STK_BIT_LGUI | STK_BIT_LCTL | STK_BIT_LALT;
     }
     return 0;
 }
