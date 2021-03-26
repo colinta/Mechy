@@ -2,10 +2,6 @@
 #include "TapHold.h"
 #include "Sticky.h"
 
-#ifndef TAPHOLD_DELAY
-#define TAPHOLD_DELAY 250
-#endif
-
 inline void sendUpDownEvent(Mechy* mechy, uint16_t modifierSnapshot, KBD* kbd) {
     uint16_t mods = mechy->currentModifiers();
     mechy->updateModifiers(modifierSnapshot);
@@ -21,10 +17,11 @@ inline void sendUpDownEvent(Mechy* mechy, uint16_t modifierSnapshot, KBD* kbd) {
     mechy->updateModifiers(mods);
 }
 
-TapHold::TapHold() {
+TapHold::TapHold(uint16_t _delay) {
     tapHoldKeys = 0;
     tapHoldKeyStack = NULL;
     eventArray = NULL;
+    delay = _delay;
 }
 
 uint8_t TapHold::defaultName() {
@@ -45,7 +42,7 @@ bool TapHold::is(uint8_t event_type, Event* event) {
 
 isPress:
     if (!event->isPressed() && event->isActive()) {
-        if (event->isHeld() && event->duration() > TAPHOLD_DELAY) {
+        if (event->isHeld() && event->duration() > this->delay) {
             Plugin* plugin = mechy->pluginFor(keyPtr->holdKey.name);
             if (plugin) {
                 Event keyEvent = {
@@ -79,7 +76,7 @@ isPress:
     return false;
 
 isModifier:
-    if (event->isActive() && event->isHeld() && event->duration() > TAPHOLD_DELAY) {
+    if (event->isActive() && event->isHeld() && event->duration() > this->delay) {
         Plugin* plugin = mechy->pluginFor(keyPtr->holdKey.name);
         if (plugin) {
             Event keyEvent = {
@@ -91,7 +88,7 @@ isModifier:
             return plugin->is(event_type, &keyEvent);
         }
     }
-    else if (event->isHeld() && event->duration() > TAPHOLD_DELAY) {
+    else if (event->isHeld() && event->duration() > this->delay) {
         Plugin* plugin = mechy->pluginFor(keyPtr->holdKey.name);
         if (plugin) {
             Event keyEvent = {
@@ -103,7 +100,7 @@ isModifier:
             return plugin->is(event_type, &keyEvent);
         }
     }
-    else if (event->isReleased() && event->duration() > TAPHOLD_DELAY) {
+    else if (event->isReleased() && event->duration() > this->delay) {
         Plugin* plugin = mechy->pluginFor(keyPtr->holdKey.name);
         if (plugin) {
             Event keyEvent = {
@@ -199,7 +196,7 @@ runPress:
         // setIsActive must be called before sendUpDownEvent, otherwise override
         // above will think that the holdKey press event is a random keypress,
         // and will activate the tapKey event
-        if (event->isHeld() && event->duration() > TAPHOLD_DELAY) {
+        if (event->isHeld() && event->duration() > this->delay) {
             event->setIsActive(false);
             sendUpDownEvent(mechy, keyPtr->modifierSnapshot, &keyPtr->holdKey);
         }
@@ -211,7 +208,7 @@ runPress:
     return;
 
 runModifier:
-    if (event->isActive() && event->isHeld() && event->duration() > TAPHOLD_DELAY) {
+    if (event->isActive() && event->isHeld() && event->duration() > this->delay) {
         event->setIsActive(false);
         Event keyEvent = {
             .name = keyPtr->holdKey.name,
@@ -221,7 +218,7 @@ runModifier:
         };
         mechy->runEvent(&keyEvent);
     }
-    else if (event->isHeld() && event->duration() > TAPHOLD_DELAY) {
+    else if (event->isHeld() && event->duration() > this->delay) {
         Event keyEvent = {
             .name = keyPtr->holdKey.name,
             .keyAndData = keyPtr->holdKey.key,
@@ -230,7 +227,7 @@ runModifier:
         };
         mechy->runEvent(&keyEvent);
     }
-    else if (event->isReleased() && event->duration() > TAPHOLD_DELAY) {
+    else if (event->isReleased() && event->duration() > this->delay) {
         Event keyEvent = {
             .name = keyPtr->holdKey.name,
             .keyAndData = keyPtr->holdKey.key,

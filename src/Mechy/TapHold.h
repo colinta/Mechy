@@ -3,6 +3,8 @@
 #include "Plugin.h"
 #include "../priv/Event.h"
 
+#define TAPHOLD_DELAY 250
+
 enum THBehavior {
     TH_TAP,
     TH_HOLD,
@@ -25,7 +27,7 @@ struct TapHoldEvent {
 
 class TapHold : public Plugin {
 public:
-    TapHold();
+    TapHold(uint16_t _delay = TAPHOLD_DELAY);
     uint8_t defaultName();
     void begin();
     bool is(uint8_t event_type, Event* event);
@@ -35,6 +37,7 @@ public:
     void add(KBD, KBD, THBehavior behavior = TH_TAP);
 protected:
     uint8_t tapHoldKeys;
+    uint16_t delay;
     TapHoldKeyList* tapHoldKeyStack;
     TapHoldEvent* eventArray;
     TapHoldEvent* thEvent(uint8_t offset);
