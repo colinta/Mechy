@@ -37,6 +37,15 @@ Layout::Layout(uint8_t ROWS, uint8_t COLS, KBDPROG layer1, KBDPROG layer2, KBDPR
     addLayer(layer4);
 }
 
+Layout::Layout(uint8_t ROWS, uint8_t COLS, KBDPROG layer1, KBDPROG layer2, KBDPROG layer3, KBDPROG layer4, KBDPROG layer5) {
+    construct(ROWS, COLS);
+    addLayer(layer1);
+    addLayer(layer2);
+    addLayer(layer3);
+    addLayer(layer4);
+    addLayer(layer5);
+}
+
 void Layout::addLayer(KBDPROG keys) {
     LayerList* ptr = (LayerList*)malloc(sizeof(LayerList));
     ptr->keys = keys;

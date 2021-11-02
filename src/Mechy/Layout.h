@@ -23,6 +23,7 @@ public:
     Layout(uint8_t ROWS, uint8_t COLS, KBDPROG layer1, KBDPROG layer2);
     Layout(uint8_t ROWS, uint8_t COLS, KBDPROG layer1, KBDPROG layer2, KBDPROG layer3);
     Layout(uint8_t ROWS, uint8_t COLS, KBDPROG layer1, KBDPROG layer2, KBDPROG layer3, KBDPROG layer4);
+    Layout(uint8_t ROWS, uint8_t COLS, KBDPROG layer1, KBDPROG layer2, KBDPROG layer3, KBDPROG layer4, KBDPROG layer5);
 
     void addLayer(KBDPROG layer);
     KBDPROG getKey(uint8_t row, uint8_t col);
