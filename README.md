@@ -242,8 +242,8 @@ This is similar to Password, but doesn't require two key presses to activate the
 KEYS(mainKeys) = { SS_0, SS_1 };
 
 uint16_t* macros[] = {
-  sendString(2, downUp('\\'), downUp(LSFT('\''))),                                      // sends -> \"
-  sendString(5, down(LSFT(0)), downUp('a'), downUp('b'), up(LSFT(0)), downUp('c'))      // sends -> ABc
+  sendMacro(2, downUp('\\'), downUp(LSFT('\''))),                                      // sends -> \"
+  sendMacro(5, down(LSFT(0)), downUp('a'), downUp('b'), up(LSFT(0)), downUp('c'))      // sends -> ABc
 };
 
 Mechy mechy = Mechy();

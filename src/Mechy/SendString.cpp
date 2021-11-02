@@ -120,7 +120,7 @@ uint16_t delayBy(uint16_t delayBy) {
     return SS_DELAY | delayBy;
 }
 
-uint16_t* sendString(uint16_t count, ...) {
+uint16_t* sendMacro(uint16_t count, ...) {
     uint16_t* keys = (uint16_t*)malloc(sizeof(uint16_t) * (count + 1));
     keys[0] = count;
     va_list args;

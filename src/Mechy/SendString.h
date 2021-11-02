@@ -49,7 +49,7 @@ uint16_t delayBy(uint16_t delayBy);
  * Usage:
  * uint16_t* macros[] = {
  *     // sends \, ctrl+v, '
- *     sendString(3, ignoreModifiers(downUp('\\')), ignoreModifiers(downUp(LCTL('v'))), downUp('\'')),
+ *     sendMacro(3, ignoreModifiers(downUp('\\')), ignoreModifiers(downUp(LCTL('v'))), downUp('\'')),
  * }
  */
-uint16_t* sendString(uint16_t count, ...);
+uint16_t* sendMacro(uint16_t count, ...);
