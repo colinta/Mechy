@@ -61,6 +61,7 @@
 #define FN_COMBO_KEY  12
 #define FN_DEBUG      13
 #define FN_USER_0    128
+#define FN_USER_MAX  255
 #define FN_USER(n) (FN_USER_0 + n)
 
 #define MCHY_NONE     0

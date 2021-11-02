@@ -27,27 +27,29 @@ protected:
 #define SS_8 SS(8)
 #define SS_9 SS(9)
 
-// 0x0000000000000000
-//    ^               ignore modifiers
-//     ^^             down, up, or both
-//       ^^^^         modifier    \__ key mask
-//           ^^^^^^^^ ascii code  /
+//                     0x0000000000000000
+//                       ^                delay
+//                        ^               ignore modifiers
+//                        .^^             down, up, or both
+//                        .  ^^^^         modifier    \__ key mask
+//                        .      ^^^^^^^^ ascii code  /
+#define SS_DELAY      (0b1000000000000000)
+#define SS_IGNOREMODS (0b0100000000000000)
 #define SS_DOWN       (0b0010000000000000)
 #define SS_UP         (0b0001000000000000)
-#define SS_IGNOREMODS (0b0100000000000000)
 
 uint16_t down(uint16_t key);
 uint16_t up(uint16_t key);
 uint16_t downUp(uint16_t key);
 uint16_t ignoreModifiers(uint16_t key);
+uint16_t delayBy(uint16_t delayBy);
 
-uint16_t* send1(uint16_t);
-uint16_t* send2(uint16_t, uint16_t);
-uint16_t* send3(uint16_t, uint16_t, uint16_t);
-uint16_t* send4(uint16_t, uint16_t, uint16_t, uint16_t);
-uint16_t* send5(uint16_t, uint16_t, uint16_t, uint16_t, uint16_t);
-uint16_t* send6(uint16_t, uint16_t, uint16_t, uint16_t, uint16_t, uint16_t);
-uint16_t* send7(uint16_t, uint16_t, uint16_t, uint16_t, uint16_t, uint16_t, uint16_t);
-uint16_t* send8(uint16_t, uint16_t, uint16_t, uint16_t, uint16_t, uint16_t, uint16_t, uint16_t);
-uint16_t* send9(uint16_t, uint16_t, uint16_t, uint16_t, uint16_t, uint16_t, uint16_t, uint16_t, uint16_t);
-uint16_t* send10(uint16_t, uint16_t, uint16_t, uint16_t, uint16_t, uint16_t, uint16_t, uint16_t, uint16_t, uint16_t);
+/**
+ * helper to create macro, returns a pointer to a macro.
+ * Usage:
+ * uint16_t* macros[] = {
+ *     // sends \, ctrl+v, '
+ *     sendString(3, ignoreModifiers(downUp('\\')), ignoreModifiers(downUp(LCTL('v'))), downUp('\'')),
+ * }
+ */
+uint16_t* sendString(uint16_t count, ...);
