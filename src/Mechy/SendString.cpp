@@ -63,8 +63,8 @@ void SendString::run(Event* event) {
 }
 
 void SendString::sendKey(uint16_t key, bool keyDown) {
-    uint8_t ascii = key & 0b11111111;
-    uint8_t mods = ((uint8_t)((uint16_t)key >> 8)) & 0b1111;
+    uint8_t ascii = key & SS_CHAR;
+    uint8_t mods = ((uint8_t)((uint16_t)(key & SS_MODS) >> 8));
 
     if (keyDown) {
         if (mods & DATA_MOD_LSFT) {
@@ -101,19 +101,19 @@ void SendString::sendKey(uint16_t key, bool keyDown) {
 }
 
 uint16_t down(uint16_t key) {
-    return SS_DOWN | key;
+    return SS_DOWN | (key & SS_KEY);
 }
 
 uint16_t up(uint16_t key) {
-    return SS_UP | key;
+    return SS_UP | (key & SS_KEY);
 }
 
 uint16_t downUp(uint16_t key) {
-    return SS_DOWN | SS_UP | key;
+    return SS_DOWN | SS_UP | (key & SS_KEY);
 }
 
 uint16_t ignoreModifiers(uint16_t key) {
-    return SS_IGNOREMODS | key;
+    return SS_IGNOREMODS | (key & SS_KEY);
 }
 
 uint16_t delayBy(uint16_t delayBy) {
@@ -126,8 +126,19 @@ uint16_t* sendMacro(uint16_t count, ...) {
     va_list args;
     va_start(args, count);
     for (uint16_t i = 0; i < count; ++i) {
-        int key = va_arg(args, uint16_t);
+        uint16_t key = va_arg(args, uint16_t);
         keys[i + 1] = key;
+    }
+    return keys;
+}
+
+uint16_t* sendString(const char *string) {
+    uint16_t count = strlen(string);
+    uint16_t* keys = (uint16_t*)malloc(sizeof(uint16_t) * (count + 1));
+    keys[0] = count;
+    for (uint16_t i = 0; i < count; ++i) {
+        uint16_t key = string[i];
+        keys[i + 1] = (key & SS_CHAR) | SS_DOWN | SS_UP;
     }
     return keys;
 }

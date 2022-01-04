@@ -99,11 +99,13 @@
 #define DATA_MOD_ANY  (0b1111)
 
 // in general, events have 8bits of "data" and 8bits of "key space"
+// "key" should contain the 'key pressed' character
 #define EVENT_KEY_MASK  0b0000000011111111
+// "data" contains event info
 #define EVENT_DATA_MASK 0b1111111100000000
 #define EVENT_USER_MASK 0b00011111
 #define EVENT_DATA_SHIFT 8
-#define EVENT_KEY_STATE_MASK  0b00001111
+#define EVENT_KEY_STATE_MASK    0b00001111
 #define EVENT_INTERNAL_MASK 0b11110000
 
 // to encourage "best practices" here are some bit masks:

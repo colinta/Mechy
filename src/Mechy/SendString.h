@@ -37,6 +37,9 @@ protected:
 #define SS_IGNOREMODS (0b0100000000000000)
 #define SS_DOWN       (0b0010000000000000)
 #define SS_UP         (0b0001000000000000)
+#define SS_KEY        (0b0000111111111111)
+#define SS_MODS       (0b0000111100000000)
+#define SS_CHAR       (0b0000000011111111)
 
 uint16_t down(uint16_t key);
 uint16_t up(uint16_t key);
@@ -53,3 +56,4 @@ uint16_t delayBy(uint16_t delayBy);
  * }
  */
 uint16_t* sendMacro(uint16_t count, ...);
+uint16_t* sendString(const char *string);
