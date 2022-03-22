@@ -46,7 +46,7 @@ bool AutoShift::is(uint8_t event_type, Event* event) {
     return false;
 }
 
-bool AutoShift::override(uint8_t UNUSED(name), Event* event, Plugin* plugin) {
+bool AutoShift::override(Event* event, Plugin* plugin) {
     if (plugin->is(EVENT_KEYPRESS, event) && event->isPressed()) {
         // another key was pressed; find all the AutoShift events in the current stack
         // and send the lower case key

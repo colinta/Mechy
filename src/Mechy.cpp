@@ -234,7 +234,7 @@ void Mechy::runEvent(Event* event) {
         bool processing = KBD_CONTINUE;
         PluginPtr* ptr = firstPluginPtr;
         while (ptr) {
-            processing = ptr->plugin->override(event->name, event, plugin) && processing;
+            processing = ptr->plugin->override(event, plugin) && processing;
             ptr = ptr->next;
         }
 

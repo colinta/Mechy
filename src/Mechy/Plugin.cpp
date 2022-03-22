@@ -10,7 +10,7 @@ void Plugin::begin() {
 void Plugin::tick() {
 }
 
-bool Plugin::override(uint8_t UNUSED(name), Event* UNUSED(event), Plugin* UNUSED(plugin)) {
+bool Plugin::override(Event* UNUSED(event), Plugin* UNUSED(plugin)) {
     return KBD_CONTINUE;
 }
 

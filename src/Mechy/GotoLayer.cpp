@@ -11,7 +11,7 @@ bool GotoLayer::is(uint8_t event_type, Event* UNUSED(event)) {
     return event_type == EVENT_LAYER;
 }
 
-bool GotoLayer::override(uint8_t UNUSED(name), Event* event, Plugin* UNUSED(plugin)) {
+bool GotoLayer::override(Event* event, Plugin* UNUSED(plugin)) {
     if (event->isPressed()) {
         // if another layer key was pressed find all the GotoLayer events in the
         // current stack and deactivate them.

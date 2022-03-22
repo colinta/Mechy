@@ -10,7 +10,7 @@ public:
     virtual uint8_t defaultName();
     virtual void begin();
     virtual void tick();
-    virtual bool override(uint8_t name, Event* event, Plugin* plugin);
+    virtual bool override(Event* event, Plugin* plugin);
     virtual bool is(uint8_t event_type, Event* event);
     virtual void run(Event* event);
 
