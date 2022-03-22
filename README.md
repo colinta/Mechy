@@ -31,6 +31,10 @@ To solve this, and make these pins available as digital I/O pins, I created a cu
 
 https://raw.githubusercontent.com/colinta/grayduino/json/package_colinta_grayduino_index.json
 
+Next you need to install the board, so open the "Board Manager" (Tools → Board: "..." → Boards Manager…) and search for `gray`, and click the *Install* button:
+
+![board manager screenshot showing grayduino search](https://raw.githubusercontent.com/colinta/grayduino/main/readme/board-manager.png)
+
 Then you'll have a new board "Grayduino Atmega32u4".
 
 Migrating from QMK
