@@ -69,6 +69,8 @@ KEYS(keys) = LAYOUT(KC_A, KC_B, ..., KC_RSFT);
 
 // Create a scanner with your keys array (or Layout).  This class will generate events and send them to Mechy.
 Scanner scanner = Scanner(keys, pinRows, pinCols, ROWS, COLS);
+// scanner.setDiodeDirection(COL_TO_ROW); // default setting
+// scanner.setDiodeDirection(ROW_TO_COL); // alternative diode wiring
 
 void setup() {
     // add all your plugins
