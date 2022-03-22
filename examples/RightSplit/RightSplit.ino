@@ -6,9 +6,9 @@
 Transmitter transmitter = Transmitter(DATA, CLK, pinRows, pinCols, ROWS, COLS);
 
 void setup() {
-    transmitter.begin();
+  transmitter.begin();
 }
 
 void loop() {
-    transmitter.scan();
+  transmitter.scan();
 }
