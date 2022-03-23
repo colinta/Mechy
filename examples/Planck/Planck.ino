@@ -4,6 +4,7 @@
 #include <Mechy/GotoLayer.h>
 #include <Mechy/Hardware/Planck.h>
 
+// clang-format off
 KEYS(mainKeys) = LAYOUT(
     KC_TAB , KC_Q   , KC_W   , KC_E   , KC_R   , KC_T   , KC_Y   , KC_U   , KC_I   , KC_O   , KC_P   , KC_BSPC,
     KC_ESC , KC_A   , KC_S   , KC_D   , KC_F   , KC_G   , KC_H   , KC_J   , KC_K   , KC_L   , KC_SCLN, KC_QUOT,
@@ -24,12 +25,12 @@ KEYS(upperKeys) = LAYOUT(
       ____ , KC_F7  , KC_F8  , KC_F9  , KC_F10 , KC_F11 , KC_F12 ,  ____  ,  ____  , KC_PGUP, KC_PGDN,  ____   ,
       ____ ,  ____  ,  ____  ,  ____  ,  ____  ,  ____  ,  ____  ,  ____  , MD_NEXT, MD_VOLD, MD_VOLU, MD_PLAY
 );
+// clang-format on
 
-
-Layout layout = Layout(ROWS, COLS, mainKeys, lowerKeys, upperKeys);
+Layout  layout  = Layout(ROWS, COLS, mainKeys, lowerKeys, upperKeys);
 Scanner scanner = Scanner(&layout, pinRows, pinCols, ROWS, COLS);
 
-Mechy mechy = Mechy();
+Mechy    mechy    = Mechy();
 Hardware hardware = Hardware(&mechy);
 
 void setup() {
