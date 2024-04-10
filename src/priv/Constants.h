@@ -103,7 +103,7 @@
 #define EVENT_USER_MASK 0b00011111
 #define EVENT_DATA_SHIFT 8
 #define EVENT_KEY_STATE_MASK  0b00001111
-#define EVENT_INTERNAL_MASK 0b11110000
+#define EVENT_INTERNAL_MASK   0b11110000
 
 // to encourage "best practices" here are some bit masks:
 #define EVENT_IS_ACTIVE_BIT 5
