@@ -61,14 +61,31 @@ void MouseKey::run(Event* event) {
     return;
 
 mouseMove:
+    if (!event->isDown()) {
+        return;
+    }
+
     if (mechy->currentModifiers() & MOD_SHIFT) {
         dy *= 5;
         dx *= 5;
     }
 
-    if (event->isDown()) {
-        Mouse.move(dx, dy, 0);
+    if (mechy->currentModifiers() & MOD_CTRL) {
+        dy *= 5;
+        dx *= 5;
     }
+
+    if (mechy->currentModifiers() & MOD_ALT) {
+        dy *= 5;
+        dx *= 5;
+    }
+
+    if (mechy->currentModifiers() & MOD_GUI) {
+        dy *= 5;
+        dx *= 5;
+    }
+
+    Mouse.move(dx, dy, 0);
     return;
 
 mouseClick:
