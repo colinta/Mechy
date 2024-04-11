@@ -190,6 +190,8 @@ Another option is `LSET` or layer set.  This is used to activate another layer a
 
 My favorite, though, is `PUSH`, which takes the best of both these behaviors.  It activates another layer while the key is held, and then you have an option: release the `PUSH` key and that layer will remain the active layer (which makes it similar to `LSET`).  Or if you keep it held and press some keys, when you release the `PUSH` key you'll return to the previous layer (which makes it similar to `GOTO`).  This is called "one shot layer" in QMK speak, though I don't know whether QMK's `OSL()` macro works the same way or not.  If you use this macro be sure to include the `BACK` key (or other layer changing keys) because otherwise you won't be able to return to the base layer.
 
+`LOWER` uses the `PUSH` behaviour but activates _layer 1_, `RAISE` uses `PUSH behaviour and activates _layer 2_.
+
 Lastly there is the `BACK` behavior, this just pops the top-most layer off the stack of activated layers.  Don't expect miracles if you have a dozen layers defined and want this feature to "just work".
 
 There is limited support for "transparent" keys.  This is deliberate, it keeps the "what keys are active?" logic simple.  If you use the `vvvv` macro you can cascade up *to the zero'th layer*, but that's all.  If you use `LSET` to activate another layer, it will still cascade up to the zero'th layer, not the "previous" layer.  In the future this might change to support cascading to multiple layers, but that will probably be an option and not the default behavior.
@@ -217,9 +219,9 @@ See [GotoLayer.h](https://github.com/colinta/Mechy/blob/master/src/Mechy/GotoLay
 
 ###### Password
 
-This is only for passwords, and for that reason it requires *two* presses of the key to activate, so a password isn't sent by accidental activation. For keyboard chords like `CMD+SHIFT+4` you can use KeyPress (`LGUI(LSFT('4'))`), and for macros that don't require this security you can use `SendString`.
+This is only for passwords, and for that reason it requires *two* presses of the key to activate, so a password isn't sent by accidental activation. For macros that don't require this security you can use `SendString`, or submit a PR adding an option to disable this.
 
-You should not include a newline in these macros/passwords, it will be added automatically unless the Shift key is held.
+You should not include a newline in these macros/passwords, it will be added automatically *unless the Shift key is held*.
 
 ```cpp
 #include <Mechy/Password.h>
@@ -229,8 +231,8 @@ KEYS(mainKeys) = { PW_0, PW_1, PW_2 };
 // If this is a "private" keyboard you can hardcode them, otherwise look at
 // Layers.ino for how I put them in a secrets file.  They'll still be visible to
 // someone who gets your keyboard and knows what to look for.
-#define PASSWORDS 7
-const char* passwords[PASSWORDS] = {"password 1", "password 2", "...", "", "", "", ""};
+#define PASSWORDS 3
+const char* passwords[PASSWORDS] = {"password 1", "password 2", "..."};
 
 Mechy mechy = Mechy();
 mechy.add(new Password(PASSWORDS, passwords));
@@ -256,7 +258,7 @@ Mechy mechy = Mechy();
 mechy.add(new SendString(2, macros));
 ```
 
-See [Password.h](https://github.com/colinta/Mechy/blob/master/src/Mechy/Password.h#L17) for defined keys.
+See [SendString.h](https://github.com/colinta/Mechy/blob/master/src/Mechy/SendString.h#L18) for defined keys.
 
 ###### Sticky
 
