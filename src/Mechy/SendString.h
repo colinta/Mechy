@@ -57,3 +57,14 @@ uint16_t delayBy(uint16_t delayBy);
  */
 uint16_t* sendMacro(uint16_t count, ...);
 uint16_t* sendString(const char *string);
+
+uint16_t* sendKeys(uint16_t key0);
+uint16_t* sendKeys(uint16_t key0, uint16_t key1);
+uint16_t* sendKeys(uint16_t key0, uint16_t key1, uint16_t key2);
+uint16_t* sendKeys(uint16_t key0, uint16_t key1, uint16_t key2, uint16_t key3);
+uint16_t* sendKeys(uint16_t key0, uint16_t key1, uint16_t key2, uint16_t key3, uint16_t key4);
+uint16_t* sendKeys(uint16_t key0, uint16_t key1, uint16_t key2, uint16_t key3, uint16_t key4, uint16_t key5);
+uint16_t* sendKeys(uint16_t key0, uint16_t key1, uint16_t key2, uint16_t key3, uint16_t key4, uint16_t key5, uint16_t key6);
+uint16_t* sendKeys(uint16_t key0, uint16_t key1, uint16_t key2, uint16_t key3, uint16_t key4, uint16_t key5, uint16_t key6, uint16_t key7);
+uint16_t* sendKeys(uint16_t key0, uint16_t key1, uint16_t key2, uint16_t key3, uint16_t key4, uint16_t key5, uint16_t key6, uint16_t key7, uint16_t key8);
+uint16_t* sendKeys(uint16_t key0, uint16_t key1, uint16_t key2, uint16_t key3, uint16_t key4, uint16_t key5, uint16_t key6, uint16_t key7, uint16_t key8, uint16_t key9);

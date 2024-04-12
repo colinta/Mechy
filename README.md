@@ -249,12 +249,29 @@ This is similar to Password, but doesn't require two key presses to activate the
 
 KEYS(mainKeys) = { SS_0, SS_1 };
 
+// kinda weird type here - a pointer to an array
+// ie an array of arrays of uint16_t (uint16_t[][])
+// the functions sendString, and sendKeys each return a uint16_t*
+// so you can combine them into long macros:
 uint16_t* macros[] = {
-  sendMacro(2, downUp('\\'), downUp(LSFT('\''))),                                      // sends -> \"
-  sendMacro(5, down(LSFT(0)), downUp('a'), downUp('b'), up(LSFT(0)), downUp('c'))      // sends -> ABc
+  // sends -> \ "
+  // - Press \
+  // - Press Left Shift + '  -> "
+  sendKeys(downUp('\\'), downUp(LSFT('\''))),
+
+  // sends -> ABc
+  // - Left Shift Down,
+  // - Press a -> A
+  // - Press b -> B
+  // - Left Shift Release,
+  // - Press c -> c
+  sendKeys(down(LSFT(0)), downUp('a'), downUp('b'), up(LSFT(0)), downUp('c'))
 };
 
 Mechy mechy = Mechy();
+
+// SendString() needs the count of how many "entries". Each entry encodes the
+// number of keys in the macro (based on the number of arguments).
 mechy.add(new SendString(2, macros));
 ```
 
