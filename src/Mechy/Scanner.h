@@ -22,7 +22,7 @@ public:
 protected:
     uint8_t ROWS;
     uint8_t COLS;
-    bool reversed;
+    uint8_t diodeDirection; // defaults to COL_TO_ROW
     Layout* layout;
     const uint8_t* pinRows;
     const uint8_t* pinCols;

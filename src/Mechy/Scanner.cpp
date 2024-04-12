@@ -7,7 +7,7 @@ void Scanner::construct(Layout* _layout, const uint8_t* _pinRows, const uint8_t*
     pinCols = _pinCols;
     ROWS = _ROWS;
     COLS = _COLS;
-    reversed = false;
+    diodeDirection = COL_TO_ROW;
 }
 
 Scanner::Scanner(Layout* layout, const uint8_t* pinRows, const uint8_t* pinCols, uint8_t ROWS, uint8_t COLS) : Responder() {
@@ -20,29 +20,29 @@ Scanner::Scanner(KBD* keys, const uint8_t* pinRows, const uint8_t* pinCols, uint
 }
 
 void Scanner::setDiodeDirection(uint8_t direction) {
-    reversed = !!direction;
+    diodeDirection = direction;
 }
 
 void Scanner::begin() {
     for (uint8_t i = 0; i < COLS; i++) {
         uint8_t colPin = pinCols[i];
-        if (reversed) {
-            Wiring::pinMode(colPin, OUTPUT);
-            Wiring::digitalWrite(colPin, HIGH);
+        if (diodeDirection == COL_TO_ROW) {
+            Wiring::pinMode(colPin, INPUT_PULLUP);
         }
         else {
-            Wiring::pinMode(colPin, INPUT_PULLUP);
+            Wiring::pinMode(colPin, OUTPUT);
+            Wiring::digitalWrite(colPin, HIGH);
         }
     }
 
     for (uint8_t i = 0; i < ROWS; i++) {
         uint8_t rowPin = pinRows[i];
-        if (reversed) {
-            Wiring::pinMode(rowPin, INPUT_PULLUP);
-        }
-        else {
+        if (diodeDirection == COL_TO_ROW) {
             Wiring::pinMode(rowPin, OUTPUT);
             Wiring::digitalWrite(rowPin, HIGH);
+        }
+        else {
+            Wiring::pinMode(rowPin, INPUT_PULLUP);
         }
     }
 
@@ -52,18 +52,7 @@ void Scanner::begin() {
     // bug it's usually easy to re-flash.
     bool anyPressed = false;
     do {
-        if (reversed) {
-            for (uint8_t col = 0; col < COLS; col++) {
-                Wiring::digitalWrite(pinCols[col], LOW);
-                for (uint8_t row = 0; row < ROWS; row++) {
-                    anyPressed = !Wiring::digitalRead(pinRows[row]);
-                    if (anyPressed)  break;
-                }
-                Wiring::digitalWrite(pinCols[col], HIGH);
-                if (anyPressed)  break;
-            }
-        }
-        else {
+        if (diodeDirection == COL_TO_ROW) {
             for (uint8_t row = 0; row < ROWS; row++) {
                 Wiring::digitalWrite(pinRows[row], LOW);
                 for (uint8_t col = 0; col < COLS; col++) {
@@ -74,28 +63,23 @@ void Scanner::begin() {
                 if (anyPressed)  break;
             }
         }
+        else {
+            for (uint8_t col = 0; col < COLS; col++) {
+                Wiring::digitalWrite(pinCols[col], LOW);
+                for (uint8_t row = 0; row < ROWS; row++) {
+                    anyPressed = !Wiring::digitalRead(pinRows[row]);
+                    if (anyPressed)  break;
+                }
+                Wiring::digitalWrite(pinCols[col], HIGH);
+                if (anyPressed)  break;
+            }
+        }
     } while (anyPressed);
 }
 
 void Scanner::scan() {
     bool shouldBreak = false;
-    if (reversed) {
-        for (uint8_t col = 0; col < COLS; col++) {
-            Wiring::digitalWrite(pinCols[col], LOW);
-            for (uint8_t row = 0; row < ROWS; row++) {
-                bool isPressed = !Wiring::digitalRead(pinRows[row]);
-                if (mechy->processKeyEvent(layout, row, col, isPressed) == KBD_HALT) {
-                    shouldBreak = true;
-                    break;
-                }
-            }
-            Wiring::digitalWrite(pinCols[col], HIGH);
-            if (shouldBreak) {
-                break;
-            }
-        }
-    }
-    else {
+    if (diodeDirection == COL_TO_ROW) {
         for (uint8_t row = 0; row < ROWS; row++) {
             Wiring::digitalWrite(pinRows[row], LOW);
             for (uint8_t col = 0; col < COLS; col++) {
@@ -106,6 +90,22 @@ void Scanner::scan() {
                 }
             }
             Wiring::digitalWrite(pinRows[row], HIGH);
+            if (shouldBreak) {
+                break;
+            }
+        }
+    }
+    else {
+        for (uint8_t col = 0; col < COLS; col++) {
+            Wiring::digitalWrite(pinCols[col], LOW);
+            for (uint8_t row = 0; row < ROWS; row++) {
+                bool isPressed = !Wiring::digitalRead(pinRows[row]);
+                if (mechy->processKeyEvent(layout, row, col, isPressed) == KBD_HALT) {
+                    shouldBreak = true;
+                    break;
+                }
+            }
+            Wiring::digitalWrite(pinCols[col], HIGH);
             if (shouldBreak) {
                 break;
             }
