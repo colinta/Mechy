@@ -128,3 +128,6 @@
 /* user defined key macros */
 #define USER_KEY(m) m
 #define USER(n, m) { .name = FN_USER(n), .key = USER_KEY(m) }
+
+// test
+//
