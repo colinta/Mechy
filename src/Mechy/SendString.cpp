@@ -26,7 +26,7 @@ void SendString::run(Event* event) {
     if (event->isPressed()) {
         uint16_t keyCount = macros[macro_index][0];
         uint16_t delayBy, mods, key;
-        for (uint8_t i = 0; i < keyCount ; ++i) {
+        for (uint16_t i = 0; i < keyCount ; ++i) {
             key = macros[macro_index][i + 1];
 
             if (key & SS_DELAY) {
