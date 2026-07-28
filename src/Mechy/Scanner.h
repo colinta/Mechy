@@ -13,7 +13,7 @@
 class Scanner : public Responder {
 public:
     Scanner(Layout* layout, const uint8_t* pinRows, const uint8_t* pinCols, uint8_t ROWS, uint8_t COLS);
-    Scanner(KBD* keys, const uint8_t* pinRows, const uint8_t* pinCols, uint8_t ROWS, uint8_t COLS);
+    Scanner(KBDPROG keys, const uint8_t* pinRows, const uint8_t* pinCols, uint8_t ROWS, uint8_t COLS);
     void begin();
     void scan();
     void setDiodeDirection(uint8_t direction);

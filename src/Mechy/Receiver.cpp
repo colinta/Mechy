@@ -19,7 +19,7 @@ Receiver::Receiver(Layout* layout, uint8_t dataPin, uint8_t clockPin) : Responde
     construct(layout, dataPin, clockPin);
 }
 
-Receiver::Receiver(KBD* keys, uint8_t ROWS, uint8_t COLS, uint8_t dataPin, uint8_t clockPin) : Responder() {
+Receiver::Receiver(KBDPROG keys, uint8_t ROWS, uint8_t COLS, uint8_t dataPin, uint8_t clockPin) : Responder() {
     Layout* layout = new Layout(ROWS, COLS, keys);
     construct(layout, dataPin, clockPin);
 }
