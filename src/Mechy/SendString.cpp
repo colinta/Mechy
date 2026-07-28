@@ -70,13 +70,13 @@ void SendString::sendKey(uint16_t key, bool keyDown) {
         if (mods & DATA_MOD_LSFT) {
             mechy->pressKey(KEY_LEFT_SHIFT);
         }
-        else if (mods & DATA_MOD_LGUI) {
+        if (mods & DATA_MOD_LGUI) {
             mechy->pressKey(KEY_LEFT_GUI);
         }
-        else if (mods & DATA_MOD_LCTL) {
+        if (mods & DATA_MOD_LCTL) {
             mechy->pressKey(KEY_LEFT_CTRL);
         }
-        else if (mods & DATA_MOD_LALT) {
+        if (mods & DATA_MOD_LALT) {
             mechy->pressKey(KEY_LEFT_ALT);
         }
 
@@ -88,13 +88,13 @@ void SendString::sendKey(uint16_t key, bool keyDown) {
         if (mods & DATA_MOD_LSFT) {
             mechy->releaseKey(KEY_LEFT_SHIFT);
         }
-        else if (mods & DATA_MOD_LGUI) {
+        if (mods & DATA_MOD_LGUI) {
             mechy->releaseKey(KEY_LEFT_GUI);
         }
-        else if (mods & DATA_MOD_LCTL) {
+        if (mods & DATA_MOD_LCTL) {
             mechy->releaseKey(KEY_LEFT_CTRL);
         }
-        else if (mods & DATA_MOD_LALT) {
+        if (mods & DATA_MOD_LALT) {
             mechy->releaseKey(KEY_LEFT_ALT);
         }
     }
