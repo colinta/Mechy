@@ -1,6 +1,7 @@
 #include "Mechy.h"
 #include "TapHold.h"
 #include "Sticky.h"
+#include "../priv/Alloc.h"
 
 inline void sendUpDownEvent(Mechy* mechy, uint16_t modifierSnapshot, KBD* kbd) {
     uint16_t mods = mechy->currentModifiers();
@@ -154,7 +155,7 @@ bool TapHold::override(Event* event, Plugin* UNUSED(plugin)) {
 void TapHold::begin() {
     if (!tapHoldKeys)  return;
 
-    TapHoldEvent* array = (TapHoldEvent*)malloc(sizeof(TapHoldEvent) * tapHoldKeys);
+    TapHoldEvent* array = (TapHoldEvent*)mechyAllocOrHalt(sizeof(TapHoldEvent) * tapHoldKeys, MECHY_HALT_TAPHOLD);
     TapHoldKeyList* ptr = tapHoldKeyStack;
     TapHoldKeyList* next = NULL;
     while (ptr) {
@@ -163,7 +164,7 @@ void TapHold::begin() {
         array[ptr->keyIndex].behavior = ptr->behavior;
         array[ptr->keyIndex].modifierSnapshot = 0;
         next = ptr->next;
-        free(ptr);
+        mechyFree(ptr);
         ptr = next;
     }
     eventArray = array;
@@ -246,9 +247,8 @@ runModifier:
 }
 
 void TapHold::add(KBD tapKey, KBD holdKey, THBehavior behavior) {
-    uint8_t keyIndex = tapHoldKeys++;
-    TapHoldKeyList* ptr = (TapHoldKeyList*)malloc(sizeof(TapHoldKeyList));
-    ptr->keyIndex = keyIndex;
+    TapHoldKeyList* ptr = (TapHoldKeyList*)mechyAllocOrHalt(sizeof(TapHoldKeyList), MECHY_HALT_TAPHOLD);
+    ptr->keyIndex = tapHoldKeys++;
     ptr->tapKey = tapKey;
     ptr->holdKey = holdKey;
     ptr->behavior = behavior;

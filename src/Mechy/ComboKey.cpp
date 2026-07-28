@@ -1,11 +1,17 @@
 #include "ComboKey.h"
+#include "../priv/Alloc.h"
 
 ComboKey::ComboKey(uint8_t count, const KBD _keys[], KBD _comboKey) {
     currentCount = count;
     totalCount = count;
-    keys = (KBD*)malloc(sizeof(KBD) * totalCount);
-    for (uint8_t i = 0; i < totalCount; ++i) {
-        keys[i] = _keys[i];
+    keys = NULL;
+    if (totalCount) {
+        // avr-libc malloc(0) returns NULL, so only allocate for a non-empty
+        // combo; is()/run() already bounds-check before indexing keys
+        keys = (KBD*)mechyAllocOrHalt(sizeof(KBD) * totalCount, MECHY_HALT_COMBOKEY);
+        for (uint8_t i = 0; i < totalCount; ++i) {
+            keys[i] = _keys[i];
+        }
     }
     comboKey = _comboKey;
 }

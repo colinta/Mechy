@@ -49,25 +49,34 @@ void GotoLayer::run(Event* event) {
 
 momentary:
     if (event->isPressed()) {
-        mechy->pushLayer(layer);
+        if (mechy->pushLayer(layer)) {
+            event->setDataBit(EVENT_GOTO_DID_PUSH_BIT, true);
+        }
     }
     else if (event->isReleased()) {
-        mechy->removeLayer(layer);
+        // only remove the layer if the paired press actually pushed it
+        if (event->dataBit(EVENT_GOTO_DID_PUSH_BIT)) {
+            mechy->removeLayer(layer);
+        }
     }
     return;
 
 push:
     if (event->isPressed()) {
-        mechy->pushLayer(layer);
-        event->setIsActive(true);
+        if (mechy->pushLayer(layer)) {
+            event->setDataBit(EVENT_GOTO_DID_PUSH_BIT, true);
+            event->setIsActive(true);
+        }
+        // if the push failed, the event is not marked active: the one-shot
+        // layer was never activated
     }
     else if (event->isReleased() && event->isActive()) {
         // if the event is still active then no other key was pressed
         // do nothing, ie keep this layer on the stack
     }
-    else if (event->isReleased()) {
+    else if (event->isReleased() && event->dataBit(EVENT_GOTO_DID_PUSH_BIT)) {
         // if the event is no longer active then it can be removed from the
-        // stack
+        // stack - but only if the paired press actually pushed it
         mechy->removeLayer(layer);
     }
     return;

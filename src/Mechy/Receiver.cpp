@@ -2,6 +2,7 @@
 #include "Receiver.h"
 #include "priv/RxTx.h"
 #include "../priv/Constants.h"
+#include "../priv/Alloc.h"
 
 static uint16_t timeout = 0;
 static bool didTimeout = false;
@@ -20,7 +21,11 @@ Receiver::Receiver(Layout* layout, uint8_t dataPin, uint8_t clockPin) : Responde
 }
 
 Receiver::Receiver(KBDPROG keys, uint8_t ROWS, uint8_t COLS, uint8_t dataPin, uint8_t clockPin) : Responder() {
-    Layout* layout = new Layout(ROWS, COLS, keys);
+    // the AVR core's global `new` does not null-check malloc before running
+    // the constructor, so allocate explicitly (halting on failure) and
+    // construct in place
+    void* mem = mechyAllocOrHalt(sizeof(Layout), MECHY_HALT_LAYOUT);
+    Layout* layout = new (MechyPlacement(), mem) Layout(ROWS, COLS, keys);
     construct(layout, dataPin, clockPin);
 }
 
@@ -63,7 +68,7 @@ inline void Receiver::removeEventPtr(ReceiverEventPtr* ptr) {
     while (eventPtr) {
         if (eventPtr == ptr) {
             *eventPtrPtr = ptr->next;
-            free(ptr);
+            mechyFree(ptr);
             return;
         }
         eventPtrPtr = &(eventPtr->next);
@@ -119,24 +124,50 @@ listenBody:
     uint8_t row = input & 0b11111;
     uint8_t col = (input >> 5) & 0b11111;
     bool isPressed = !!(input >> 10);
-    mechy->processKeyEvent(layout, row, col, isPressed);
 
     if (isPressed) {
-        ReceiverEventPtr* ptr = (ReceiverEventPtr*)malloc(sizeof(ReceiverEventPtr));
-        ptr->layout = layout;
-        ptr->row = row;
-        ptr->col = col;
-        pushEventPtr(ptr);
+        // track the key *before* processing the press: holdCheck() re-drives
+        // the pressed state on every scan, so a tracked press automatically
+        // retries any transient event-allocation failure in processKeyEvent
+        bool isTracked = false;
+        ReceiverEventPtr* findPtr = firstEventPtr;
+        while (findPtr) {
+            if (findPtr->matches(layout, row, col)) {
+                isTracked = true;
+                break;
+            }
+            findPtr = findPtr->next;
+        }
+
+        if (!isTracked) {
+            ReceiverEventPtr* ptr = (ReceiverEventPtr*)mechyAlloc(sizeof(ReceiverEventPtr));
+            if (ptr) {
+                ptr->layout = layout;
+                ptr->row = row;
+                ptr->col = col;
+                pushEventPtr(ptr);
+                isTracked = true;
+            }
+        }
+
+        // never emit a press that cannot be tracked through its release; if
+        // allocation failed, this press packet is discarded (the matching
+        // release packet will find no tracked key and is safely ignored)
+        if (isTracked) {
+            mechy->processKeyEvent(layout, row, col, true);
+        }
     }
     else {
         ReceiverEventPtr* findPtr = firstEventPtr;
         while (findPtr) {
             if (findPtr->matches(layout, row, col)) {
+                mechy->processKeyEvent(layout, row, col, false);
                 removeEventPtr(findPtr);
                 break;
             }
             findPtr = findPtr->next;
         }
+        // an untracked release (its press was never tracked) is ignored
     }
 
     bool hasMoreData = !receiveOneBit();

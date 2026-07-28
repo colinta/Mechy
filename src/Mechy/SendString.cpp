@@ -1,6 +1,7 @@
 #include <stdarg.h>
 #include <Keyboard.h>
 #include "SendString.h"
+#include "../priv/Alloc.h"
 
 
 SendString::SendString(uint8_t _count, uint16_t** _macros) {
@@ -121,7 +122,7 @@ uint16_t delayBy(uint16_t delayBy) {
 }
 
 uint16_t* sendMacro(uint16_t count, ...) {
-    uint16_t* keys = (uint16_t*)malloc(sizeof(uint16_t) * (count + 1));
+    uint16_t* keys = (uint16_t*)mechyAllocOrHalt(sizeof(uint16_t) * (count + 1), MECHY_HALT_SENDSTRING);
     keys[0] = count;
     va_list args;
     va_start(args, count);
@@ -134,7 +135,7 @@ uint16_t* sendMacro(uint16_t count, ...) {
 
 uint16_t* sendString(const char *string) {
     uint16_t count = strlen(string);
-    uint16_t* keys = (uint16_t*)malloc(sizeof(uint16_t) * (count + 1));
+    uint16_t* keys = (uint16_t*)mechyAllocOrHalt(sizeof(uint16_t) * (count + 1), MECHY_HALT_SENDSTRING);
     keys[0] = count;
     for (uint16_t i = 0; i < count; ++i) {
         uint16_t key = string[i];
@@ -144,14 +145,14 @@ uint16_t* sendString(const char *string) {
 }
 
 uint16_t* sendKeys(uint16_t key0) {
-    uint16_t* keys = (uint16_t*)malloc(sizeof(uint16_t) * 2);
+    uint16_t* keys = (uint16_t*)mechyAllocOrHalt(sizeof(uint16_t) * 2, MECHY_HALT_SENDSTRING);
     keys[0] = 1;
     keys[1] = key0;
     return keys;
 }
 
 uint16_t* sendKeys(uint16_t key0, uint16_t key1) {
-    uint16_t* keys = (uint16_t*)malloc(sizeof(uint16_t) * 3);
+    uint16_t* keys = (uint16_t*)mechyAllocOrHalt(sizeof(uint16_t) * 3, MECHY_HALT_SENDSTRING);
     keys[0] = 2;
     keys[1] = key0;
     keys[2] = key1;
@@ -159,7 +160,7 @@ uint16_t* sendKeys(uint16_t key0, uint16_t key1) {
 }
 
 uint16_t* sendKeys(uint16_t key0, uint16_t key1, uint16_t key2) {
-    uint16_t* keys = (uint16_t*)malloc(sizeof(uint16_t) * 4);
+    uint16_t* keys = (uint16_t*)mechyAllocOrHalt(sizeof(uint16_t) * 4, MECHY_HALT_SENDSTRING);
     keys[0] = 3;
     keys[1] = key0;
     keys[2] = key1;
@@ -168,7 +169,7 @@ uint16_t* sendKeys(uint16_t key0, uint16_t key1, uint16_t key2) {
 }
 
 uint16_t* sendKeys(uint16_t key0, uint16_t key1, uint16_t key2, uint16_t key3) {
-    uint16_t* keys = (uint16_t*)malloc(sizeof(uint16_t) * 5);
+    uint16_t* keys = (uint16_t*)mechyAllocOrHalt(sizeof(uint16_t) * 5, MECHY_HALT_SENDSTRING);
     keys[0] = 4;
     keys[1] = key0;
     keys[2] = key1;
@@ -178,7 +179,7 @@ uint16_t* sendKeys(uint16_t key0, uint16_t key1, uint16_t key2, uint16_t key3) {
 }
 
 uint16_t* sendKeys(uint16_t key0, uint16_t key1, uint16_t key2, uint16_t key3, uint16_t key4) {
-    uint16_t* keys = (uint16_t*)malloc(sizeof(uint16_t) * 6);
+    uint16_t* keys = (uint16_t*)mechyAllocOrHalt(sizeof(uint16_t) * 6, MECHY_HALT_SENDSTRING);
     keys[0] = 5;
     keys[1] = key0;
     keys[2] = key1;
@@ -189,7 +190,7 @@ uint16_t* sendKeys(uint16_t key0, uint16_t key1, uint16_t key2, uint16_t key3, u
 }
 
 uint16_t* sendKeys(uint16_t key0, uint16_t key1, uint16_t key2, uint16_t key3, uint16_t key4, uint16_t key5) {
-    uint16_t* keys = (uint16_t*)malloc(sizeof(uint16_t) * 7);
+    uint16_t* keys = (uint16_t*)mechyAllocOrHalt(sizeof(uint16_t) * 7, MECHY_HALT_SENDSTRING);
     keys[0] = 6;
     keys[1] = key0;
     keys[2] = key1;
@@ -201,7 +202,7 @@ uint16_t* sendKeys(uint16_t key0, uint16_t key1, uint16_t key2, uint16_t key3, u
 }
 
 uint16_t* sendKeys(uint16_t key0, uint16_t key1, uint16_t key2, uint16_t key3, uint16_t key4, uint16_t key5, uint16_t key6) {
-    uint16_t* keys = (uint16_t*)malloc(sizeof(uint16_t) * 8);
+    uint16_t* keys = (uint16_t*)mechyAllocOrHalt(sizeof(uint16_t) * 8, MECHY_HALT_SENDSTRING);
     keys[0] = 7;
     keys[1] = key0;
     keys[2] = key1;
@@ -214,7 +215,7 @@ uint16_t* sendKeys(uint16_t key0, uint16_t key1, uint16_t key2, uint16_t key3, u
 }
 
 uint16_t* sendKeys(uint16_t key0, uint16_t key1, uint16_t key2, uint16_t key3, uint16_t key4, uint16_t key5, uint16_t key6, uint16_t key7) {
-    uint16_t* keys = (uint16_t*)malloc(sizeof(uint16_t) * 9);
+    uint16_t* keys = (uint16_t*)mechyAllocOrHalt(sizeof(uint16_t) * 9, MECHY_HALT_SENDSTRING);
     keys[0] = 8;
     keys[1] = key0;
     keys[2] = key1;
@@ -228,7 +229,7 @@ uint16_t* sendKeys(uint16_t key0, uint16_t key1, uint16_t key2, uint16_t key3, u
 }
 
 uint16_t* sendKeys(uint16_t key0, uint16_t key1, uint16_t key2, uint16_t key3, uint16_t key4, uint16_t key5, uint16_t key6, uint16_t key7, uint16_t key8) {
-    uint16_t* keys = (uint16_t*)malloc(sizeof(uint16_t) * 10);
+    uint16_t* keys = (uint16_t*)mechyAllocOrHalt(sizeof(uint16_t) * 10, MECHY_HALT_SENDSTRING);
     keys[0] = 9;
     keys[1] = key0;
     keys[2] = key1;
@@ -243,7 +244,7 @@ uint16_t* sendKeys(uint16_t key0, uint16_t key1, uint16_t key2, uint16_t key3, u
 }
 
 uint16_t* sendKeys(uint16_t key0, uint16_t key1, uint16_t key2, uint16_t key3, uint16_t key4, uint16_t key5, uint16_t key6, uint16_t key7, uint16_t key8, uint16_t key9) {
-    uint16_t* keys = (uint16_t*)malloc(sizeof(uint16_t) * 11);
+    uint16_t* keys = (uint16_t*)mechyAllocOrHalt(sizeof(uint16_t) * 11, MECHY_HALT_SENDSTRING);
     keys[0] = 10;
     keys[1] = key0;
     keys[2] = key1;

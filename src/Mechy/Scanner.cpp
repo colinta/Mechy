@@ -1,5 +1,6 @@
 #include "Wiring.h"
 #include "Scanner.h"
+#include "../priv/Alloc.h"
 
 void Scanner::construct(Layout* _layout, const uint8_t* _pinRows, const uint8_t* _pinCols, uint8_t _ROWS, uint8_t _COLS) {
     layout = _layout;
@@ -15,7 +16,11 @@ Scanner::Scanner(Layout* layout, const uint8_t* pinRows, const uint8_t* pinCols,
 }
 
 Scanner::Scanner(KBDPROG keys, const uint8_t* pinRows, const uint8_t* pinCols, uint8_t ROWS, uint8_t COLS) : Responder() {
-    Layout* layout = new Layout(ROWS, COLS, keys);
+    // the AVR core's global `new` does not null-check malloc before running
+    // the constructor, so allocate explicitly (halting on failure) and
+    // construct in place
+    void* mem = mechyAllocOrHalt(sizeof(Layout), MECHY_HALT_LAYOUT);
+    Layout* layout = new (MechyPlacement(), mem) Layout(ROWS, COLS, keys);
     construct(layout, pinRows, pinCols, ROWS, COLS);
 }
 

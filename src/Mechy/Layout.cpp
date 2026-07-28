@@ -1,4 +1,5 @@
 #include "Layout.h"
+#include "../priv/Alloc.h"
 
 void Layout::construct(uint8_t _ROWS, uint8_t _COLS) {
     ROWS = _ROWS;
@@ -47,7 +48,7 @@ Layout::Layout(uint8_t ROWS, uint8_t COLS, KBDPROG layer1, KBDPROG layer2, KBDPR
 }
 
 void Layout::addLayer(KBDPROG keys) {
-    LayerList* ptr = (LayerList*)malloc(sizeof(LayerList));
+    LayerList* ptr = (LayerList*)mechyAllocOrHalt(sizeof(LayerList), MECHY_HALT_LAYOUT);
     ptr->keys = keys;
     ptr->next = NULL;
 

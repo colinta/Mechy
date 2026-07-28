@@ -1,4 +1,5 @@
 #include "Mechy.h"
+#include "priv/Alloc.h"
 
 #include <Keyboard.h>
 
@@ -45,7 +46,7 @@ void Mechy::tick() {
 }
 
 void Mechy::attach(Responder* responder) {
-    ResponderPtr* ptr = (ResponderPtr*)malloc(sizeof(ResponderPtr));
+    ResponderPtr* ptr = (ResponderPtr*)mechyAllocOrHalt(sizeof(ResponderPtr), MECHY_HALT_RESPONDER);
     ptr->responder = responder;
     ptr->next = NULL;
     responder->mechy = this;
@@ -58,7 +59,7 @@ void Mechy::add(Plugin* plugin) {
 }
 
 void Mechy::add(uint8_t name, Plugin* plugin) {
-    PluginPtr* ptr = (PluginPtr*)malloc(sizeof(PluginPtr));
+    PluginPtr* ptr = (PluginPtr*)mechyAllocOrHalt(sizeof(PluginPtr), MECHY_HALT_PLUGIN);
     ptr->name = name;
     ptr->plugin = plugin;
     ptr->next = NULL;
@@ -80,13 +81,19 @@ void Mechy::setDefaultLayer(uint8_t layer) {
     updateLayer(layerStackPtr ? layerStackPtr->value : _defaultLayer);
 }
 
-void Mechy::pushLayer(uint8_t layer) {
-    LayerStackPtr* layerPtr = (LayerStackPtr*)malloc(sizeof(LayerStackPtr));
+bool Mechy::pushLayer(uint8_t layer) {
+    LayerStackPtr* layerPtr = (LayerStackPtr*)mechyAlloc(sizeof(LayerStackPtr));
+    if (!layerPtr) {
+        // runtime allocation failed: reject the push, leave the current and
+        // default layers unchanged
+        return false;
+    }
     layerPtr->value = layer;
     layerPtr->prev = layerStackPtr;
     layerStackPtr = layerPtr;
 
     updateLayer(layer);
+    return true;
 }
 
 void Mechy::popLayer() {
@@ -101,7 +108,7 @@ void Mechy::removeLayer(uint8_t layer) {
     while (layerPtr) {
         if (layerPtr->value == layer) {
             LayerStackPtr* prev = layerPtr->prev;
-            free(layerPtr);
+            mechyFree(layerPtr);
             *layerPtrPtr = prev;
             break;
         }
@@ -116,7 +123,7 @@ void Mechy::clearLayers() {
     LayerStackPtr* layerPtr = layerStackPtr;
     while (layerPtr) {
         LayerStackPtr* prev = layerPtr->prev;
-        free(layerPtr);
+        mechyFree(layerPtr);
         layerPtr = prev;
     }
     layerStackPtr = NULL;
@@ -178,11 +185,22 @@ bool Mechy::processKeyEvent(Layout* layout, uint8_t row, uint8_t col, bool isPre
             ptr = cachedEventPtr;
         }
         else if (kbd) {
-            ptr = (EventPtr*)malloc(sizeof(EventPtr));
+            // allocate transactionally: nothing is linked into the event
+            // list until every allocation has succeeded.  On failure the key
+            // is still physically down, so a later scan retries this press.
+            ptr = (EventPtr*)mechyAlloc(sizeof(EventPtr));
+            if (!ptr) {
+                return KBD_CONTINUE;
+            }
+            Event* event = (Event*)mechyAlloc(sizeof(Event));
+            if (!event) {
+                mechyFree(ptr);
+                return KBD_CONTINUE;
+            }
             ptr->layout = layout;
             ptr->row = row;
             ptr->col = col;
-            ptr->event = (Event*)malloc(sizeof(Event));
+            ptr->event = event;
             pushEventPtr(ptr);
         }
 
@@ -554,8 +572,8 @@ inline EventPtr* Mechy::removeEventPtr(EventPtr* ptr) {
     while (eventPtr) {
         if (eventPtr == ptr) {
             *eventPtrPtr = ptr->next;
-            free(ptr->event);
-            free(ptr);
+            mechyFree(ptr->event);
+            mechyFree(ptr);
             return *eventPtrPtr;
         }
         eventPtrPtr = &(eventPtr->next);

@@ -2,6 +2,12 @@
 
 #include "Mechy.h"
 
+// records whether this event's pushLayer() call succeeded.  removeLayer()
+// matches by value, so a release must never remove a layer entry that its
+// paired press failed to push (it could remove another key's entry for the
+// same layer).  Bit 5 is EVENT_IS_ACTIVE_BIT; bits 0-4 are user data.
+#define EVENT_GOTO_DID_PUSH_BIT 6
+
 enum {
     GO_MOMENTARY,
     GO_PUSH,

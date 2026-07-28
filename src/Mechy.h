@@ -68,7 +68,9 @@ public:
 
     uint8_t defaultLayer();
     void setDefaultLayer(uint8_t layer);
-    void pushLayer(uint8_t layer);
+    // returns false if the layer-stack allocation failed; the active layer
+    // is unchanged in that case
+    bool pushLayer(uint8_t layer);
     void popLayer();
     void removeLayer(uint8_t layer);
     void clearLayers();

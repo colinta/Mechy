@@ -35,6 +35,7 @@ Worker     |     |HIGH||LOW |   ACK   +--<--<--<--<--<--<--<--+
 #include "Transmitter.h"
 #include "../priv/RxTx.h"
 #include "../priv/Constants.h"
+#include "../priv/Alloc.h"
 
 #define QUEUE_LEN 20
 static uint16_t queue[QUEUE_LEN];
@@ -49,7 +50,7 @@ Transmitter::Transmitter(uint8_t dataPin, uint8_t clockPin, const uint8_t* _pinR
     pinCols = _pinCols;
     ROWS = _ROWS;
     COLS = _COLS;
-    keyPressed = (bool*)malloc(sizeof(bool) * (ROWS * COLS));
+    keyPressed = (bool*)mechyAllocOrHalt(sizeof(bool) * (ROWS * COLS), MECHY_HALT_TRANSMITTER);
     bool* pressedPtr = keyPressed;
     for (uint8_t i = 0; i < ROWS * COLS; i++) {
         *pressedPtr = false;
