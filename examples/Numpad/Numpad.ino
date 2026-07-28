@@ -18,7 +18,7 @@ KEYS(keys) = {
     // media keys: vol+, play, vol-
     {  MD_VOLU, MD_PLAY, MD_VOLD, MD(MEDIA_PLAY)  },
     // lock keys,     simple modifier keys
-    {  LK, LK,        KC_SFT, KC_GUI  },
+    {  LK, LK,        KC_LSFT, KC_LGUI  },
     // sticky keys - hyper is ctrl+alt+shift+gui
     {  ST_CTL , ST_ALT, ST_GUI, ST_HYP  },
     // no-op and transparent keys (for when using layers)

@@ -11,13 +11,13 @@ const uint8_t pinRows[] = { _D0, _D1, _D2, _D3, _D5};
 const uint8_t pinCols[] = { _F0, _F1, _E6, _C7, _C6, _B6, _D4, _B1, _B7, _B5, _B4, _D7, _D6, _B3, _B0};
 
 // press and hold 1/2/3 for F1/F2/F3
-#define TH_PGUP TH(KC_PGUP, KC_HOME)
-#define TH_PGDN TH(KC_PGDN, KC_END)
-#define TH_PLAY TH(MD_PLAY, MD_MUTE)
+#define TH_PGUP TH(10)
+#define TH_PGDN TH(11)
+#define TH_PLAY TH(12)
 
 
 KEYS(mainKeys) = {
-     KC_ESC , KC_GRV ,  TH_1  ,  TH_2  ,  TH_3  ,  TH_4  ,  TH_5  , TH_DEL ,  TH_6  ,  TH_7  ,  TH_8  ,  TH_9  , TH_0   , KC_MINS, KC_EQL ,
+     KC_ESC , KC_GRV ,  TH_1  ,  TH_2  ,  TH_3  ,  TH_4  ,  TH_5  , KC_DEL ,  TH_6  ,  TH_7  ,  TH_8  ,  TH_9  , TH_0   , KC_MINS, KC_EQL ,
       ____  , KC_TAB ,  KC_Q  ,  KC_W  ,  KC_F  ,  KC_P  ,  KC_G  , KC_BSPC,  KC_J  ,  KC_L  ,  KC_U  ,  KC_Y  , KC_SCLN, KC_LBRC, KC_RBRC,
       ____  , KC_LSFT,  KC_A  ,  KC_R  ,  KC_S  ,  KC_T  ,  KC_D  , KC_ENT ,  KC_H  ,  KC_N  ,  KC_E  ,  KC_I  , KC_O   , KC_QUOT, KC_BSLS,
       ____  , KC_LCTL,  KC_Z  ,  KC_X  ,  KC_C  ,  KC_V  ,  KC_B  , GOTO_1 ,  KC_K  ,  KC_M  , KC_COMM, KC_DOT , KC_SLSH, KC_UP  ,  ____  ,

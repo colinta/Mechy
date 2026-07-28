@@ -3,8 +3,8 @@
 
 #define ROWS 4
 #define COLS 12
-const uint8_t pinRows[] = { _D0, _D5, _B5, _B6 }
-const uint8_t pinCols[] = { _F1, _F0, _B0, _C7, _F4, _F5, _F6, _F7, _D4, _D6, _B4, _D7 }
+const uint8_t pinRows[] = { _D0, _D5, _B5, _B6 };
+const uint8_t pinCols[] = { _F1, _F0, _B0, _C7, _F4, _F5, _F6, _F7, _D4, _D6, _B4, _D7 };
 
 
 KEYS(keys) = {
