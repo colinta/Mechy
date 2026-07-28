@@ -3,11 +3,40 @@
 
 #include <Keyboard.h>
 
+// Fixed pool backing the active-event list.  EventPtr is the first member of
+// PooledEvent, so the pool can hand out EventPtr* that existing plugins
+// iterate unchanged (via Mechy::events()), while the Event storage lives
+// inline in the same entry.  No heap is touched during typing.
+struct PooledEvent {
+    EventPtr ptr;
+    Event event;
+    bool inUse;
+};
+
+static PooledEvent eventPool[MECHY_MAX_EVENTS];
+
+static EventPtr* allocEventPtr() {
+    for (uint8_t i = 0; i < MECHY_MAX_EVENTS; i++) {
+        if (!eventPool[i].inUse) {
+            eventPool[i].inUse = true;
+            eventPool[i].ptr.event = &eventPool[i].event;
+            return &eventPool[i].ptr;
+        }
+    }
+    return NULL;
+}
+
+static void freeEventPtr(EventPtr* ptr) {
+    // EventPtr is the first member of PooledEvent, so the pointers are
+    // interconvertible
+    ((PooledEvent*)ptr)->inUse = false;
+}
+
 Mechy::Mechy() {
     _defaultLayer = 0;
     modifiers = 0;
     capsIsOn = false;
-    layerStackPtr = NULL;
+    layerStackSize = 0;
     firstResponderPtr = NULL;
     firstPluginPtr = NULL;
     firstEventPtr = NULL;
@@ -78,61 +107,51 @@ uint8_t Mechy::defaultLayer() {
 
 void Mechy::setDefaultLayer(uint8_t layer) {
     _defaultLayer = layer;
-    updateLayer(layerStackPtr ? layerStackPtr->value : _defaultLayer);
+    updateLayer(layerStackSize ? layerStack[layerStackSize - 1] : _defaultLayer);
 }
 
 bool Mechy::pushLayer(uint8_t layer) {
-    LayerStackPtr* layerPtr = (LayerStackPtr*)mechyAlloc(sizeof(LayerStackPtr));
-    if (!layerPtr) {
-        // runtime allocation failed: reject the push, leave the current and
-        // default layers unchanged
+    if (layerStackSize == MECHY_MAX_LAYER_STACK) {
+        // stack is full: reject the push, leave the current and default
+        // layers unchanged
         return false;
     }
-    layerPtr->value = layer;
-    layerPtr->prev = layerStackPtr;
-    layerStackPtr = layerPtr;
+    layerStack[layerStackSize++] = layer;
 
     updateLayer(layer);
     return true;
 }
 
 void Mechy::popLayer() {
-    if (layerStackPtr) {
-        removeLayer(layerStackPtr->value);
+    if (layerStackSize) {
+        removeLayer(layerStack[layerStackSize - 1]);
     }
 }
 
 void Mechy::removeLayer(uint8_t layer) {
-    LayerStackPtr** layerPtrPtr = &layerStackPtr;
-    LayerStackPtr* layerPtr = layerStackPtr;
-    while (layerPtr) {
-        if (layerPtr->value == layer) {
-            LayerStackPtr* prev = layerPtr->prev;
-            mechyFree(layerPtr);
-            *layerPtrPtr = prev;
+    // scan from the top of the stack (the most recently pushed match is
+    // removed, mirroring the previous linked-list behavior)
+    for (uint8_t i = layerStackSize; i > 0; i--) {
+        if (layerStack[i - 1] == layer) {
+            for (uint8_t j = i - 1; j + 1 < layerStackSize; j++) {
+                layerStack[j] = layerStack[j + 1];
+            }
+            layerStackSize--;
             break;
         }
-        layerPtrPtr = &(layerPtr->prev);
-        layerPtr = layerPtr->prev;
     }
 
-    updateLayer(layerStackPtr ? layerStackPtr->value : _defaultLayer);
+    updateLayer(layerStackSize ? layerStack[layerStackSize - 1] : _defaultLayer);
 }
 
 void Mechy::clearLayers() {
-    LayerStackPtr* layerPtr = layerStackPtr;
-    while (layerPtr) {
-        LayerStackPtr* prev = layerPtr->prev;
-        mechyFree(layerPtr);
-        layerPtr = prev;
-    }
-    layerStackPtr = NULL;
+    layerStackSize = 0;
 
     updateLayer(_defaultLayer);
 }
 
 uint8_t Mechy::currentLayer() {
-    return (layerStackPtr ? layerStackPtr->value : _defaultLayer);
+    return (layerStackSize ? layerStack[layerStackSize - 1] : _defaultLayer);
 }
 
 void Mechy::updateLayer(uint8_t layer) {
@@ -185,22 +204,17 @@ bool Mechy::processKeyEvent(Layout* layout, uint8_t row, uint8_t col, bool isPre
             ptr = cachedEventPtr;
         }
         else if (kbd) {
-            // allocate transactionally: nothing is linked into the event
-            // list until every allocation has succeeded.  On failure the key
-            // is still physically down, so a later scan retries this press.
-            ptr = (EventPtr*)mechyAlloc(sizeof(EventPtr));
+            // events come from a fixed pool; nothing is linked into the
+            // event list unless a pool entry is available.  If the pool is
+            // exhausted the key is still physically down, so a later scan
+            // retries this press.
+            ptr = allocEventPtr();
             if (!ptr) {
-                return KBD_CONTINUE;
-            }
-            Event* event = (Event*)mechyAlloc(sizeof(Event));
-            if (!event) {
-                mechyFree(ptr);
                 return KBD_CONTINUE;
             }
             ptr->layout = layout;
             ptr->row = row;
             ptr->col = col;
-            ptr->event = event;
             pushEventPtr(ptr);
         }
 
@@ -572,8 +586,7 @@ inline EventPtr* Mechy::removeEventPtr(EventPtr* ptr) {
     while (eventPtr) {
         if (eventPtr == ptr) {
             *eventPtrPtr = ptr->next;
-            mechyFree(ptr->event);
-            mechyFree(ptr);
+            freeEventPtr(ptr);
             return *eventPtrPtr;
         }
         eventPtrPtr = &(eventPtr->next);

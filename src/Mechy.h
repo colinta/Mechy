@@ -9,6 +9,21 @@
 
 #define DEBOUNCE 15
 
+// Fixed capacities for runtime state.  These replace runtime heap use: once
+// the keyboard boots, no allocation can fail.  Override with a build flag
+// (e.g. -DMECHY_MAX_EVENTS=16) if a configuration needs more.
+
+// maximum simultaneously active key events (pressed keys, plus keys released
+// within the last DEBOUNCE ms)
+#ifndef MECHY_MAX_EVENTS
+#define MECHY_MAX_EVENTS 12
+#endif
+
+// maximum simultaneously pushed layers
+#ifndef MECHY_MAX_LAYER_STACK
+#define MECHY_MAX_LAYER_STACK 8
+#endif
+
 
 struct PluginPtr {
     uint8_t name;
@@ -22,11 +37,6 @@ struct ResponderPtr {
     ResponderPtr* next;
 };
 
-
-struct LayerStackPtr {
-    uint8_t value;
-    LayerStackPtr* prev;
-};
 
 
 struct EventPtr {
@@ -80,7 +90,8 @@ public:
 
 protected:
     uint8_t _defaultLayer;
-    LayerStackPtr* layerStackPtr;
+    uint8_t layerStack[MECHY_MAX_LAYER_STACK];
+    uint8_t layerStackSize;
     ResponderPtr* firstResponderPtr;
     PluginPtr* firstPluginPtr;
     EventPtr* firstEventPtr;

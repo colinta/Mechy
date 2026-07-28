@@ -4,13 +4,15 @@
 #include "Responder.h"
 #include "Layout.h"
 
-struct ReceiverEventPtr {
-    Layout* layout;
+// maximum simultaneously held remote keys.  Override with a build flag
+// (e.g. -DMECHY_MAX_RECEIVER_KEYS=12) if a configuration needs more.
+#ifndef MECHY_MAX_RECEIVER_KEYS
+#define MECHY_MAX_RECEIVER_KEYS 8
+#endif
+
+struct ReceiverKey {
     uint8_t row;
     uint8_t col;
-    ReceiverEventPtr* next;
-
-    bool matches(Layout* layout, uint8_t row, uint8_t col);
 };
 
 class Receiver : public Responder {
@@ -28,12 +30,14 @@ protected:
     uint8_t data;
     bool hasData;
     Layout* layout;
-    ReceiverEventPtr* firstEventPtr;
+    ReceiverKey trackedKeys[MECHY_MAX_RECEIVER_KEYS];
+    uint8_t trackedKeyCount;
 
     void listen();
     void holdCheck();
-    inline void pushEventPtr(ReceiverEventPtr* ptr);
-    inline void removeEventPtr(ReceiverEventPtr* ptr);
+    bool isTracked(uint8_t row, uint8_t col);
+    bool trackKey(uint8_t row, uint8_t col);
+    bool untrackKey(uint8_t row, uint8_t col);
 
     inline bool transmitterHasData();
     inline void sendHasData();

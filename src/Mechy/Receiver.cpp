@@ -11,7 +11,7 @@ void Receiver::construct(Layout* _layout, uint8_t dataPin, uint8_t clockPin) {
     layout = _layout;
     inputPin = dataPin;
     outputPin = clockPin;
-    firstEventPtr = NULL;
+    trackedKeyCount = 0;
     data = 0;
     hasData = false;
 }
@@ -50,34 +50,40 @@ void Receiver::gotoLayer(uint8_t layer) {
 }
 
 void Receiver::holdCheck() {
-    ReceiverEventPtr* kbdData = firstEventPtr;
-    while (kbdData) {
-        mechy->processKeyEvent(layout, kbdData->row, kbdData->col, true);
-        kbdData = kbdData->next;
+    for (uint8_t i = 0; i < trackedKeyCount; i++) {
+        mechy->processKeyEvent(layout, trackedKeys[i].row, trackedKeys[i].col, true);
     }
 }
 
-inline void Receiver::pushEventPtr(ReceiverEventPtr* ptr) {
-    ptr->next = firstEventPtr;
-    firstEventPtr = ptr;
-}
-
-inline void Receiver::removeEventPtr(ReceiverEventPtr* ptr) {
-    ReceiverEventPtr** eventPtrPtr = &firstEventPtr;
-    ReceiverEventPtr* eventPtr = firstEventPtr;
-    while (eventPtr) {
-        if (eventPtr == ptr) {
-            *eventPtrPtr = ptr->next;
-            mechyFree(ptr);
-            return;
+bool Receiver::isTracked(uint8_t row, uint8_t col) {
+    for (uint8_t i = 0; i < trackedKeyCount; i++) {
+        if (trackedKeys[i].row == row && trackedKeys[i].col == col) {
+            return true;
         }
-        eventPtrPtr = &(eventPtr->next);
-        eventPtr = eventPtr->next;
     }
+    return false;
 }
 
-bool ReceiverEventPtr::matches(Layout* layout, uint8_t row, uint8_t col) {
-    return this->layout == layout && this->row == row && this->col == col;
+bool Receiver::trackKey(uint8_t row, uint8_t col) {
+    if (trackedKeyCount == MECHY_MAX_RECEIVER_KEYS) {
+        return false;
+    }
+    trackedKeys[trackedKeyCount].row = row;
+    trackedKeys[trackedKeyCount].col = col;
+    trackedKeyCount++;
+    return true;
+}
+
+bool Receiver::untrackKey(uint8_t row, uint8_t col) {
+    for (uint8_t i = 0; i < trackedKeyCount; i++) {
+        if (trackedKeys[i].row == row && trackedKeys[i].col == col) {
+            // order does not matter, so swap-remove
+            trackedKeys[i] = trackedKeys[trackedKeyCount - 1];
+            trackedKeyCount--;
+            return true;
+        }
+    }
+    return false;
 }
 
 void Receiver::listen() {
@@ -128,46 +134,19 @@ listenBody:
     if (isPressed) {
         // track the key *before* processing the press: holdCheck() re-drives
         // the pressed state on every scan, so a tracked press automatically
-        // retries any transient event-allocation failure in processKeyEvent
-        bool isTracked = false;
-        ReceiverEventPtr* findPtr = firstEventPtr;
-        while (findPtr) {
-            if (findPtr->matches(layout, row, col)) {
-                isTracked = true;
-                break;
-            }
-            findPtr = findPtr->next;
-        }
-
-        if (!isTracked) {
-            ReceiverEventPtr* ptr = (ReceiverEventPtr*)mechyAlloc(sizeof(ReceiverEventPtr));
-            if (ptr) {
-                ptr->layout = layout;
-                ptr->row = row;
-                ptr->col = col;
-                pushEventPtr(ptr);
-                isTracked = true;
-            }
-        }
-
-        // never emit a press that cannot be tracked through its release; if
-        // allocation failed, this press packet is discarded (the matching
-        // release packet will find no tracked key and is safely ignored)
-        if (isTracked) {
+        // retries any transient event-pool exhaustion in processKeyEvent.
+        // Never emit a press that cannot be tracked through its release; if
+        // the tracking table is full, this press packet is discarded (the
+        // matching release packet will find no tracked key and is ignored).
+        if (isTracked(row, col) || trackKey(row, col)) {
             mechy->processKeyEvent(layout, row, col, true);
         }
     }
     else {
-        ReceiverEventPtr* findPtr = firstEventPtr;
-        while (findPtr) {
-            if (findPtr->matches(layout, row, col)) {
-                mechy->processKeyEvent(layout, row, col, false);
-                removeEventPtr(findPtr);
-                break;
-            }
-            findPtr = findPtr->next;
-        }
         // an untracked release (its press was never tracked) is ignored
+        if (untrackKey(row, col)) {
+            mechy->processKeyEvent(layout, row, col, false);
+        }
     }
 
     bool hasMoreData = !receiveOneBit();
