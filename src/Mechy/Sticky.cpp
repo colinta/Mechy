@@ -14,6 +14,9 @@ Sticky::Sticky() {
     sticky_lock = 0;
     prev_mods = 0;
     should_clear = false;
+    sticky_lock_timer = 0;
+    sticky_auto_off_timer = 0;
+    sticky_lock_timer_valid = false;
 }
 
 uint8_t Sticky::defaultName() {
@@ -47,8 +50,13 @@ void Sticky::run(Event* event) {
             sticky_state &= ~modkey_mask;
             sticky_lock  &= ~modkey_mask;
         }
+        else if (mods_down_state & modkey_mask) {
+            // A second physical key for this modifier is still a held
+            // modifier, not a double-tap.
+        }
         else if ((sticky_state & modkey_mask) == modkey_mask) {
-             if ((millis() - sticky_lock_timer) < STICKY_LOCK_DELAY) {
+            if (sticky_lock_timer_valid
+                && (millis() - sticky_lock_timer) < STICKY_LOCK_DELAY) {
                 sticky_lock |= modkey_mask;
             }
             else {
@@ -68,6 +76,7 @@ void Sticky::run(Event* event) {
     else if (event->isReleased()) {
         if (sticky_state & modkey_mask) {
             sticky_lock_timer = millis();
+            sticky_lock_timer_valid = true;
         }
         mods_down_state &= ~modkey_mask;
 
