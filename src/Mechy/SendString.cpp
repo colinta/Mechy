@@ -223,7 +223,7 @@ uint16_t* sendKeys(uint16_t key0, uint16_t key1, uint16_t key2, uint16_t key3, u
     keys[5] = key4;
     keys[6] = key5;
     keys[7] = key6;
-    keys[7] = key7;
+    keys[8] = key7;
     return keys;
 }
 
