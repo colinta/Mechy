@@ -145,16 +145,17 @@ bool Mechy::processKeyEvent(Layout* layout, uint8_t row, uint8_t col, bool isPre
     EventPtr* findEventPtr = firstEventPtr;
     EventPtr* cachedEventPtr = NULL;
     while (findEventPtr) {
-        if (findEventPtr->matches(layout, row, col)) {
-            cachedEventPtr = findEventPtr;
-        }
-
-        // remove "stale" keyboard events
+        // remove "stale" keyboard events before caching a matching event.  A
+        // released event may be freed by removeEventPtr, so it must not be
+        // retained in cachedEventPtr.
         if (findEventPtr->event->isReleased() && now - findEventPtr->event->started > DEBOUNCE) {
             // remove the ptr and return the next one or NULL
             findEventPtr = removeEventPtr(findEventPtr);
         }
         else {
+            if (findEventPtr->matches(layout, row, col)) {
+                cachedEventPtr = findEventPtr;
+            }
             findEventPtr = findEventPtr->next;
         }
     }
