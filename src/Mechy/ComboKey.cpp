@@ -1,9 +1,10 @@
 #include "ComboKey.h"
 
-ComboKey::ComboKey(uint8_t _count, const KBD _keys[], KBD _comboKey) {
-    count = _count;
-    keys = (KBD*)malloc(sizeof(KBD) * count);
-    for (uint8_t i = 0; i < count; ++i) {
+ComboKey::ComboKey(uint8_t count, const KBD _keys[], KBD _comboKey) {
+    currentCount = count;
+    totalCount = count;
+    keys = (KBD*)malloc(sizeof(KBD) * totalCount);
+    for (uint8_t i = 0; i < totalCount; ++i) {
         keys[i] = _keys[i];
     }
     comboKey = _comboKey;
@@ -14,8 +15,10 @@ uint8_t ComboKey::defaultName() {
 }
 
 bool ComboKey::is(uint8_t event_type, Event* event) {
+    if (event->key() >= totalCount)  return false;
+
     Plugin* plugin = NULL;
-    if (count == 0) {
+    if (currentCount == 0) {
         plugin = mechy->pluginFor(comboKey.name);
         return plugin && plugin->is(event_type, event);
     }
@@ -34,6 +37,8 @@ bool ComboKey::is(uint8_t event_type, Event* event) {
 }
 
 void ComboKey::run(Event* comboEvent) {
+    if (comboEvent->key() >= totalCount)  return;
+
     Event keyEvent = {
         .name = 0,
         .keyAndData = 0,
@@ -42,7 +47,7 @@ void ComboKey::run(Event* comboEvent) {
     };
 
     if (comboEvent->isPressed()) {
-        if (--count == 0) {
+        if (--currentCount == 0) {
             keyEvent.name = comboKey.name;
             keyEvent.keyAndData = comboKey.key;
             mechy->runEvent(&keyEvent);
@@ -55,7 +60,7 @@ void ComboKey::run(Event* comboEvent) {
         }
     }
     else if (comboEvent->isReleased()) {
-        if (count++ == 0) {
+        if (currentCount++ == 0) {
             keyEvent.name = comboKey.name;
             keyEvent.keyAndData = comboKey.key;
             mechy->runEvent(&keyEvent);
@@ -68,7 +73,7 @@ void ComboKey::run(Event* comboEvent) {
         }
     }
     else if (comboEvent->isHeld()) {
-        if (count == 0) {
+        if (currentCount == 0) {
             keyEvent.name = comboKey.name;
             keyEvent.keyAndData = comboKey.key;
             mechy->runEvent(&keyEvent);

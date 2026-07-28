@@ -30,6 +30,7 @@ uint8_t TapHold::defaultName() {
 
 bool TapHold::is(uint8_t event_type, Event* event) {
     TapHoldEvent* keyPtr = thEvent(event->key());
+    if (!keyPtr)  return false;
 
     switch (keyPtr->behavior) {
     case TH_TAP:
@@ -170,12 +171,13 @@ void TapHold::begin() {
 }
 
 TapHoldEvent* TapHold::thEvent(uint8_t offset) {
-    if (!eventArray)  return NULL;
+    if (!eventArray || offset >= tapHoldKeys)  return NULL;
     return eventArray + offset;
 }
 
 void TapHold::run(Event* event) {
     TapHoldEvent* keyPtr = thEvent(event->key());
+    if (!keyPtr)  return;
 
     if (event->isPressed()) {
         event->setIsActive(true);

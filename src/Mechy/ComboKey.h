@@ -10,7 +10,8 @@ public:
     void run(Event* event);
 
 protected:
-    uint8_t count;
+    uint8_t currentCount;
+    uint8_t totalCount;
     KBD comboKey;
     KBD* keys;
 };
