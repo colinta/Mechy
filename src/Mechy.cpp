@@ -3,37 +3,11 @@
 
 #include <Keyboard.h>
 
-// Fixed pool backing the active-event list.  EventPtr is the first member of
-// PooledEvent, so the pool can hand out EventPtr* that existing plugins
-// iterate unchanged (via Mechy::events()), while the Event storage lives
-// inline in the same entry.  No heap is touched during typing.
-struct PooledEvent {
-    EventPtr ptr;
-    Event event;
-    bool inUse;
-};
-
-static PooledEvent eventPool[MECHY_MAX_EVENTS];
-
-static EventPtr* allocEventPtr() {
-    for (uint8_t i = 0; i < MECHY_MAX_EVENTS; i++) {
-        if (!eventPool[i].inUse) {
-            eventPool[i].inUse = true;
-            eventPool[i].ptr.event = &eventPool[i].event;
-            return &eventPool[i].ptr;
-        }
-    }
-    return NULL;
-}
-
-static void freeEventPtr(EventPtr* ptr) {
-    // EventPtr is the first member of PooledEvent, so the pointers are
-    // interconvertible
-    ((PooledEvent*)ptr)->inUse = false;
-}
-
 Mechy::Mechy() {
     _defaultLayer = 0;
+    for (uint8_t i = 0; i < MECHY_MAX_EVENTS; i++) {
+        eventPool[i].inUse = false;
+    }
     modifiers = 0;
     capsIsOn = false;
     layerStackSize = 0;
@@ -578,6 +552,23 @@ inline void Mechy::pushResponderPtr(ResponderPtr* ptr) {
 inline void Mechy::pushEventPtr(EventPtr* ptr) {
     ptr->next = firstEventPtr;
     firstEventPtr = ptr;
+}
+
+EventPtr* Mechy::allocEventPtr() {
+    for (uint8_t i = 0; i < MECHY_MAX_EVENTS; i++) {
+        if (!eventPool[i].inUse) {
+            eventPool[i].inUse = true;
+            eventPool[i].ptr.event = &eventPool[i].event;
+            return &eventPool[i].ptr;
+        }
+    }
+    return NULL;
+}
+
+void Mechy::freeEventPtr(EventPtr* ptr) {
+    // EventPtr is the first member of EventPoolEntry, so the pointers are
+    // interconvertible.
+    ((EventPoolEntry*)ptr)->inUse = false;
 }
 
 inline EventPtr* Mechy::removeEventPtr(EventPtr* ptr) {

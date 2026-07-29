@@ -50,6 +50,16 @@ struct EventPtr {
 };
 
 
+// Event storage is owned by each Mechy instance.  Keeping the Event inline
+// with its list node avoids two heap allocations per key press and ensures
+// multiple Mechy instances cannot contend for one global pool.
+struct EventPoolEntry {
+    EventPtr ptr;
+    Event event;
+    bool inUse;
+};
+
+
 class Mechy {
 public:
     Mechy();
@@ -78,8 +88,8 @@ public:
 
     uint8_t defaultLayer();
     void setDefaultLayer(uint8_t layer);
-    // returns false if the layer-stack allocation failed; the active layer
-    // is unchanged in that case
+    // returns false if the fixed layer stack is full; the active layer is
+    // unchanged in that case
     bool pushLayer(uint8_t layer);
     void popLayer();
     void removeLayer(uint8_t layer);
@@ -95,6 +105,7 @@ protected:
     ResponderPtr* firstResponderPtr;
     PluginPtr* firstPluginPtr;
     EventPtr* firstEventPtr;
+    EventPoolEntry eventPool[MECHY_MAX_EVENTS];
     uint16_t modifiers;
     void (*listenFnPtr)(Event*);
 
@@ -107,4 +118,6 @@ private:
     inline void pushResponderPtr(ResponderPtr* ptr);
     inline void pushEventPtr(EventPtr* ptr);
     inline EventPtr* removeEventPtr(EventPtr* ptr);
+    EventPtr* allocEventPtr();
+    void freeEventPtr(EventPtr* ptr);
 };
