@@ -51,12 +51,12 @@ struct Event {
     }
 
     inline bool dataBit(uint8_t bit) {
-        if (bit >= 16)  return false;
+        if (bit >= 8)  return false;
         return bit_get(keyAndData, bit(EVENT_DATA_SHIFT + bit));
     }
 
     inline void setDataBit(uint8_t bit, bool value) {
-        if (bit >= 16)  return;
+        if (bit >= 8)  return;
         if (value) {
             bit_on(keyAndData, bit(EVENT_DATA_SHIFT + bit));
         }
