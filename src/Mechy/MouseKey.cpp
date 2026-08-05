@@ -13,6 +13,12 @@ void MouseKey::begin() {
     Mouse.begin();
 }
 
+inline int16_t clampMouseDelta(int16_t delta) {
+    if (delta > 127)  return 127;
+    if (delta < -127)  return -127;
+    return delta;
+}
+
 bool MouseKey::is(uint8_t event_type, Event* UNUSED(event)) {
     switch (event->key()) {
     case MOUSEKEY_UP:
@@ -31,7 +37,7 @@ bool MouseKey::is(uint8_t event_type, Event* UNUSED(event)) {
 }
 
 void MouseKey::run(Event* event) {
-    char dx = 0, dy = 0;
+    int16_t dx = 0, dy = 0;
     char button;
 
     switch (event->key()) {
@@ -90,7 +96,9 @@ mouseMove:
         dx *= 5;
     }
 
-    Mouse.move(dx, dy, 0);
+    dx = clampMouseDelta(dx);
+    dy = clampMouseDelta(dy);
+    Mouse.move((int8_t)dx, (int8_t)dy, 0);
     return;
 
 mouseClick:
