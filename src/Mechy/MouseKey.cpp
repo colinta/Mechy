@@ -15,10 +15,15 @@ void MouseKey::begin() {
 
 bool MouseKey::is(uint8_t event_type, Event* UNUSED(event)) {
     switch (event->key()) {
+    case MOUSEKEY_UP:
+    case MOUSEKEY_DOWN:
+    case MOUSEKEY_LEFT:
+    case MOUSEKEY_RIGHT:
     case MOUSEKEY_LCLK:
     case MOUSEKEY_RCLK:
     case MOUSEKEY_MCLK:
     case MOUSEKEY_CLK4:
+    case MOUSEKEY_CLK5:
         return event_type == EVENT_MOUSE;
     default:
         return false;
