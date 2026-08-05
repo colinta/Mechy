@@ -120,6 +120,7 @@ void Tone::stop(uint8_t _pin)
     songNotes = NULL;
     songDurations = NULL;
     songLen = 0;
+    timer_toggle_count = 0;
     disableTimer();
     digitalWrite(_pin, 0);
 }
